@@ -2,8 +2,16 @@ package com.jtmnetwork.economy
 
 import com.google.inject.Injector
 import com.jtm.framework.Framework
+import com.jtmnetwork.economy.core.domain.entity.Currency
+import com.jtmnetwork.economy.core.domain.entity.Wallet
+import com.jtmnetwork.economy.data.cache.CurrencyCache
+import com.jtmnetwork.economy.data.cache.WalletCache
+import com.jtmnetwork.economy.entrypoint.commands.CurrencyCommands
+import com.jtmnetwork.economy.entrypoint.commands.WalletCommands
+import com.jtmnetwork.economy.entrypoint.listener.CurrencyListener
 import com.jtmnetwork.economy.entrypoint.listener.PlayerListener
 import com.jtmnetwork.economy.entrypoint.listener.WalletListener
+import com.jtmnetwork.economy.entrypoint.module.CurrencyModule
 import com.jtmnetwork.economy.entrypoint.module.WalletModule
 
 class Economy: Framework(false) {
@@ -11,20 +19,40 @@ class Economy: Framework(false) {
     private lateinit var subInjector: Injector
 
     override fun init() {
-        subInjector = injector(listOf(WalletModule()))
+        subInjector = injector(listOf(WalletModule(), CurrencyModule()))
+
+        registerClass(Wallet::class.java)
+        registerClass(Currency::class.java)
     }
 
-    override fun enable() {}
+    override fun enable() {
+        getCurrencyCache().enable()
+        getWalletCache().enable()
+    }
 
-    override fun disable() {}
+    override fun disable() {
+        getCurrencyCache().disable()
+        getWalletCache().disable()
+    }
 
     override fun registerCommands() {
         super.registerCommands()
+        registerCommands(subInjector.getInstance(CurrencyCommands::class.java), arrayOf("currency"))
+        registerCommands(subInjector.getInstance(WalletCommands::class.java), arrayOf("wallet"))
     }
 
     override fun registerListeners() {
         super.registerListeners()
         registerListener(subInjector.getInstance(PlayerListener::class.java))
         registerListener(subInjector.getInstance(WalletListener::class.java))
+        registerListener(subInjector.getInstance(CurrencyListener::class.java))
+    }
+
+    private fun getWalletCache(): WalletCache {
+        return subInjector.getInstance(WalletCache::class.java)
+    }
+
+    private fun getCurrencyCache(): CurrencyCache {
+        return subInjector.getInstance(CurrencyCache::class.java)
     }
 }
