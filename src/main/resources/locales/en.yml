@@ -1,0 +1,6 @@
+currency:
+  found: "&4Error: &cCurrency already found."
+  not_found: "&4Error: &cCurrency not found."
+  commands:
+    add: "&aSuccessfully added currency '&f%s&a'"
+    remove: "&aSuccessfully removed currency '&f%s&a'"
