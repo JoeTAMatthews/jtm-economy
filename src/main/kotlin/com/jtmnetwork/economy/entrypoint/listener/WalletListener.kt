@@ -1,14 +1,15 @@
 package com.jtmnetwork.economy.entrypoint.listener
 
 import com.google.inject.Inject
-import com.jtmnetwork.economy.core.domain.event.WalletLoadEvent
-import com.jtmnetwork.economy.core.domain.event.WalletUnloadEvent
+import com.jtmnetwork.economy.core.domain.event.wallet.WalletLoadEvent
+import com.jtmnetwork.economy.core.domain.event.wallet.WalletUnloadEvent
+import com.jtmnetwork.economy.data.cache.CurrencyCache
 import com.jtmnetwork.economy.data.cache.WalletCache
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.slf4j.LoggerFactory
 
-class WalletListener @Inject constructor(private val cache: WalletCache): Listener {
+class WalletListener @Inject constructor(private val cache: WalletCache, private val currencyCache: CurrencyCache): Listener {
 
     private val logger = LoggerFactory.getLogger(WalletListener::class.java)
 
@@ -16,6 +17,7 @@ class WalletListener @Inject constructor(private val cache: WalletCache): Listen
     fun onLoad(event: WalletLoadEvent) {
         val wallet = event.wallet
         val saved = cache.insert(wallet.id, wallet) ?: return
+        currencyCache.getAll()?.forEach { if (!wallet.hasBalance(it)) wallet.addBalance(it) }
         logger.info("Successfully loaded wallet: ${saved.id}")
     }
 

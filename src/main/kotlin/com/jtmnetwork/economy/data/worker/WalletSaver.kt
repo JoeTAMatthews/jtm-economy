@@ -1,7 +1,7 @@
 package com.jtmnetwork.economy.data.worker
 
 import com.jtm.framework.Framework
-import com.jtmnetwork.economy.core.domain.event.WalletUnloadEvent
+import com.jtmnetwork.economy.core.domain.event.wallet.WalletUnloadEvent
 import com.jtmnetwork.economy.data.cache.WalletCache
 import com.jtmnetwork.economy.data.service.WalletService
 import org.bukkit.entity.Player
