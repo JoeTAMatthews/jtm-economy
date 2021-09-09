@@ -43,6 +43,7 @@ class WalletListenerTest {
         verify(cache, times(1)).insert(anyOrNull(), anyOrNull())
         verifyNoMoreInteractions(cache)
 
+        verify(currencyCache, times(1)).exists(anyOrNull())
         verify(currencyCache, times(1)).getAll()
         verifyNoMoreInteractions(currencyCache)
     }

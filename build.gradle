@@ -54,6 +54,10 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "16"
 }
 
+test {
+    useJUnitPlatform()
+}
+
 shadowJar {
     destinationDirectory = file("/media/michelle/Programming/Programming/Servers/lobby/plugins")
 }

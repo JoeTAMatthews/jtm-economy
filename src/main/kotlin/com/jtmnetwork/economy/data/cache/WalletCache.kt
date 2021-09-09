@@ -33,7 +33,7 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
     fun hasBalance(player: Player, currency: UUID, amount: Double): Boolean {
         val wallet = getById(player.uniqueId) ?: return false
         val balance = wallet.balances[currency] ?: return false
-        return amount >= balance
+        return balance >= amount
     }
 
     fun deposit(wallet: Wallet, currency: UUID, amount: Double): Transaction? {

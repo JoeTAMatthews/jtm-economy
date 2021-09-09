@@ -21,8 +21,8 @@ data class Wallet(
         return balances[currency] ?: 0.0
     }
 
-    fun addBalance(currency: Currency): Wallet {
-        balances[currency.id] = 0.0
+    fun addBalance(currency: UUID): Wallet {
+        balances[currency] = 0.0
         return this
     }
 

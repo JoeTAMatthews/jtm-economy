@@ -17,7 +17,7 @@ class CurrencyListener @Inject constructor(private val cache: WalletCache): List
         val currency = event.currency
         cache.getAll()?.forEach {
             if (!it.hasBalance(currency)) {
-                val curr = it.addBalance(currency)
+                val curr = it.addBalance(currency.id)
                 cache.update(it.id, curr)
                 logger.info("Updated wallet for: ${it.id}")
             }
