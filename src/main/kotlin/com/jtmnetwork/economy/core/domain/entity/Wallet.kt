@@ -17,13 +17,29 @@ data class Wallet(
         return balances.containsKey(currency.id)
     }
 
+    fun getBalance(currency: UUID): Double {
+        return balances[currency] ?: 0.0
+    }
+
     fun addBalance(currency: Currency): Wallet {
         balances[currency.id] = 0.0
         return this
     }
 
-    fun removeBalance(currency: Currency): Wallet {
-        balances.remove(currency.id)
+    fun addBalance(currency: UUID, amount: Double): Wallet? {
+        var balance = balances[currency] ?: return null
+        balance += amount
+        return this
+    }
+
+    fun removeBalance(id: UUID): Wallet {
+        balances.remove(id)
+        return this
+    }
+
+    fun removeBalance(currency: UUID, amount: Double): Wallet? {
+        var balance = balances[currency] ?: return null
+        balance += amount
         return this
     }
 }

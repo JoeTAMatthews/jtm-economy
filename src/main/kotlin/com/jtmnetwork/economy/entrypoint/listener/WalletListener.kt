@@ -18,6 +18,7 @@ class WalletListener @Inject constructor(private val cache: WalletCache, private
         val wallet = event.wallet
         val saved = cache.insert(wallet.id, wallet) ?: return
         currencyCache.getAll()?.forEach { if (!wallet.hasBalance(it)) wallet.addBalance(it) }
+        wallet.balances.keys.forEach { if (!currencyCache.exists(it)) wallet.removeBalance(it) }
         logger.info("Successfully loaded wallet: ${saved.id}")
     }
 

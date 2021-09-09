@@ -32,12 +32,12 @@ class WalletLoaderTest {
 
     @Test
     fun run_walletNotExists() {
-        `when`(service.exists(anyString())).thenReturn(false)
+        `when`(service.exists(any(UUID::class.java))).thenReturn(false)
         `when`(service.insert(anyOrNull())).thenReturn(wallet)
 
         loader.run()
 
-        verify(service, times(1)).exists(anyString())
+        verify(service, times(1)).exists(any(UUID::class.java))
         verify(service, times(1)).insert(anyOrNull())
         verifyNoMoreInteractions(service)
 
@@ -51,13 +51,13 @@ class WalletLoaderTest {
 
     @Test
     fun run_walletExists() {
-        `when`(service.exists(anyString())).thenReturn(true)
-        `when`(service.get(anyString())).thenReturn(wallet)
+        `when`(service.exists(any(UUID::class.java))).thenReturn(true)
+        `when`(service.get(any(UUID::class.java))).thenReturn(wallet)
 
         loader.run()
 
-        verify(service, times(1)).exists(anyString())
-        verify(service, times(1)).get(anyString())
+        verify(service, times(1)).exists(any(UUID::class.java))
+        verify(service, times(1)).get(any(UUID::class.java))
         verifyNoMoreInteractions(service)
 
         verify(player, times(2)).uniqueId
