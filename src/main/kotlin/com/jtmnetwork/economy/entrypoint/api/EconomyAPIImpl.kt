@@ -15,7 +15,7 @@ class EconomyAPIImpl @Inject constructor(private val framework: Framework, priva
 
     private val service = walletCache.service
 
-    override fun deposit(player: Player, currency: UUID, from: UUID, amount: Double): Boolean {
+    override fun deposit(player: Player, currency: UUID, from: UUID?, amount: Double): Boolean {
         val wallet = walletCache.getById(player.uniqueId) ?: return false
         val transaction = walletCache.deposit(wallet, currency, amount) ?: return false
         framework.runTaskAsync { transactionService.insert(transaction) }
@@ -23,21 +23,21 @@ class EconomyAPIImpl @Inject constructor(private val framework: Framework, priva
     }
 
     // Write documentation to have this method ran in a separate thread as will lock the main thread.
-    override fun deposit(player: OfflinePlayer, currency: UUID, from: UUID, amount: Double): Boolean {
+    override fun deposit(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Boolean {
         val wallet = service.get(player.uniqueId) ?: return false
         val transaction = walletCache.deposit(wallet, currency, amount) ?: return false
         transactionService.insert(transaction)
         return true
     }
 
-    override fun withdraw(player: Player, currency: UUID, from: UUID, amount: Double): Boolean {
+    override fun withdraw(player: Player, currency: UUID, from: UUID?, amount: Double): Boolean {
         val wallet = walletCache.getById(player.uniqueId) ?: return false
         val transaction = walletCache.withdraw(wallet, currency, amount) ?: return false
         framework.runTaskAsync { transactionService.insert(transaction) }
         return true
     }
 
-    override fun withdraw(player: OfflinePlayer, currency: UUID, from: UUID, amount: Double): Boolean {
+    override fun withdraw(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Boolean {
         val wallet = service.get(player.uniqueId) ?: return false
         val transaction = walletCache.withdraw(wallet, currency, amount) ?: return false
         transactionService.insert(transaction)
