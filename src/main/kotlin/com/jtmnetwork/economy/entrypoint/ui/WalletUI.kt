@@ -21,7 +21,7 @@ class WalletUI(private val walletCache: WalletCache, private val currencyCache: 
 
         wallet.balances.forEach {
             val currency = currencyCache.getById(it.key) ?: return
-            builder.withLore(arrayOf("&f${currency.name}: &e${currency.symbol}${it.value}"))
+            builder.withLore(arrayOf("&f${currency.name}: &e${currency.getSymbolAmount(it.value)}"))
         }
 
         registerItem(4, builder.build())

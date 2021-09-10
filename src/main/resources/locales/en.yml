@@ -4,3 +4,14 @@ currency:
   commands:
     add: "&aSuccessfully added currency '&f%s&a'"
     remove: "&aSuccessfully removed currency '&f%s&a'"
+
+economy:
+  deposited:
+    sender_failed: "&4Error: &cFailed to deposit funds to the player."
+    sender_success: "&aSuccessfully deposited &e%s &ato &e%s&a."
+    target_success: "&aYou have been given &e%s&a."
+  withdraw:
+    sender_failed: "&4Error: &cFailed to withdraw funds from the player."
+    sender_success: "&aSuccessfully withdrew &e%s &ato &e%s&a."
+    target_success: "&aYou have lost &e%s&a."
+  balance: "&b%s &abalance: &e%s"

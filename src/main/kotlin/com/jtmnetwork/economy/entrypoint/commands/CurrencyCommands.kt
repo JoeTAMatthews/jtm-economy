@@ -21,6 +21,7 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
     private val localeMessenger = framework.getLocaleMessenger()
 
     @Command("currency")
+    @Permission("currency.admin")
     fun onCurrency(player: Player) {
         val builder = StringBuilder()
         builder.append("&b&m-----------------------")

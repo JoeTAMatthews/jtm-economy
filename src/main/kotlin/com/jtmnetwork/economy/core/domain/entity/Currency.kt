@@ -32,4 +32,12 @@ data class Currency(@Id @Convert(converter = UUIDConverter::class) @Column(lengt
         this.symbol = symbol
         return this
     }
+
+    fun getSymbolAmount(amount: Double): String {
+        return "${symbol}${amount}"
+    }
+
+    fun getAbbreviationAmount(amount: Double): String {
+        return "$amount $abbreviation"
+    }
 }

@@ -28,6 +28,8 @@ class Economy: Framework(false) {
         registerClass(Wallet::class.java)
         registerClass(Currency::class.java)
         registerClass(Transaction::class.java)
+
+        getCurrencyCache().init()
     }
 
     override fun enable() {

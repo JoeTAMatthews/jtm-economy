@@ -13,8 +13,8 @@ data class Wallet(
     @Column(columnDefinition = "LONGTEXT") @Convert(converter = BalanceConverter::class) val balances: MutableMap<UUID, Double> = HashMap(),
     val created: Long = System.currentTimeMillis()) {
 
-    fun hasBalance(currency: Currency): Boolean {
-        return balances.containsKey(currency.id)
+    fun hasBalance(currency: UUID): Boolean {
+        return balances.containsKey(currency)
     }
 
     fun getBalance(currency: UUID): Double {
@@ -27,8 +27,9 @@ data class Wallet(
     }
 
     fun addBalance(currency: UUID, amount: Double): Wallet? {
-        var balance = balances[currency] ?: return null
-        balance += amount
+        if (!hasBalance(currency)) return null
+        val balance = balances[currency] ?: return null
+        balances[currency] = balance.plus(amount)
         return this
     }
 
@@ -38,8 +39,9 @@ data class Wallet(
     }
 
     fun removeBalance(currency: UUID, amount: Double): Wallet? {
-        var balance = balances[currency] ?: return null
-        balance += amount
+        if (!hasBalance(currency)) return null
+        val balance = balances[currency] ?: return null
+        balances[currency] = if (amount >= balance) 0.0 else balance.minus(amount)
         return this
     }
 }
