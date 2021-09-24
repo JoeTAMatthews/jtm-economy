@@ -24,14 +24,14 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
     @Permission("currency.admin")
     fun onCurrency(player: Player) {
         val builder = StringBuilder()
-        builder.append("&b&m-----------------------")
+        builder.append("&b&m                       ")
         builder.append("\n&eCurrency Commands")
-        builder.append("\n&f- &c/currency add <name> <abbreviation> <symbol>")
-        builder.append("\n&f- &c/currency remove <name>")
-        builder.append("\n&f- &c/currency update <name> <setting> <value>")
-        builder.append("\n&f- &c/currency info <name>")
-        builder.append("\n&f- &c/currency list")
-        builder.append("\n&b&m-----------------------")
+        builder.append("\n&f  &c/currency add <name> <abbreviation> <symbol>")
+        builder.append("\n&f  &c/currency remove <name>")
+        builder.append("\n&f  &c/currency update <name> <setting> <value>")
+        builder.append("\n&f  &c/currency info <name>")
+        builder.append("\n&f  &c/currency list")
+        builder.append("\n&b&m                       ")
 
         player.sendMessage(UtilString.colour(builder.toString()))
     }
@@ -82,12 +82,12 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
 
         val currency = cache.getByName(name) ?: return
         val updated: Currency = when(setting) {
-            "name" -> currency.updateName(value)
+            "name"  -> currency.updateName(value)
             "abbreviation" -> currency.updateAbbreviation(value)
             "symbol" -> currency.updateSymbol(value)
 
             else -> {
-                player.sendMessage(UtilString.colour("&4Error: &cValid settings listed: \n- name \n- abbreviation \n- symbol"))
+                player.sendMessage(UtilString.colour("&4Error: &cValid settings listed: \n  name \n  abbreviation \n  symbol"))
                 return
             }
         }
@@ -117,9 +117,9 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
     @Usage("/currency list")
     fun onCurrencyList(player: Player) {
         val builder = StringBuilder()
-        builder.append("&b&m------------------------")
+        builder.append("&b&m                        ")
         cache.getAll()?.forEach { builder.append("\n${it.info()}") }
-        builder.append("\n&b&m------------------------")
+        builder.append("\n&b&m                        ")
         player.sendMessage(UtilString.colour(builder.toString()))
     }
 }

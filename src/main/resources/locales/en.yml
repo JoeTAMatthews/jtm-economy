@@ -15,3 +15,12 @@ economy:
     sender_success: "&aSuccessfully withdrew &e%s &ato &e%s&a."
     target_success: "&aYou have lost &e%s&a."
   balance: "&b%s &abalance: &e%s"
+
+exchangerate:
+  found: "&4Error: &cExchange rate with that symbol already found."
+  not_found: "&4Error: &cExchange rate with that symbol not found."
+  commands:
+    add: "&aSuccessfully added Exchange Rate: '&f%s&a'"
+    remove: "&aSuccessfully remove Exchange Rate: '&f%s&a'"
+    updated:
+      rate: "&aSuccessfully updated rate of exchange rate to: '&f%s&a'"
