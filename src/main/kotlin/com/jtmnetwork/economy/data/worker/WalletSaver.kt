@@ -8,8 +8,10 @@ import org.bukkit.entity.Player
 
 class WalletSaver(private val framework: Framework, private val service: WalletService, private val cache: WalletCache, private val player: Player): Runnable {
 
+    private val logging = framework.getLogging()
+
     override fun run() {
-        val wallet = cache.getById(player.uniqueId) ?: return
+        val wallet = cache.getById(player.uniqueId.toString()) ?: return
         val update = service.update(wallet) ?: return
         framework.runTask { framework.callEvent(WalletUnloadEvent(update)) }
     }

@@ -38,10 +38,15 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
     @Command("erate")
     @SubCommand("add")
     @Permission("erate.admin")
-    @Usage("/erate add <currency_from> <currency_to> <rate>")
+    @Usage("/erate add <from> <to> <rate>")
     fun onExchangeRateAdd(player: Player, from: Currency, to: Currency, rate: Double) {
         if (exchangeRateCache.existsBySymbol("${from.abbreviation}${to.abbreviation}")) {
             localeMessenger.sendMessage(player, "exchangerate.found")
+            return
+        }
+
+        if (from.id == to.id) {
+            localeMessenger.sendMessage(player, "exchangerate.commands.same_currency")
             return
         }
 

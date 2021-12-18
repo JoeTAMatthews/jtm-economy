@@ -24,3 +24,4 @@ exchangerate:
     remove: "&aSuccessfully remove Exchange Rate: '&f%s&a'"
     updated:
       rate: "&aSuccessfully updated rate of exchange rate to: '&f%s&a'"
+    same_currency: "&4Error: &cCan't add a exchange rate of 2 of the same currency."

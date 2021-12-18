@@ -14,16 +14,26 @@ import java.util.*
 @Singleton
 class ExchangeRateCache @Inject constructor(private val framework: Framework, private val service: ExchangeRateService, connector: RedisConnector): CacheService<ExchangeRate, UUID>(connector, "exchange", ExchangeRate::class.java) {
 
+    private val logging = framework.getLogging()
+
     fun init() {
         framework.registerResolver(ExchangeRateSetting::class.java, ExchangeRateSettingResolver())
     }
 
     fun enable() {
-        service.getAll()?.forEach { insert(it.id, it) }
+        logging.info("Registering exchange rates:")
+        service.getAll()?.forEach {
+            val rate = insert(it.id, it) ?: return
+            logging.info("- ${rate.symbol}")
+        }
     }
 
     fun disable() {
-        getAll()?.forEach { service.update(it) }
+        logging.info("Saving exchange rates:")
+        getAll()?.forEach {
+            val rate = service.update(it) ?: return
+            logging.info("- ${rate.symbol}")
+        }
     }
 
     fun existsBySymbol(symbol: String): Boolean {

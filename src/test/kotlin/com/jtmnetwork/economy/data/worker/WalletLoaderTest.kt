@@ -1,6 +1,7 @@
 package com.jtmnetwork.economy.data.worker
 
 import com.jtm.framework.Framework
+import com.jtm.framework.core.util.Logging
 import com.jtmnetwork.economy.core.domain.entity.Wallet
 import com.jtmnetwork.economy.data.service.WalletService
 import org.bukkit.entity.Player
@@ -18,16 +19,20 @@ import java.util.*
 class WalletLoaderTest {
 
     private val framework: Framework = mock()
+    private val logging: Logging = mock()
     private val service: WalletService = mock()
     private val player: Player = mock()
-    private val loader = WalletLoader(framework, service, player)
+    private lateinit var loader: WalletLoader
 
-    private val wallet = Wallet(UUID.randomUUID(), "test")
+    private val wallet = Wallet(UUID.randomUUID().toString(), "test")
 
     @Before
     fun setup() {
+        `when`(framework.getLogging()).thenReturn(logging)
         `when`(player.uniqueId).thenReturn(UUID.randomUUID())
         `when`(player.name).thenReturn("test")
+
+        loader = WalletLoader(framework, service, player)
     }
 
     @Test
@@ -45,6 +50,7 @@ class WalletLoaderTest {
         verify(player, times(1)).name
         verifyNoMoreInteractions(player)
 
+        verify(framework, times(1)).getLogging()
         verify(framework, times(1)).runTask(anyOrNull())
         verifyNoMoreInteractions(framework)
     }
@@ -63,6 +69,7 @@ class WalletLoaderTest {
         verify(player, times(2)).uniqueId
         verifyNoMoreInteractions(player)
 
+        verify(framework, times(1)).getLogging()
         verify(framework, times(1)).runTask(anyOrNull())
         verifyNoMoreInteractions(framework)
     }

@@ -3,20 +3,20 @@ package com.jtmnetwork.economy.entrypoint.api
 import com.jtm.framework.Framework
 import com.jtmnetwork.economy.core.domain.constants.TransactionType
 import com.jtmnetwork.economy.core.domain.entity.Currency
+import com.jtmnetwork.economy.core.domain.entity.ExchangeRate
 import com.jtmnetwork.economy.core.domain.entity.Transaction
 import com.jtmnetwork.economy.core.domain.entity.Wallet
 import com.jtmnetwork.economy.data.cache.CurrencyCache
+import com.jtmnetwork.economy.data.cache.ExchangeRateCache
 import com.jtmnetwork.economy.data.cache.WalletCache
 import com.jtmnetwork.economy.data.service.TransactionService
 import com.jtmnetwork.economy.data.service.WalletService
 import org.bukkit.OfflinePlayer
-import org.bukkit.block.data.type.Wall
 import org.bukkit.entity.Player
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.*
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyDouble
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
@@ -34,19 +34,24 @@ class EconomyAPIImplTest {
     private val walletService: WalletService = mock()
     private val walletCache: WalletCache = mock()
     private val currencyCache: CurrencyCache = mock()
+    private val exchangeRateCache: ExchangeRateCache = mock()
     private lateinit var economyAPI: EconomyAPI
 
     private val player: Player = mock()
     private val offlinePlayer: OfflinePlayer = mock()
-    private val wallet = Wallet(UUID.randomUUID(), "test")
+    private val wallet = Wallet(UUID.randomUUID().toString(), "test")
     private val depositTrans = Transaction(type = TransactionType.IN, playerId = UUID.randomUUID(), currency = UUID.randomUUID(), amount = 2.0, balance = 5.0)
     private val withdrawTrans = Transaction(type = TransactionType.OUT, playerId = UUID.randomUUID(), currency = UUID.randomUUID(), amount = 4.0, balance = 6.0)
+    private val currency = Currency(name = "test", abbreviation = "tes", symbol = "£")
+    private val rate = ExchangeRate(currency_from = UUID.randomUUID(), currency_to = UUID.randomUUID(), symbol = "TestDS", rate = 2.4)
+    private val mockWallet: Wallet = mock()
+    private val mockCurrency: Currency = mock()
 
     @Before
     fun setup() {
         `when`(walletCache.service).thenReturn(walletService)
 
-        economyAPI = EconomyAPIImpl(framework, transactionService, walletCache, currencyCache)
+        economyAPI = EconomyAPIImpl(framework, transactionService, walletCache, currencyCache, exchangeRateCache)
 
         `when`(player.uniqueId).thenReturn(UUID.randomUUID())
         `when`(offlinePlayer.uniqueId).thenReturn(UUID.randomUUID())
@@ -360,5 +365,116 @@ class EconomyAPIImplTest {
         verifyNoMoreInteractions(transactionService)
 
         assertEquals(1, returned.size)
+    }
+
+    @Test
+    fun exchangeAmountPlayer() {
+        `when`(mockWallet.addBalance(anyOrNull(), anyDouble())).thenReturn(mockWallet)
+        `when`(mockWallet.removeBalance(anyOrNull(), anyDouble())).thenReturn(mockWallet)
+        `when`(currencyCache.getById(anyOrNull())).thenReturn(currency)
+        `when`(exchangeRateCache.getBySymbol(anyString())).thenReturn(rate)
+        `when`(walletCache.getById(anyOrNull())).thenReturn(mockWallet)
+        `when`(walletCache.update(anyOrNull(), anyOrNull())).thenReturn(mockWallet)
+
+        val returned = economyAPI.exchangeAmount(player, UUID.randomUUID(), UUID.randomUUID(), 2.4)
+
+        verify(currencyCache, times(2)).getById(anyOrNull())
+        verifyNoMoreInteractions(currencyCache)
+
+        verify(exchangeRateCache, times(1)).getBySymbol(anyString())
+        verifyNoMoreInteractions(exchangeRateCache)
+
+        verify(walletCache, times(1)).service
+        verify(walletCache, times(1)).getById(anyOrNull())
+        verify(walletCache, times(1)).update(anyOrNull(), anyOrNull())
+        verifyNoMoreInteractions(walletCache)
+
+        verify(framework, times(1)).runTaskAsync(anyOrNull())
+        verifyNoMoreInteractions(framework)
+
+        verify(player, times(1)).uniqueId
+        verifyNoMoreInteractions(player)
+
+        assertTrue(returned)
+    }
+
+    @Test
+    fun exchangeAmountOfflinePlayer() {
+        `when`(mockWallet.addBalance(anyOrNull(), anyDouble())).thenReturn(mockWallet)
+        `when`(mockWallet.removeBalance(anyOrNull(), anyDouble())).thenReturn(mockWallet)
+        `when`(currencyCache.getById(anyOrNull())).thenReturn(currency)
+        `when`(exchangeRateCache.getBySymbol(anyString())).thenReturn(rate)
+        `when`(walletService.get(anyOrNull())).thenReturn(mockWallet)
+
+        val returned = economyAPI.exchangeAmount(offlinePlayer, UUID.randomUUID(), UUID.randomUUID(), 2.5)
+
+        verify(currencyCache, times(2)).getById(anyOrNull())
+        verifyNoMoreInteractions(currencyCache)
+
+        verify(exchangeRateCache, times(1)).getBySymbol(anyString())
+        verifyNoMoreInteractions(exchangeRateCache)
+
+        verify(walletCache, times(1)).service
+        verifyNoMoreInteractions(walletCache)
+
+        verify(walletService, times(1)).get(anyOrNull())
+        verifyNoMoreInteractions(walletService)
+
+        verify(framework, times(1)).runTaskAsync(anyOrNull())
+        verifyNoMoreInteractions(framework)
+
+        verify(offlinePlayer, times(1)).uniqueId
+        verifyNoMoreInteractions(offlinePlayer)
+
+        assertTrue(returned)
+    }
+
+    @Test
+    fun getWalletPlayer() {
+        `when`(walletCache.getById(anyOrNull())).thenReturn(mockWallet)
+
+        val returned = economyAPI.getWallet(player)
+
+        verify(walletCache, times(1)).getById(anyOrNull())
+        verify(walletCache, times(1)).service
+        verifyNoMoreInteractions(walletCache)
+
+        assertNotNull(returned)
+    }
+
+    @Test
+    fun getWalletOfflinePlayer() {
+        `when`(walletService.get(anyOrNull())).thenReturn(mockWallet)
+
+        val returned = economyAPI.getWallet(offlinePlayer)
+
+        verify(walletService, times(1)).get(anyOrNull())
+        verifyNoMoreInteractions(walletService)
+
+        assertNotNull(returned)
+    }
+
+    @Test
+    fun getCurrency() {
+        `when`(currencyCache.getById(anyOrNull())).thenReturn(mockCurrency)
+
+        val returned = economyAPI.getCurrency(UUID.randomUUID())
+
+        verify(currencyCache, times(1)).getById(anyOrNull())
+        verifyNoMoreInteractions(currencyCache)
+
+        assertNotNull(returned)
+    }
+
+    @Test
+    fun getCurrencyByName() {
+        `when`(currencyCache.getByName(anyString())).thenReturn(mockCurrency)
+
+        val returned = economyAPI.getCurrency("test")
+
+        verify(currencyCache, times(1)).getByName(anyString())
+        verifyNoMoreInteractions(currencyCache)
+
+        assertNotNull(returned)
     }
 }

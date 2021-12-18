@@ -17,7 +17,7 @@ class WalletUI(private val walletCache: WalletCache, private val currencyCache: 
             .withName("&b${player.name} Information")
             .withLore(arrayOf(""))
 
-        val wallet = walletCache.getById(player.uniqueId) ?: return
+        val wallet = walletCache.getById(player.uniqueId.toString()) ?: return
 
         wallet.balances.forEach {
             val currency = currencyCache.getById(it.key) ?: return

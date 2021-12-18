@@ -1,6 +1,7 @@
 package com.jtmnetwork.economy.data.worker
 
 import com.jtm.framework.Framework
+import com.jtm.framework.core.util.Logging
 import com.jtmnetwork.economy.core.domain.entity.Wallet
 import com.jtmnetwork.economy.data.cache.WalletCache
 import com.jtmnetwork.economy.data.service.WalletService
@@ -20,17 +21,21 @@ import java.util.*
 class WalletSaverTest {
 
     private val framework: Framework = mock()
+    private val logging: Logging = mock()
     private val service: WalletService = mock()
     private val cache: WalletCache = mock()
     private val player: Player = mock()
 
-    private val walletSaver = WalletSaver(framework, service, cache, player)
+    private lateinit var walletSaver: WalletSaver
 
-    private val wallet = Wallet(UUID.randomUUID(), "test")
+    private val wallet = Wallet(UUID.randomUUID().toString(), "test")
 
     @Before
     fun setup() {
+        `when`(framework.getLogging()).thenReturn(logging)
         `when`(player.uniqueId).thenReturn(UUID.randomUUID())
+
+        walletSaver = WalletSaver(framework, service, cache, player)
     }
 
     @Test
@@ -43,7 +48,9 @@ class WalletSaverTest {
         verifyNoMoreInteractions(cache)
 
         verifyNoInteractions(service)
-        verifyNoInteractions(framework)
+
+        verify(framework, times(1)).getLogging()
+        verifyNoMoreInteractions(framework)
     }
 
     @Test
@@ -59,7 +66,8 @@ class WalletSaverTest {
         verify(service, times(1)).update(anyOrNull())
         verifyNoMoreInteractions(service)
 
-        verifyNoInteractions(framework)
+        verify(framework, times(1)).getLogging()
+        verifyNoMoreInteractions(framework)
     }
 
     @Test
@@ -75,6 +83,7 @@ class WalletSaverTest {
         verify(service, times(1)).update(anyOrNull())
         verifyNoMoreInteractions(service)
 
+        verify(framework, times(1)).getLogging()
         verify(framework, times(1)).runTask(anyOrNull())
         verifyNoMoreInteractions(framework)
     }

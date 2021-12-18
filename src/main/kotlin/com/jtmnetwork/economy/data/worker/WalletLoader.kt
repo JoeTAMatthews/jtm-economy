@@ -8,8 +8,10 @@ import org.bukkit.entity.Player
 
 class WalletLoader(private val framework: Framework, private val service: WalletService, private val player: Player): Runnable {
 
+    private val logging = framework.getLogging()
+
     override fun run() {
-        val wallet: Wallet = if (!service.exists(player.uniqueId)) service.insert(Wallet(player.uniqueId, player.name)) ?: return else service.get(player.uniqueId) ?: return
+        val wallet: Wallet = if (service.exists(player.uniqueId.toString())) service.get(player.uniqueId.toString())!! else service.insert(Wallet(player.uniqueId.toString(), player.name))!!
         framework.runTask { framework.callEvent(WalletLoadEvent(wallet)) }
     }
 }

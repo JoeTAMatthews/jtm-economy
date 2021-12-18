@@ -10,10 +10,7 @@ import com.jtmnetwork.economy.data.cache.CurrencyCache
 import com.jtmnetwork.economy.data.cache.ExchangeRateCache
 import com.jtmnetwork.economy.data.cache.WalletCache
 import com.jtmnetwork.economy.entrypoint.api.EconomyAPI
-import com.jtmnetwork.economy.entrypoint.commands.CurrencyCommands
-import com.jtmnetwork.economy.entrypoint.commands.EconomyCommands
-import com.jtmnetwork.economy.entrypoint.commands.ExchangeRateCommands
-import com.jtmnetwork.economy.entrypoint.commands.WalletCommands
+import com.jtmnetwork.economy.entrypoint.commands.*
 import com.jtmnetwork.economy.entrypoint.listener.CurrencyListener
 import com.jtmnetwork.economy.entrypoint.listener.PlayerListener
 import com.jtmnetwork.economy.entrypoint.listener.WalletListener
@@ -26,14 +23,16 @@ class Economy: Framework(false) {
 
     private lateinit var subInjector: Injector
 
-    override fun init() {
+    override fun setup() {
         subInjector = injector(listOf(WalletModule(), CurrencyModule(), EconomyModule(), ExchangeRateModule()))
 
         registerClass(Wallet::class.java)
         registerClass(Currency::class.java)
         registerClass(Transaction::class.java)
         registerClass(ExchangeRate::class.java)
+    }
 
+    override fun init() {
         getExchangeRateCache().init()
         getCurrencyCache().init()
     }
@@ -56,6 +55,7 @@ class Economy: Framework(false) {
         registerCommands(subInjector.getInstance(WalletCommands::class.java), arrayOf("wallet"))
         registerCommands(subInjector.getInstance(EconomyCommands::class.java), arrayOf("econ"))
         registerCommands(subInjector.getInstance(ExchangeRateCommands::class.java), arrayOf("erate"))
+        registerCommands(subInjector.getInstance(ExchangeCommands::class.java), arrayOf("exchange"))
     }
 
     override fun registerListeners() {

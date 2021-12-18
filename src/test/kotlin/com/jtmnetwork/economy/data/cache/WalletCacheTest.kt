@@ -47,7 +47,7 @@ class WalletCacheTest {
 
     @Test
     fun hasBalance_thenBalanceNull() {
-        walletCache.insert(id, wallet)
+        walletCache.insert(id.toString(), wallet)
 
         val returned = walletCache.hasBalance(player, currency, 5.0)
 
@@ -59,7 +59,7 @@ class WalletCacheTest {
 
     @Test
     fun hasBalance() {
-        walletCache.insert(id, wallet)
+        walletCache.insert(id.toString(), wallet)
         `when`(wallet.balances).thenReturn(mutableMapOf(currency to 5.0))
 
         val returned = walletCache.hasBalance(player, currency, 2.0)
@@ -72,7 +72,7 @@ class WalletCacheTest {
 
     @Test
     fun hasBalance_thenInsufficientBalance() {
-        walletCache.insert(id, wallet)
+        walletCache.insert(id.toString(), wallet)
         `when`(wallet.balances).thenReturn(mutableMapOf(currency to 0.0))
 
         val returned = walletCache.hasBalance(player, currency, 2.0)
@@ -97,7 +97,7 @@ class WalletCacheTest {
 
     @Test
     fun deposit() {
-        `when`(wallet.id).thenReturn(id)
+        `when`(wallet.id).thenReturn(id.toString())
         `when`(wallet.addBalance(anyOrNull(), anyOrNull())).thenReturn(wallet)
         `when`(wallet.getBalance(anyOrNull())).thenReturn(1.0)
 
@@ -108,6 +108,7 @@ class WalletCacheTest {
         verify(wallet, times(1)).getBalance(anyOrNull())
         verifyNoMoreInteractions(wallet)
 
+        verify(framework, times(1)).getLogging()
         verify(framework, times(1)).runTaskAsync(anyOrNull())
         verifyNoMoreInteractions(framework)
 
@@ -129,7 +130,7 @@ class WalletCacheTest {
 
     @Test
     fun withdraw() {
-        `when`(wallet.id).thenReturn(id)
+        `when`(wallet.id).thenReturn(id.toString())
         `when`(wallet.removeBalance(anyOrNull(), anyOrNull())).thenReturn(wallet)
         `when`(wallet.getBalance(anyOrNull())).thenReturn(1.0)
 
@@ -140,6 +141,7 @@ class WalletCacheTest {
         verify(wallet, times(1)).getBalance(anyOrNull())
         verifyNoMoreInteractions(wallet)
 
+        verify(framework, times(1)).getLogging()
         verify(framework, times(1)).runTaskAsync(anyOrNull())
         verifyNoMoreInteractions(framework)
 

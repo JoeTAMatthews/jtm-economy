@@ -26,7 +26,7 @@ class WalletListenerTest {
 
     private val loadEvent: WalletLoadEvent = mock()
     private val unloadEvent: WalletUnloadEvent = mock()
-    private val wallet = Wallet(UUID.randomUUID(), "test")
+    private val wallet = Wallet(UUID.randomUUID().toString(), "test")
     private val currency = Currency(name = "test", abbreviation = "GBP", symbol = "$")
 
     @Test

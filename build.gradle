@@ -2,10 +2,30 @@ plugins {
     id 'idea'
     id 'org.jetbrains.kotlin.jvm' version '1.5.30'
     id 'com.github.johnrengelman.shadow' version '2.0.4'
+    id 'maven-publish'
 }
 
 group 'com.jtmnetwork.economy'
-version '0.2'
+version '0.26'
+
+publishing {
+    repositories {
+        maven {
+            url "$myMavenRepoWriteUrl"
+
+            credentials {
+                username "$myMavenRepoWriteUsername"
+                password "$myMavenRepoWritePassword"
+            }
+        }
+    }
+
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
 
 repositories {
     maven {
@@ -28,7 +48,7 @@ dependencies {
     implementation 'com.google.inject:guice:5.0.1'
     implementation 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation "com.jtm.framework:framework:0.8.72"
+    implementation "com.jtm.framework:framework:0.8.88"
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5'

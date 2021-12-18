@@ -1,5 +1,5 @@
-name: Economy
-version: 0.2
+name: JtmEconomy
+version: 0.26
 author: DrennyDev
 api-version: 1.13
 main: com.jtmnetwork.economy.Economy

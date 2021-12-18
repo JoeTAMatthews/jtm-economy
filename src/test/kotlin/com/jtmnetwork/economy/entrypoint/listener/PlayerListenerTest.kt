@@ -40,6 +40,7 @@ class PlayerListenerTest {
         verify(joinEvent, times(1)).player
         verifyNoMoreInteractions(joinEvent)
 
+        verify(framework, times(1)).getLogging()
         verify(framework, times(1)).runTaskAsync(anyOrNull())
         verifyNoMoreInteractions(framework)
     }
@@ -53,6 +54,7 @@ class PlayerListenerTest {
         verify(quitEvent, times(1)).player
         verifyNoMoreInteractions(quitEvent)
 
+        verify(framework, times(1)).getLogging()
         verify(framework, times(1)).runTaskAsync(anyOrNull())
         verifyNoMoreInteractions(framework)
     }

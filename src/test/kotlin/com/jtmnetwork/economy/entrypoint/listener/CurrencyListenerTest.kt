@@ -21,7 +21,7 @@ class CurrencyListenerTest {
     private val cache: WalletCache = mock()
     private val currencyListener = CurrencyListener(cache)
 
-    private val wallet = Wallet(UUID.randomUUID(), "test")
+    private val wallet = Wallet(UUID.randomUUID().toString(), "test")
     private val currency = Currency(name = "test", abbreviation = "GBP", symbol = "£")
     private val addEvent: CurrencyAddEvent = mock()
     private val removeEvent: CurrencyRemoveEvent = mock()

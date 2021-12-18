@@ -14,24 +14,28 @@ import org.bukkit.entity.Player
 import java.util.*
 
 @Singleton
-class WalletCache @Inject constructor(private val framework: Framework, val service: WalletService, connector: RedisConnector): CacheService<Wallet, UUID>(connector,"wallet", Wallet::class.java) {
+class WalletCache @Inject constructor(private val framework: Framework, val service: WalletService, connector: RedisConnector): CacheService<Wallet, String>(connector,"wallet", Wallet::class.java) {
+
+    private val logging = framework.getLogging()
 
     fun enable() {
         Bukkit.getServer().onlinePlayers.forEach {
-            val wallet = service.get(it.uniqueId) ?: return
-            insert(it.uniqueId, wallet)
+            val wallet = service.get(it.uniqueId.toString()) ?: return
+            insert(it.uniqueId.toString(), wallet)
         }
     }
 
     fun disable() {
+        logging.info("Saving wallets:")
         getAll()?.forEach {
-            service.update(it)
-            remove(it.id)
+            val wallet = service.update(it) ?: return
+            remove(wallet.id)
+            logging.info("- ${wallet.id}")
         }
     }
 
     fun hasBalance(player: Player, currency: UUID, amount: Double): Boolean {
-        val wallet = getById(player.uniqueId) ?: return false
+        val wallet = getById(player.uniqueId.toString()) ?: return false
         val balance = wallet.balances[currency] ?: return false
         return balance >= amount
     }
@@ -39,12 +43,12 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
     fun deposit(wallet: Wallet, currency: UUID, amount: Double): Transaction? {
         val deposited = wallet.addBalance(currency, amount) ?: return null
         framework.runTaskAsync { service.update(deposited) }
-        return Transaction(type = TransactionType.IN, playerId = wallet.id, currency = currency, amount = amount, balance = deposited.getBalance(currency))
+        return Transaction(type = TransactionType.IN, playerId = UUID.fromString(wallet.id), currency = currency, amount = amount, balance = deposited.getBalance(currency))
     }
 
     fun withdraw(wallet: Wallet, currency: UUID, amount: Double): Transaction? {
         val withdrew = wallet.removeBalance(currency, amount) ?: return null
         framework.runTaskAsync { service.update(withdrew) }
-        return Transaction(type = TransactionType.OUT, playerId = wallet.id, currency = currency, amount = amount, balance = withdrew.getBalance(currency))
+        return Transaction(type = TransactionType.OUT, playerId = UUID.fromString(wallet.id), currency = currency, amount = amount, balance = withdrew.getBalance(currency))
     }
 }
