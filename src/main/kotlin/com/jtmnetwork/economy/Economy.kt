@@ -21,9 +21,15 @@ import com.jtmnetwork.economy.entrypoint.module.WalletModule
 
 class Economy: Framework(false) {
 
+    companion object {
+        lateinit var instance: Economy
+        private set
+    }
+
     private lateinit var subInjector: Injector
 
     override fun setup() {
+        instance = this
         subInjector = injector(listOf(WalletModule(), CurrencyModule(), EconomyModule(), ExchangeRateModule()))
 
         registerClass(Wallet::class.java)

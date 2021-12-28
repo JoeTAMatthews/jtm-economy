@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'com.jtmnetwork.economy'
-version '0.26'
+version '0.30'
 
 publishing {
     repositories {
