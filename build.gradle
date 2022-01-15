@@ -48,7 +48,7 @@ dependencies {
     implementation 'com.google.inject:guice:5.0.1'
     implementation 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation "com.jtm.framework:framework:0.8.88"
+    implementation "com.jtm.framework:framework:0.9.08"
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5'
