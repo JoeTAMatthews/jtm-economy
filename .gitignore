@@ -23,6 +23,6 @@
 hs_err_pid*
 
 .idea
-build
-.gradle
-gradle.properties
+plugin/build
+plugin/.gradle
+plugin/gradle.properties
