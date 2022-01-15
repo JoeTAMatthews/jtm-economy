@@ -26,3 +26,6 @@ hs_err_pid*
 plugin/build
 plugin/.gradle
 plugin/gradle.properties
+
+service/build
+service/.gradle

@@ -1,0 +1,11 @@
+server:
+  port: 8095
+
+spring:
+  application:
+    name: economy
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+  profiles:
+    active: ${PROFILE}
