@@ -1,0 +1,27 @@
+currency:
+  found: "&4Error: &cCurrency already found."
+  not_found: "&4Error: &cCurrency not found."
+  commands:
+    add: "&aSuccessfully added currency '&f%s&a'"
+    remove: "&aSuccessfully removed currency '&f%s&a'"
+
+economy:
+  deposited:
+    sender_failed: "&4Error: &cFailed to deposit funds to the player."
+    sender_success: "&aSuccessfully deposited &e%s &ato &e%s&a."
+    target_success: "&aYou have been given &e%s&a."
+  withdraw:
+    sender_failed: "&4Error: &cFailed to withdraw funds from the player."
+    sender_success: "&aSuccessfully withdrew &e%s &ato &e%s&a."
+    target_success: "&aYou have lost &e%s&a."
+  balance: "&b%s &abalance: &e%s"
+
+exchangerate:
+  found: "&4Error: &cExchange rate with that symbol already found."
+  not_found: "&4Error: &cExchange rate with that symbol not found."
+  commands:
+    add: "&aSuccessfully added Exchange Rate: '&f%s&a'"
+    remove: "&aSuccessfully remove Exchange Rate: '&f%s&a'"
+    updated:
+      rate: "&aSuccessfully updated rate of exchange rate to: '&f%s&a'"
+    same_currency: "&4Error: &cCan't add a exchange rate of 2 of the same currency."
