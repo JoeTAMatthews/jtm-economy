@@ -1,2 +1,9 @@
-# economy
-Economy plugin designed for minefps
+# JTM Economy
+
+## Table of Contents
+
+## Introduction
+
+## How to use
+
+## Developer API
