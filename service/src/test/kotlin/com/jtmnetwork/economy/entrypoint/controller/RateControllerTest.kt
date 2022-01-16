@@ -75,7 +75,7 @@ class RateControllerTest {
 
     @Test
     fun getRate() {
-        `when`(rateService.getRate(any(UUID::class.java))).thenReturn(Mono.just(created))
+        `when`(rateService.getRate(anyOrNull())).thenReturn(Mono.just(created))
 
         testClient.get()
             .uri("/rate/${UUID.randomUUID()}")
@@ -88,7 +88,7 @@ class RateControllerTest {
             .jsonPath("$.symbol").isEqualTo("GBPEUR")
             .jsonPath("$.rate").isEqualTo(1.13)
 
-        verify(rateService, times(1)).getRate(any(UUID::class.java))
+        verify(rateService, times(1)).getRate(anyOrNull())
         verifyNoMoreInteractions(rateService)
     }
 
@@ -113,7 +113,7 @@ class RateControllerTest {
 
     @Test
     fun deleteRate() {
-        `when`(rateService.deleteRate(any(UUID::class.java))).thenReturn(Mono.just(created))
+        `when`(rateService.deleteRate(anyOrNull())).thenReturn(Mono.just(created))
 
         testClient.delete()
             .uri("/rate/${UUID.randomUUID()}")
@@ -126,7 +126,7 @@ class RateControllerTest {
             .jsonPath("$.symbol").isEqualTo("GBPEUR")
             .jsonPath("$.rate").isEqualTo(1.13)
 
-        verify(rateService, times(1)).deleteRate(any(UUID::class.java))
+        verify(rateService, times(1)).deleteRate(anyOrNull())
         verifyNoMoreInteractions(rateService)
     }
 }

@@ -76,6 +76,7 @@ class RateServiceTest {
     @Test
     fun updateRate() {
         `when`(rateRepository.findById(any(UUID::class.java))).thenReturn(Mono.just(created))
+        `when`(rateRepository.save(anyOrNull())).thenReturn(Mono.just(created))
 
         val returned = rateService.updateRate(created)
 
@@ -131,7 +132,7 @@ class RateServiceTest {
     fun getRates() {
         `when`(rateRepository.findAll()).thenReturn(Flux.just(created, ExchangeRate(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "EURGBP", 0.85)))
 
-        val returned = rateService.getRate(UUID.randomUUID())
+        val returned = rateService.getRates()
 
         verify(rateRepository, times(1)).findAll()
         verifyNoMoreInteractions(rateRepository)
