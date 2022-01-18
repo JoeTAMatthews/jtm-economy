@@ -1,5 +1,3 @@
-# JTM Economy
-
 ## Table of Contents
 - [Introduction](#introduction)
 - [How to use](#how-to-use)
