@@ -14,6 +14,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
 import java.util.*
+import kotlin.collections.HashMap
 
 @RunWith(MockitoJUnitRunner::class)
 class CurrencyListenerTest {
@@ -21,16 +22,17 @@ class CurrencyListenerTest {
     private val cache: WalletCache = mock()
     private val currencyListener = CurrencyListener(cache)
 
-    private val wallet = Wallet(UUID.randomUUID().toString(), "test")
     private val currency = Currency(name = "test", abbreviation = "GBP", symbol = "£")
+    private val walletOne = Wallet(UUID.randomUUID().toString(), "test")
+    private val walletTwo = Wallet(UUID.randomUUID().toString(), "test", balances = mutableMapOf(currency.id to 0.0))
     private val addEvent: CurrencyAddEvent = mock()
     private val removeEvent: CurrencyRemoveEvent = mock()
 
     @Test
     fun onCurrencyAdd() {
         `when`(addEvent.currency).thenReturn(currency)
-        `when`(cache.getAll()).thenReturn(listOf(wallet))
-        `when`(cache.update(anyOrNull(), anyOrNull())).thenReturn(wallet)
+        `when`(cache.getAll()).thenReturn(listOf(walletOne))
+        `when`(cache.update(anyOrNull(), anyOrNull())).thenReturn(walletOne)
 
         currencyListener.onCurrencyAdd(addEvent)
 
@@ -45,8 +47,8 @@ class CurrencyListenerTest {
     @Test
     fun onCurrencyRemove() {
         `when`(removeEvent.currency).thenReturn(currency)
-        `when`(cache.getAll()).thenReturn(listOf(wallet))
-        `when`(cache.update(anyOrNull(), anyOrNull())).thenReturn(wallet)
+        `when`(cache.getAll()).thenReturn(listOf(walletTwo))
+        `when`(cache.update(anyOrNull(), anyOrNull())).thenReturn(walletTwo)
 
         currencyListener.onCurrencyRemove(removeEvent)
 

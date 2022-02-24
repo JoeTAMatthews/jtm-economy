@@ -5,6 +5,7 @@ import com.jtmnetwork.economy.data.worker.WalletLoaderTest
 import com.jtmnetwork.economy.data.worker.WalletSaverTest
 import com.jtmnetwork.economy.entrypoint.api.EconomyAPIImplTest
 import com.jtmnetwork.economy.entrypoint.commands.*
+import com.jtmnetwork.economy.entrypoint.listener.CurrencyListenerTest
 import com.jtmnetwork.economy.entrypoint.listener.PlayerListenerTest
 import com.jtmnetwork.economy.entrypoint.listener.WalletListenerTest
 import org.junit.runner.RunWith
@@ -18,6 +19,7 @@ import org.junit.runners.Suite
 
     PlayerListenerTest::class,
     WalletListenerTest::class,
+    CurrencyListenerTest::class,
 
     CurrencyCommandsTest::class,
     EconomyCommandsTest::class,
