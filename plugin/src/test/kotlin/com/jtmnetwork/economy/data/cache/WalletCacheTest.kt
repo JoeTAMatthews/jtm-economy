@@ -32,6 +32,7 @@ class WalletCacheTest {
     private val wallet: Wallet = mock()
     private val player: Player = mock()
     private val id = UUID.randomUUID()
+    private val sender = UUID.randomUUID()
 
     @Before
     fun setup() {
@@ -87,7 +88,7 @@ class WalletCacheTest {
     fun deposit_thenDepositedNull() {
         `when`(wallet.addBalance(anyOrNull(), anyOrNull())).thenReturn(null)
 
-        val returned = walletCache.deposit(wallet, UUID.randomUUID(), 5.0)
+        val returned = walletCache.deposit(sender, wallet, UUID.randomUUID(), 5.0)
 
         verify(wallet, times(1)).addBalance(anyOrNull(), anyOrNull())
         verifyNoMoreInteractions(wallet)
@@ -101,7 +102,7 @@ class WalletCacheTest {
         `when`(wallet.addBalance(anyOrNull(), anyOrNull())).thenReturn(wallet)
         `when`(wallet.getBalance(anyOrNull())).thenReturn(1.0)
 
-        val returned = walletCache.deposit(wallet, UUID.randomUUID(), 2.0)
+        val returned = walletCache.deposit(sender, wallet, UUID.randomUUID(), 2.0)
 
         verify(wallet, times(1)).id
         verify(wallet, times(1)).addBalance(anyOrNull(), anyDouble())
@@ -120,7 +121,7 @@ class WalletCacheTest {
     fun withdraw_thenWithdrewNull() {
         `when`(wallet.removeBalance(anyOrNull(), anyOrNull())).thenReturn(null)
 
-        val returned = walletCache.withdraw(wallet, currency, 4.0)
+        val returned = walletCache.withdraw(sender, wallet, currency, 4.0)
 
         verify(wallet, times(1)).removeBalance(anyOrNull(), anyOrNull())
         verifyNoMoreInteractions(wallet)
@@ -134,7 +135,7 @@ class WalletCacheTest {
         `when`(wallet.removeBalance(anyOrNull(), anyOrNull())).thenReturn(wallet)
         `when`(wallet.getBalance(anyOrNull())).thenReturn(1.0)
 
-        val returned = walletCache.withdraw(wallet, currency, 5.0)
+        val returned = walletCache.withdraw(sender, wallet, currency, 5.0)
 
         verify(wallet, times(1)).id
         verify(wallet, times(1)).removeBalance(anyOrNull(), anyOrNull())

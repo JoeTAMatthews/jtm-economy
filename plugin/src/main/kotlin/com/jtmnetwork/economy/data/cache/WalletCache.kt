@@ -40,15 +40,15 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         return balance >= amount
     }
 
-    fun deposit(wallet: Wallet, currency: UUID, amount: Double): Transaction? {
+    fun deposit(sender: UUID?, wallet: Wallet, currency: UUID, amount: Double): Transaction? {
         val deposited = wallet.addBalance(currency, amount) ?: return null
         framework.runTaskAsync { service.update(deposited) }
-        return Transaction(type = TransactionType.IN, playerId = UUID.fromString(wallet.id), currency = currency, amount = amount, balance = deposited.getBalance(currency))
+        return Transaction(type = TransactionType.IN, sender = sender, receiver = UUID.fromString(wallet.id), currency = currency, amount = amount, balance = deposited.getBalance(currency))
     }
 
-    fun withdraw(wallet: Wallet, currency: UUID, amount: Double): Transaction? {
+    fun withdraw(sender: UUID?, wallet: Wallet, currency: UUID, amount: Double): Transaction? {
         val withdrew = wallet.removeBalance(currency, amount) ?: return null
         framework.runTaskAsync { service.update(withdrew) }
-        return Transaction(type = TransactionType.OUT, playerId = UUID.fromString(wallet.id), currency = currency, amount = amount, balance = withdrew.getBalance(currency))
+        return Transaction(type = TransactionType.OUT, sender = sender, receiver = UUID.fromString(wallet.id), currency = currency, amount = amount, balance = withdrew.getBalance(currency))
     }
 }
