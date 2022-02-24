@@ -3,3 +3,5 @@ version: 0.30
 author: DrennyDev
 api-version: 1.13
 main: com.jtmnetwork.economy.Economy
+softdepend:
+  - Vault
