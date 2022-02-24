@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongo
+data:
+  mongo.host: "localhost"
+  mongo.port: "27017"
+  mongo.database: "test"

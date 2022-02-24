@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.4.2'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'org.jetbrains.kotlin.jvm' version '1.6.10'
+    id "com.palantir.docker" version "0.28.0"
 }
 
 group 'com.jtmnetwork.economy'
@@ -55,4 +56,12 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+docker {
+    name "drennydev/${project.name}:${project.version}"
+    tags "latest"
+    tag 'DockerHub', "drennydev/${project.name}:${project.version}"
+    files tasks.testClasses.outputs, tasks.bootJar.outputs, "build/libs/${bootJar.archiveFileName.get()}"
+    buildArgs([JAR_FILE: bootJar.archiveFileName.get()])
 }

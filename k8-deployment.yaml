@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: economy
+spec:
+  selector:
+    matchLabels:
+      app: economy
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: economy
+    spec:
+      containers:
+        - name: economy
+          image: drennydev/economy-service:k8-latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8095
+          resources:
+            limits:
+              memory: "512Mi"
+            requests:
+              memory: "256Mi"
+          env:
+            - name: MONGO_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: mongo
+                  key: mongo.host
+            - name: MONGO_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: mongo
+                  key: mongo.port
+            - name: MONGO_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: mongo
+                  key: mongo.database
+            - name: MONGO_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: mongo
+                  key: mongo.username
+            - name: MONGO_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: mongo
+                  key: mongo.password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: economy-service
+spec:
+  selector:
+    app: economy
+  ports:
+    - port: 8095
+      targetPort: 8095
+      protocol: TCP
