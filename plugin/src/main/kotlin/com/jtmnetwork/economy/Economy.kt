@@ -18,6 +18,8 @@ import com.jtmnetwork.economy.entrypoint.module.CurrencyModule
 import com.jtmnetwork.economy.entrypoint.module.EconomyModule
 import com.jtmnetwork.economy.entrypoint.module.ExchangeRateModule
 import com.jtmnetwork.economy.entrypoint.module.WalletModule
+import com.jtmnetwork.economy.entrypoint.vault.VaultEconomy
+import org.bukkit.plugin.ServicePriority
 
 class Economy: Framework(false) {
 
@@ -47,6 +49,8 @@ class Economy: Framework(false) {
         getExchangeRateCache().enable()
         getCurrencyCache().enable()
         getWalletCache().enable()
+
+        registerVault()
     }
 
     override fun disable() {
@@ -69,6 +73,16 @@ class Economy: Framework(false) {
         registerListener(subInjector.getInstance(PlayerListener::class.java))
         registerListener(subInjector.getInstance(WalletListener::class.java))
         registerListener(subInjector.getInstance(CurrencyListener::class.java))
+    }
+
+    fun registerVault() {
+        if (!server.pluginManager.isPluginEnabled("Vault")) {
+            getLogging().warn("Vault not found, using standard EconomyAPI!")
+            return
+        }
+        val vault = server.pluginManager.getPlugin("Vault") ?: return
+        server.servicesManager.register(net.milkbowl.vault.economy.Economy::class.java, VaultEconomy(), vault, ServicePriority.High)
+        getLogging().info("Vault found. Registered Vault Economy Service provider.")
     }
 
     private fun getWalletCache(): WalletCache {

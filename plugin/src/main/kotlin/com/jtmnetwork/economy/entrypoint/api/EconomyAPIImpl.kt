@@ -19,7 +19,7 @@ class EconomyAPIImpl @Inject constructor(private val framework: Framework, priva
 
     override fun deposit(player: Player, currency: UUID, from: UUID?, amount: Double): Boolean {
         val wallet = walletCache.getById(player.uniqueId.toString()) ?: return false
-        val transaction = walletCache.deposit(wallet, currency, amount) ?: return false
+        val transaction = walletCache.deposit(from, wallet, currency, amount) ?: return false
         framework.runTaskAsync { transactionService.insert(transaction) }
         return true
     }
@@ -27,21 +27,21 @@ class EconomyAPIImpl @Inject constructor(private val framework: Framework, priva
     // Write documentation to have this method ran in a separate thread as will lock the main thread.
     override fun deposit(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Boolean {
         val wallet = walletService.get(player.uniqueId.toString()) ?: return false
-        val transaction = walletCache.deposit(wallet, currency, amount) ?: return false
+        val transaction = walletCache.deposit(from, wallet, currency, amount) ?: return false
         transactionService.insert(transaction)
         return true
     }
 
     override fun withdraw(player: Player, currency: UUID, from: UUID?, amount: Double): Boolean {
         val wallet = walletCache.getById(player.uniqueId.toString()) ?: return false
-        val transaction = walletCache.withdraw(wallet, currency, amount) ?: return false
+        val transaction = walletCache.withdraw(from, wallet, currency, amount) ?: return false
         framework.runTaskAsync { transactionService.insert(transaction) }
         return true
     }
 
     override fun withdraw(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Boolean {
         val wallet = walletService.get(player.uniqueId.toString()) ?: return false
-        val transaction = walletCache.withdraw(wallet, currency, amount) ?: return false
+        val transaction = walletCache.withdraw(from, wallet, currency, amount) ?: return false
         transactionService.insert(transaction)
         return true
     }
@@ -57,19 +57,19 @@ class EconomyAPIImpl @Inject constructor(private val framework: Framework, priva
     }
 
     override fun getTransactions(player: Player, currency: UUID): List<Transaction> {
-        return transactionService.getByPlayerIdAndCurrency(player.uniqueId, currency)
+        return transactionService.getByReceiverAndCurrency(player.uniqueId, currency)
     }
 
     override fun getTransactions(player: OfflinePlayer, currency: UUID): List<Transaction> {
-        return transactionService.getByPlayerIdAndCurrency(player.uniqueId, currency)
+        return transactionService.getByReceiverAndCurrency(player.uniqueId, currency)
     }
 
     override fun getTransactions(player: Player): List<Transaction> {
-        return transactionService.getByPlayerId(player.uniqueId)
+        return transactionService.getByReceiver(player.uniqueId)
     }
 
     override fun getTransactions(player: OfflinePlayer): List<Transaction> {
-        return transactionService.getByPlayerId(player.uniqueId)
+        return transactionService.getByReceiver(player.uniqueId)
     }
 
     override fun exchangeAmount(player: Player, from: UUID, to: UUID, amount: Double): Boolean {
@@ -115,5 +115,13 @@ class EconomyAPIImpl @Inject constructor(private val framework: Framework, priva
 
     override fun getCurrency(name: String): Currency? {
         return currencyCache.getByName(name)
+    }
+
+    override fun processRollback(player: Player) {
+        TODO("Not yet implemented")
+    }
+
+    override fun processRollback(offlinePlayer: OfflinePlayer) {
+        TODO("Not yet implemented")
     }
 }

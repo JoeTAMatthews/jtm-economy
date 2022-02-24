@@ -40,4 +40,8 @@ interface EconomyAPI {
     fun getCurrency(id: UUID): Currency?
 
     fun getCurrency(name: String): Currency?
+
+    fun processRollback(player: Player)
+
+    fun processRollback(offlinePlayer: OfflinePlayer)
 }

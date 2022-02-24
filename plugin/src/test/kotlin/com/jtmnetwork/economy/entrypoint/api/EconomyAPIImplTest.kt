@@ -40,8 +40,8 @@ class EconomyAPIImplTest {
     private val player: Player = mock()
     private val offlinePlayer: OfflinePlayer = mock()
     private val wallet = Wallet(UUID.randomUUID().toString(), "test")
-    private val depositTrans = Transaction(type = TransactionType.IN, playerId = UUID.randomUUID(), currency = UUID.randomUUID(), amount = 2.0, balance = 5.0)
-    private val withdrawTrans = Transaction(type = TransactionType.OUT, playerId = UUID.randomUUID(), currency = UUID.randomUUID(), amount = 4.0, balance = 6.0)
+    private val depositTrans = Transaction(type = TransactionType.IN, sender = UUID.randomUUID(), receiver = UUID.randomUUID(), currency = UUID.randomUUID(), amount = 2.0, balance = 5.0)
+    private val withdrawTrans = Transaction(type = TransactionType.OUT, sender = UUID.randomUUID(), receiver = UUID.randomUUID(), currency = UUID.randomUUID(), amount = 4.0, balance = 6.0)
     private val currency = Currency(name = "test", abbreviation = "tes", symbol = "£")
     private val rate = ExchangeRate(currency_from = UUID.randomUUID(), currency_to = UUID.randomUUID(), symbol = "TestDS", rate = 2.4)
     private val mockWallet: Wallet = mock()
@@ -76,13 +76,13 @@ class EconomyAPIImplTest {
     @Test
     fun depositPlayer_thenTransactionNull() {
         `when`(walletCache.getById(anyOrNull())).thenReturn(wallet)
-        `when`(walletCache.deposit(anyOrNull(), anyOrNull(), anyDouble())).thenReturn(null)
+        `when`(walletCache.deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())).thenReturn(null)
 
         val returned = economyAPI.deposit(player, UUID.randomUUID(), UUID.randomUUID(),53.0)
 
         verify(walletCache, times(1)).service
         verify(walletCache, times(1)).getById(anyOrNull())
-        verify(walletCache, times(1)).deposit(anyOrNull(), anyOrNull(), anyDouble())
+        verify(walletCache, times(1)).deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())
         verifyNoMoreInteractions(walletCache)
         verifyNoInteractions(framework)
 
@@ -92,13 +92,13 @@ class EconomyAPIImplTest {
     @Test
     fun depositPlayer() {
         `when`(walletCache.getById(anyOrNull())).thenReturn(wallet)
-        `when`(walletCache.deposit(anyOrNull(), anyOrNull(), anyDouble())).thenReturn(depositTrans)
+        `when`(walletCache.deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())).thenReturn(depositTrans)
 
         val returned = economyAPI.deposit(player, UUID.randomUUID(), UUID.randomUUID(),2.0)
 
         verify(walletCache, times(1)).service
         verify(walletCache, times(1)).getById(anyOrNull())
-        verify(walletCache, times(1)).deposit(anyOrNull(), anyOrNull(), anyDouble())
+        verify(walletCache, times(1)).deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())
         verifyNoMoreInteractions(walletCache)
 
         verify(framework, times(1)).runTaskAsync(anyOrNull())
@@ -127,7 +127,7 @@ class EconomyAPIImplTest {
     @Test
     fun depositOfflinePlayer_thenTransactionNull() {
         `when`(walletService.get(anyOrNull())).thenReturn(wallet)
-        `when`(walletCache.deposit(anyOrNull(), anyOrNull(), anyDouble())).thenReturn(null)
+        `when`(walletCache.deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())).thenReturn(null)
 
         val returned = economyAPI.deposit(offlinePlayer, UUID.randomUUID(), UUID.randomUUID(), 3.0)
 
@@ -135,7 +135,7 @@ class EconomyAPIImplTest {
         verifyNoMoreInteractions(walletService)
 
         verify(walletCache, times(1)).service
-        verify(walletCache, times(1)).deposit(anyOrNull(), anyOrNull(), anyDouble())
+        verify(walletCache, times(1)).deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())
         verifyNoMoreInteractions(walletCache)
 
         verifyNoInteractions(transactionService)
@@ -146,7 +146,7 @@ class EconomyAPIImplTest {
     @Test
     fun depositOfflinePlayer() {
         `when`(walletService.get(anyOrNull())).thenReturn(wallet)
-        `when`(walletCache.deposit(anyOrNull(), anyOrNull(), anyDouble())).thenReturn(depositTrans)
+        `when`(walletCache.deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())).thenReturn(depositTrans)
 
         val returned = economyAPI.deposit(offlinePlayer, UUID.randomUUID(), UUID.randomUUID(), 2.0)
 
@@ -154,7 +154,7 @@ class EconomyAPIImplTest {
         verifyNoMoreInteractions(walletService)
 
         verify(walletCache, times(1)).service
-        verify(walletCache, times(1)).deposit(anyOrNull(), anyOrNull(), anyDouble())
+        verify(walletCache, times(1)).deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())
         verifyNoMoreInteractions(walletCache)
 
         verify(transactionService, times(1)).insert(anyOrNull())
@@ -181,13 +181,13 @@ class EconomyAPIImplTest {
     @Test
     fun withdrawPlayer_thenTransactionNull() {
         `when`(walletCache.getById(anyOrNull())).thenReturn(wallet)
-        `when`(walletCache.withdraw(anyOrNull(), anyOrNull(), anyDouble())).thenReturn(null)
+        `when`(walletCache.withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())).thenReturn(null)
 
         val returned = economyAPI.withdraw(player, UUID.randomUUID(), UUID.randomUUID(),5.0)
 
         verify(walletCache, times(1)).service
         verify(walletCache, times(1)).getById(anyOrNull())
-        verify(walletCache, times(1)).withdraw(anyOrNull(), anyOrNull(), anyDouble())
+        verify(walletCache, times(1)).withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())
         verifyNoMoreInteractions(walletCache)
 
         verifyNoInteractions(framework)
@@ -198,13 +198,13 @@ class EconomyAPIImplTest {
     @Test
     fun withdrawPlayer() {
         `when`(walletCache.getById(anyOrNull())).thenReturn(wallet)
-        `when`(walletCache.withdraw(anyOrNull(), anyOrNull(), anyDouble())).thenReturn(withdrawTrans)
+        `when`(walletCache.withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())).thenReturn(withdrawTrans)
 
         val returned = economyAPI.withdraw(player, UUID.randomUUID(), UUID.randomUUID(),3.0)
 
         verify(walletCache, times(1)).service
         verify(walletCache, times(1)).getById(anyOrNull())
-        verify(walletCache, times(1)).withdraw(anyOrNull(), anyOrNull(), anyDouble())
+        verify(walletCache, times(1)).withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())
         verifyNoMoreInteractions(walletCache)
 
         verify(framework, times(1)).runTaskAsync(anyOrNull())
@@ -232,7 +232,7 @@ class EconomyAPIImplTest {
     @Test
     fun withdrawOfflinePlayer_thenTransactionNull() {
         `when`(walletService.get(anyOrNull())).thenReturn(wallet)
-        `when`(walletCache.withdraw(anyOrNull(), anyOrNull(), anyDouble())).thenReturn(null)
+        `when`(walletCache.withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())).thenReturn(null)
 
         val returned = economyAPI.withdraw(offlinePlayer, UUID.randomUUID(), UUID.randomUUID(),2.0)
 
@@ -240,7 +240,7 @@ class EconomyAPIImplTest {
         verifyNoMoreInteractions(walletService)
 
         verify(walletCache, times(1)).service
-        verify(walletCache, times(1)).withdraw(anyOrNull(), anyOrNull(), anyDouble())
+        verify(walletCache, times(1)).withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())
         verifyNoMoreInteractions(walletCache)
         verifyNoInteractions(transactionService)
 
@@ -250,7 +250,7 @@ class EconomyAPIImplTest {
     @Test
     fun withdrawOfflinePlayer() {
         `when`(walletService.get(anyOrNull())).thenReturn(wallet)
-        `when`(walletCache.withdraw(anyOrNull(), anyOrNull(), anyDouble())).thenReturn(withdrawTrans)
+        `when`(walletCache.withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())).thenReturn(withdrawTrans)
 
         val returned = economyAPI.withdraw(offlinePlayer, UUID.randomUUID(), UUID.randomUUID(),1.0)
 
@@ -258,7 +258,7 @@ class EconomyAPIImplTest {
         verifyNoMoreInteractions(walletService)
 
         verify(walletCache, times(1)).service
-        verify(walletCache, times(1)).withdraw(anyOrNull(), anyOrNull(), anyDouble())
+        verify(walletCache, times(1)).withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())
         verifyNoMoreInteractions(walletCache)
 
         verify(transactionService, times(1)).insert(anyOrNull())
@@ -321,11 +321,11 @@ class EconomyAPIImplTest {
 
     @Test
     fun getTransactionsWithCurrencyPlayer() {
-        `when`(transactionService.getByPlayerIdAndCurrency(anyOrNull(), anyOrNull())).thenReturn(listOf(withdrawTrans))
+        `when`(transactionService.getByReceiverAndCurrency(anyOrNull(), anyOrNull())).thenReturn(listOf(withdrawTrans))
 
         val returned = economyAPI.getTransactions(player, UUID.randomUUID())
 
-        verify(transactionService, times(1)).getByPlayerIdAndCurrency(anyOrNull(), anyOrNull())
+        verify(transactionService, times(1)).getByReceiverAndCurrency(anyOrNull(), anyOrNull())
         verifyNoMoreInteractions(transactionService)
 
         assertEquals(1, returned.size)
@@ -333,11 +333,11 @@ class EconomyAPIImplTest {
 
     @Test
     fun getTransactionsWithCurrencyOfflinePlayer() {
-        `when`(transactionService.getByPlayerIdAndCurrency(anyOrNull(), anyOrNull())).thenReturn(listOf(withdrawTrans))
+        `when`(transactionService.getByReceiverAndCurrency(anyOrNull(), anyOrNull())).thenReturn(listOf(withdrawTrans))
 
         val returned = economyAPI.getTransactions(offlinePlayer, UUID.randomUUID())
 
-        verify(transactionService, times(1)).getByPlayerIdAndCurrency(anyOrNull(), anyOrNull())
+        verify(transactionService, times(1)).getByReceiverAndCurrency(anyOrNull(), anyOrNull())
         verifyNoMoreInteractions(transactionService)
 
         assertEquals(1, returned.size)
@@ -345,11 +345,11 @@ class EconomyAPIImplTest {
 
     @Test
     fun getTransactionsPlayer() {
-        `when`(transactionService.getByPlayerId(anyOrNull())).thenReturn(listOf(withdrawTrans))
+        `when`(transactionService.getByReceiver(anyOrNull())).thenReturn(listOf(withdrawTrans))
 
         val returned = economyAPI.getTransactions(player)
 
-        verify(transactionService, times(1)).getByPlayerId(anyOrNull())
+        verify(transactionService, times(1)).getByReceiver(anyOrNull())
         verifyNoMoreInteractions(transactionService)
 
         assertEquals(1, returned.size)
@@ -357,11 +357,11 @@ class EconomyAPIImplTest {
 
     @Test
     fun getTransactionOfflinePlayer() {
-        `when`(transactionService.getByPlayerId(anyOrNull())).thenReturn(listOf(withdrawTrans))
+        `when`(transactionService.getByReceiver(anyOrNull())).thenReturn(listOf(withdrawTrans))
 
         val returned = economyAPI.getTransactions(offlinePlayer)
 
-        verify(transactionService, times(1)).getByPlayerId(anyOrNull())
+        verify(transactionService, times(1)).getByReceiver(anyOrNull())
         verifyNoMoreInteractions(transactionService)
 
         assertEquals(1, returned.size)
