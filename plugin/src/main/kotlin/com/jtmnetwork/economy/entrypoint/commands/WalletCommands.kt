@@ -2,18 +2,54 @@ package com.jtmnetwork.economy.entrypoint.commands
 
 import com.google.inject.Inject
 import com.jtm.framework.core.domain.annotations.Command
+import com.jtm.framework.core.domain.annotations.Optional
 import com.jtm.framework.core.domain.annotations.Usage
+import com.jtm.framework.core.util.UtilString
+import com.jtmnetwork.economy.core.domain.model.TransactionNode
 import com.jtmnetwork.economy.data.cache.CurrencyCache
 import com.jtmnetwork.economy.data.cache.WalletCache
+import com.jtmnetwork.economy.data.service.TransactionService
+import com.jtmnetwork.economy.entrypoint.api.EconomyAPI
 import com.jtmnetwork.economy.entrypoint.ui.WalletUI
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
+import java.util.*
 
-class WalletCommands @Inject constructor(private val walletCache: WalletCache, private val currencyCache: CurrencyCache) {
+class WalletCommands @Inject constructor(private val transactionService: TransactionService, private val walletCache: WalletCache, private val currencyCache: CurrencyCache) {
 
     @Command("wallet")
     @Usage("/wallet")
     fun onWallet(player: Player) {
         val walletUI = WalletUI(walletCache, currencyCache, player)
         walletUI.showInventory(player, true)
+    }
+
+    @Command("transactions")
+    @Usage("/transactions <target>")
+    fun onTransactions(player: Player, @Optional target: OfflinePlayer?) {
+        val builder = StringBuilder()
+        val nodes: Stack<TransactionNode>
+        builder.append("&7&m---------------------------------------")
+
+        if (target != null) {
+            nodes = transactionService.transactionsToStack(target.uniqueId)
+            if (nodes.isEmpty()) {
+                player.sendMessage(UtilString.colour("&4Error: &cNo transactions."))
+                return
+            }
+
+            nodes.forEach { builder.append(it.transaction.toString(it.index, currencyCache)) }
+        } else {
+            nodes = transactionService.transactionsToStack(player.uniqueId)
+            if (nodes.isEmpty()) {
+                player.sendMessage(UtilString.colour("&4Error: &cNo transactions."))
+                return
+            }
+
+            nodes.forEach { builder.append(it.transaction.toString(it.index, currencyCache)) }
+        }
+
+        builder.append("\n&7&m---------------------------------------")
+        player.sendMessage(UtilString.colour(builder.toString()))
     }
 }

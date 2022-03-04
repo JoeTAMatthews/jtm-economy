@@ -2,6 +2,8 @@ package com.jtmnetwork.economy.entrypoint.api
 
 import com.google.inject.Inject
 import com.jtm.framework.Framework
+import com.jtm.framework.core.util.UtilString
+import com.jtmnetwork.economy.core.domain.constants.TransactionType
 import com.jtmnetwork.economy.core.domain.entity.Currency
 import com.jtmnetwork.economy.core.domain.entity.Transaction
 import com.jtmnetwork.economy.core.domain.entity.Wallet
@@ -78,6 +80,8 @@ class EconomyAPIImpl @Inject constructor(private val framework: Framework, priva
         val rate = exchangeRateCache.getBySymbol("${currencyFrom.abbreviation}${currencyTo.abbreviation}") ?: return false
         val wallet = walletCache.getById(player.uniqueId.toString()) ?: return false
 
+        if (!walletCache.hasBalance(player, from, amount)) return false
+
         val converted = amount * (rate.rate)
         val added = wallet.addBalance(to, converted) ?: return false
         val removed = added.removeBalance(from, amount) ?: return false
@@ -92,6 +96,8 @@ class EconomyAPIImpl @Inject constructor(private val framework: Framework, priva
         val currencyTo = currencyCache.getById(to) ?: return false
         val rate = exchangeRateCache.getBySymbol("${currencyFrom.abbreviation}${currencyTo.abbreviation}") ?: return false
         val wallet = walletService.get(player.uniqueId.toString()) ?: return false
+
+        if (!walletCache.hasBalance(player, from, amount))  return false
 
         val converted = amount * (rate.rate)
         val added = wallet.addBalance(to, converted) ?: return false
@@ -117,11 +123,83 @@ class EconomyAPIImpl @Inject constructor(private val framework: Framework, priva
         return currencyCache.getByName(name)
     }
 
-    override fun processRollback(player: Player) {
-        TODO("Not yet implemented")
+    override fun processRollback(initiator: Player, target: Player, transactionId: Int): Boolean {
+        val wallet = walletCache.getById(target.uniqueId.toString()) ?: return false
+        val stack = transactionService.transactionsToStack(target.uniqueId)
+        if (stack.isEmpty()) {
+            initiator.sendMessage(UtilString.colour("&4Error: &cNo transactions to rollback."))
+            return false
+        }
+        var node = stack.pop()
+        while (transactionId != node.index || stack.isNotEmpty()) {
+            val transaction = node.transaction
+
+            val updated = wallet.setBalance(transaction.currency, transaction.previous_balance)
+            walletService.update(updated)
+
+            val deleted = transactionService.delete(transaction.id) ?: return false
+            initiator.sendMessage(UtilString.colour("&cRolled back transaction: ${deleted.id}"))
+            if (stack.isNotEmpty()) node = stack.pop()
+        }
+        return true
     }
 
-    override fun processRollback(offlinePlayer: OfflinePlayer) {
-        TODO("Not yet implemented")
+    override fun processRollback(initiator: Player, target: OfflinePlayer, transactionId: Int): Boolean {
+        val wallet = walletService.get(target.uniqueId.toString()) ?: return false
+        val stack = transactionService.transactionsToStack(target.uniqueId)
+        if (stack.isEmpty()) {
+            initiator.sendMessage(UtilString.colour("&4Error: &cNo transactions to rollback."))
+            return false
+        }
+        var node = stack.pop()
+        while (transactionId != node.index || stack.isNotEmpty()) {
+            val transaction = node.transaction
+
+            val updated = wallet.setBalance(transaction.currency, transaction.previous_balance)
+            walletService.update(updated)
+
+            val deleted = transactionService.delete(transaction.id) ?: return false
+            initiator.sendMessage(UtilString.colour("&cRolled back transaction: ${deleted.id}"))
+            if (stack.isNotEmpty()) node = stack.pop()
+        }
+        return true
+    }
+
+    override fun pay(target: Player, sender: Player, currencyId: UUID, amount: Double): Boolean {
+        val currency = currencyCache.getById(currencyId) ?: return false
+        val senderWallet = walletCache.getById(sender.uniqueId.toString()) ?: return false
+        val receiverWallet = walletCache.getById(target.uniqueId.toString()) ?: return false
+
+        if (!walletCache.hasBalance(sender, currencyId, amount)) {
+            sender.sendMessage(UtilString.colour("&4Error: &cInsufficient funds."))
+            return false
+        }
+
+        val removed = walletCache.withdraw(target.uniqueId, senderWallet, currency.id, amount) ?: return false
+        val added = walletCache.deposit(sender.uniqueId, receiverWallet, currency.id, amount) ?: return false
+        framework.runTaskAsync {
+            transactionService.insert(removed)
+            transactionService.insert(added)
+        }
+        return true
+    }
+
+    override fun pay(target: OfflinePlayer, sender: Player, currencyId: UUID, amount: Double): Boolean {
+        val currency = currencyCache.getById(currencyId) ?: return false
+        val senderWallet = walletCache.getById(sender.uniqueId.toString()) ?: return false
+        val receiverWallet = walletService.get(target.uniqueId.toString()) ?: return false
+
+        if (!walletCache.hasBalance(sender, currencyId, amount)) {
+            sender.sendMessage(UtilString.colour("&4Error: &cInsufficient funds."))
+            return false
+        }
+
+        val removed = walletCache.withdraw(target.uniqueId, senderWallet, currency.id, amount) ?: return false
+        val added = walletCache.deposit(sender.uniqueId, receiverWallet, currency.id, amount) ?: return false
+        framework.runTaskAsync {
+            transactionService.insert(removed)
+            transactionService.insert(added)
+        }
+        return true
     }
 }

@@ -62,10 +62,12 @@ class Economy: Framework(false) {
     override fun registerCommands() {
         super.registerCommands()
         registerCommands(subInjector.getInstance(CurrencyCommands::class.java), arrayOf("currency"))
-        registerCommands(subInjector.getInstance(WalletCommands::class.java), arrayOf("wallet"))
+        registerCommands(subInjector.getInstance(WalletCommands::class.java), arrayOf("wallet", "transactions"))
         registerCommands(subInjector.getInstance(EconomyCommands::class.java), arrayOf("econ"))
         registerCommands(subInjector.getInstance(ExchangeRateCommands::class.java), arrayOf("erate"))
         registerCommands(subInjector.getInstance(ExchangeCommands::class.java), arrayOf("exchange"))
+        registerCommands(subInjector.getInstance(PayCommands::class.java), arrayOf("pay"))
+        registerCommands(subInjector.getInstance(RollbackCommands::class.java), arrayOf("rollback"))
     }
 
     override fun registerListeners() {

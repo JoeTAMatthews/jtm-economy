@@ -10,6 +10,7 @@ import com.jtmnetwork.economy.core.domain.entity.Transaction
 import com.jtmnetwork.economy.core.domain.entity.Wallet
 import com.jtmnetwork.economy.data.service.WalletService
 import org.bukkit.Bukkit
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -40,15 +41,25 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         return balance >= amount
     }
 
+    fun hasBalance(player: OfflinePlayer, currency: UUID, amount: Double): Boolean {
+        val wallet = service.get(player.uniqueId.toString()) ?: return false
+        val balance = wallet.balances[currency] ?: return false
+        return balance >= amount
+    }
+
     fun deposit(sender: UUID?, wallet: Wallet, currency: UUID, amount: Double): Transaction? {
+        val current = wallet.getBalance(currency)
         val deposited = wallet.addBalance(currency, amount) ?: return null
+        if (exists(wallet.id)) update(wallet.id, wallet)
         framework.runTaskAsync { service.update(deposited) }
-        return Transaction(type = TransactionType.IN, sender = sender, receiver = UUID.fromString(wallet.id), currency = currency, amount = amount, balance = deposited.getBalance(currency))
+        return Transaction(type = TransactionType.IN, sender = sender, receiver = UUID.fromString(wallet.id), currency = currency, amount = amount, previous_balance = current, new_balance = deposited.getBalance(currency))
     }
 
     fun withdraw(sender: UUID?, wallet: Wallet, currency: UUID, amount: Double): Transaction? {
+        val current = wallet.getBalance(currency)
         val withdrew = wallet.removeBalance(currency, amount) ?: return null
+        if (exists(wallet.id)) update(wallet.id, wallet)
         framework.runTaskAsync { service.update(withdrew) }
-        return Transaction(type = TransactionType.OUT, sender = sender, receiver = UUID.fromString(wallet.id), currency = currency, amount = amount, balance = withdrew.getBalance(currency))
+        return Transaction(type = TransactionType.OUT, sender = UUID.fromString(wallet.id), receiver = sender, currency = currency, amount = amount, previous_balance = current, new_balance = withdrew.getBalance(currency))
     }
 }
