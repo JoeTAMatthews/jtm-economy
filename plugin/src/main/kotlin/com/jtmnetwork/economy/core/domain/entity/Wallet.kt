@@ -32,6 +32,11 @@ data class Wallet(
         return this
     }
 
+    fun setBalance(currency: UUID, amount: Double): Wallet {
+        this.balances[currency] = amount
+        return this
+    }
+
     fun removeBalance(id: UUID): Wallet {
         balances.remove(id)
         return this

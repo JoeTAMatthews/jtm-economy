@@ -44,7 +44,7 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
                     return
                 }
 
-                if (economyAPI.deposit(targetPlayer, currency.id, player.uniqueId, amount)) {
+                if (economyAPI.deposit(targetPlayer, currency.id, null, amount)) {
                     localeMessenger.sendMessage(player, "economy.deposited.sender_success", currency.getAbbreviationAmount(amount), target.name)
                     localeMessenger.sendMessage(targetPlayer, "economy.deposited.target_success", currency.getAbbreviationAmount(amount))
                 } else localeMessenger.sendMessage(player, "economy.deposited.sender_failed")
@@ -52,7 +52,7 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
 
             false -> {
                 framework.runTaskAsync {
-                    if (economyAPI.deposit(target, currency.id, player.uniqueId, amount))
+                    if (economyAPI.deposit(target, currency.id, null, amount))
                         localeMessenger.sendMessage(player, "economy.deposited.sender_success", currency.getAbbreviationAmount(amount), target.name)
                     else
                         localeMessenger.sendMessage(player, "economy.deposited.sender_failed")
@@ -74,7 +74,7 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
                     return
                 }
 
-                if (economyAPI.withdraw(targetPlayer, currency.id, player.uniqueId, amount)) {
+                if (economyAPI.withdraw(targetPlayer, currency.id, null, amount)) {
                     localeMessenger.sendMessage(player, "economy.withdraw.sender_success", currency.getAbbreviationAmount(amount), target.name)
                     localeMessenger.sendMessage(targetPlayer, "economy.withdraw.target_success", currency.getAbbreviationAmount(amount))
                 } else localeMessenger.sendMessage(player, "economy.withdraw.sender_failed")
@@ -82,7 +82,7 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
 
             false -> {
                 framework.runTaskAsync {
-                    if (economyAPI.withdraw(target, currency.id, player.uniqueId, amount))
+                    if (economyAPI.withdraw(target, currency.id, null, amount))
                         localeMessenger.sendMessage(player, "economy.withdraw.sender_success", currency.getAbbreviationAmount(amount), target.name)
                     else
                         localeMessenger.sendMessage(player, "economy.withdraw.sender_failed")
