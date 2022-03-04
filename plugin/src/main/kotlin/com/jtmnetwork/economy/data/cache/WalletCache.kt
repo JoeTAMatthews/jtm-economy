@@ -35,18 +35,43 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         }
     }
 
+    /**
+     * Check the balance of a online player against an amount, ensuring that the player has the sufficient funds.
+     *
+     * @param player        the target online player
+     * @param currency      the currency to be used.
+     * @param amount        the currency amount.
+     * @return              if the player has sufficient amount return true, if they don't return false
+     */
     fun hasBalance(player: Player, currency: UUID, amount: Double): Boolean {
         val wallet = getById(player.uniqueId.toString()) ?: return false
         val balance = wallet.balances[currency] ?: return false
         return balance >= amount
     }
 
+    /**
+     * Check the balance of a offline player against an amount, ensuring that the player has the sufficient funds.
+     *
+     * @param player        the target offline player
+     * @param currency      the currency to be used.
+     * @param amount        the currency amount.
+     * @return              if the player has sufficient amount return true, if they don't return false
+     */
     fun hasBalance(player: OfflinePlayer, currency: UUID, amount: Double): Boolean {
         val wallet = service.get(player.uniqueId.toString()) ?: return false
         val balance = wallet.balances[currency] ?: return false
         return balance >= amount
     }
 
+    /**
+     * Deposit a currency amount to a target wallet.
+     *
+     * @param sender        the sender of the currency.
+     * @param wallet        the target wallet.
+     * @param currency      the currency selected.
+     * @param amount        the amount of currency.
+     * @return              the transaction of the deposit.
+     */
     fun deposit(sender: UUID?, wallet: Wallet, currency: UUID, amount: Double): Transaction? {
         val current = wallet.getBalance(currency)
         val deposited = wallet.addBalance(currency, amount) ?: return null
@@ -55,6 +80,15 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         return Transaction(type = TransactionType.IN, sender = sender, receiver = UUID.fromString(wallet.id), currency = currency, amount = amount, previous_balance = current, new_balance = deposited.getBalance(currency))
     }
 
+    /**
+     * Withdraw a currency amount from a target wallet.
+     *
+     * @param sender        the sender of the currency.
+     * @param wallet        the target wallet
+     * @param currency      the currency selected.
+     * @param amount        the amount of currency.
+     * @return              the transaction of the withdrawal.
+     */
     fun withdraw(sender: UUID?, wallet: Wallet, currency: UUID, amount: Double): Transaction? {
         val current = wallet.getBalance(currency)
         val withdrew = wallet.removeBalance(currency, amount) ?: return null

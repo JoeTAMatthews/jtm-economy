@@ -13,6 +13,9 @@ import org.bukkit.inventory.ItemStack
 
 class WalletUI(private val wallet: Wallet, private val currencyCache: CurrencyCache, private val player: Player): UIInventory(UISettings("wallet", "&bWallet", 9, false, 1)) {
 
+    /**
+     * This will set up all balances for the wallet given.
+     */
     override fun initItems() {
         val builder = ItemStackBuilder(Material.SUNFLOWER)
             .withName("&b${player.name} Information")

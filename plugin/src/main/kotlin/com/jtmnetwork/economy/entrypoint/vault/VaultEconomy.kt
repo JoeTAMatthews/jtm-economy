@@ -1,24 +1,25 @@
 package com.jtmnetwork.economy.entrypoint.vault
 
+import com.jtmnetwork.economy.entrypoint.api.EconomyAPI
 import net.milkbowl.vault.economy.AbstractEconomy
 import net.milkbowl.vault.economy.EconomyResponse
 
-class VaultEconomy: AbstractEconomy() {
+class VaultEconomy(private val economyAPI: EconomyAPI): AbstractEconomy() {
 
     override fun isEnabled(): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     override fun getName(): String {
-        TODO("Not yet implemented")
+        return "JTMEconomy"
     }
 
     override fun hasBankSupport(): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     override fun fractionalDigits(): Int {
-        TODO("Not yet implemented")
+        return 0
     }
 
     override fun format(amount: Double): String {

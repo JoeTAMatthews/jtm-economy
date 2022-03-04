@@ -26,7 +26,6 @@ class EconomyAPIImpl @Inject constructor(private val framework: Framework, priva
         return true
     }
 
-    // Write documentation to have this method ran in a separate thread as will lock the main thread.
     override fun deposit(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Boolean {
         val wallet = walletService.get(player.uniqueId.toString()) ?: return false
         val transaction = walletCache.deposit(from, wallet, currency, amount) ?: return false
@@ -59,11 +58,11 @@ class EconomyAPIImpl @Inject constructor(private val framework: Framework, priva
     }
 
     override fun getTransactions(player: Player, currency: UUID): List<Transaction> {
-        return transactionService.getByReceiverAndCurrency(player.uniqueId, currency)
+        return transactionService.getByCurrency(player.uniqueId, currency)
     }
 
     override fun getTransactions(player: OfflinePlayer, currency: UUID): List<Transaction> {
-        return transactionService.getByReceiverAndCurrency(player.uniqueId, currency)
+        return transactionService.getByCurrency(player.uniqueId, currency)
     }
 
     override fun getTransactions(player: Player): List<Transaction> {

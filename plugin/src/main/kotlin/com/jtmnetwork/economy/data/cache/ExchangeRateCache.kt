@@ -36,10 +36,22 @@ class ExchangeRateCache @Inject constructor(private val framework: Framework, pr
         }
     }
 
+    /**
+     * Returns if the exchange rate symbol/pair exists.
+     *
+     * @param symbol        the pair of the exchange rate.
+     * @return              if found return true, if not return false.
+     */
     fun existsBySymbol(symbol: String): Boolean {
         return getBySymbol(symbol) != null
     }
 
+    /**
+     * Returns that exchange rate using the symbol/pair
+     *
+     * @param symbol        the pair of the exchange rate
+     * @return              the exchange rate found, if not found return null
+     */
     fun getBySymbol(symbol: String): ExchangeRate? {
         val list = getAll() ?: return null
         return list.stream().filter { it.symbol == symbol }.findFirst().orElse(null)

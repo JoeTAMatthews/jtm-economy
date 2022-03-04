@@ -83,7 +83,7 @@ class Economy: Framework(false) {
             return
         }
         val vault = server.pluginManager.getPlugin("Vault") ?: return
-        server.servicesManager.register(net.milkbowl.vault.economy.Economy::class.java, VaultEconomy(), vault, ServicePriority.High)
+        server.servicesManager.register(net.milkbowl.vault.economy.Economy::class.java, VaultEconomy(getEconomyAPI()), vault, ServicePriority.High)
         getLogging().info("Vault found. Registered Vault Economy Service provider.")
     }
 

@@ -37,11 +37,23 @@ class CurrencyCache @Inject constructor(private val framework: Framework, privat
         }
     }
 
+    /**
+     * Returns if the currency exists.
+     *
+     * @param name          the name of the currency.
+     * @return              if exists return true, if not return false
+     */
     fun existsByName(name: String): Boolean {
         getAll()?.forEach { if (it.name.equals(name, true)) return true }
         return false
     }
 
+    /**
+     * Returns the currency found by the name.
+     *
+     * @param name          the name of the currency.
+     * @return              the currency found, it not return null
+     */
     fun getByName(name: String): Currency? {
         getAll()?.forEach { if (it.name.equals(name, true)) return it }
         return null
