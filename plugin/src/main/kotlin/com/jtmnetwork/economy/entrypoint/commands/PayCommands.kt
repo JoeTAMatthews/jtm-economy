@@ -13,7 +13,14 @@ import org.bukkit.entity.Player
 
 class PayCommands @Inject constructor(private val framework: Framework, private val economyAPI: EconomyAPI, private val localeMessenger: LocaleMessenger) {
 
-    // TODO: Add messages to the en.yml
+    /**
+     * Allow players to pay each other using a selected currency.
+     *
+     * @param player        the command sender.
+     * @param target        the target player.
+     * @param currency      the selected currency.
+     * @param amount        the amount to be transferred.
+     */
     @Command("pay")
     @Usage("/pay <player> <currency> <amount>")
     fun onPay(player: Player, target: OfflinePlayer, currency: Currency, amount: Double) {

@@ -17,13 +17,31 @@ import java.util.*
 
 class WalletCommands @Inject constructor(private val transactionService: TransactionService, private val walletCache: WalletCache, private val currencyCache: CurrencyCache) {
 
+    private val walletService = walletCache.service
+
+    /**
+     * Show the wallet of the target player, if null show the wallet of the command sender.
+     *
+     * @param player        the command sender.
+     */
     @Command("wallet")
     @Usage("/wallet")
-    fun onWallet(player: Player) {
-        val walletUI = WalletUI(walletCache, currencyCache, player)
+    fun onWallet(player: Player, @Optional target: OfflinePlayer?) {
+        val wallet = if (target == null) walletCache.getById(player.uniqueId.toString()) else if (target.isOnline) walletCache.getById(target.uniqueId.toString()) else walletService.get(target.uniqueId.toString())
+        if (wallet == null) {
+            player.sendMessage(UtilString.colour("&4Error: &cWallet not found."))
+            return
+        }
+        val walletUI = WalletUI(wallet, currencyCache, player)
         walletUI.showInventory(player, true)
     }
 
+    /**
+     * Show transactions of the target player, if null show the transactions of the command sender.
+     *
+     * @param player        the command sender.
+     * @param target        the target player.
+     */
     @Command("transactions")
     @Usage("/transactions <target>")
     fun onTransactions(player: Player, @Optional target: OfflinePlayer?) {

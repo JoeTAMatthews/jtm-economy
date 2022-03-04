@@ -12,6 +12,13 @@ import org.bukkit.entity.Player
 
 class RollbackCommands @Inject constructor(private val framework: Framework, private val economyAPI: EconomyAPI, private val localeMessenger: LocaleMessenger) {
 
+    /**
+     * Rollback a target player's wallet transactions to a certain transaction index.
+     *
+     * @param player        the command sender.
+     * @param target        the target player.
+     * @param id            the selected transaction index.
+     */
     @Command("rollback")
     @Usage("/rollback <target> <transaction_id>")
     @Permission("economy.rollback")

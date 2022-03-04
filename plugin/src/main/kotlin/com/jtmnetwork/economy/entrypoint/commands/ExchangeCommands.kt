@@ -10,6 +10,14 @@ import org.bukkit.entity.Player
 
 class ExchangeCommands @Inject constructor(private val economyAPI: EconomyAPI, private val localeMessenger: LocaleMessenger) {
 
+    /**
+     * Exchange currencies between each other.
+     *
+     * @param player        the command sender.
+     * @param from          the currency to exchange from.
+     * @param to            the currency to exchange to.
+     * @param amount        the amount of currency to be exchanged.
+     */
     @Command("exchange")
     @Usage("/exchange <from> <to> <amount>")
     fun onExchange(player: Player, from: Currency, to: Currency, amount: Double) {

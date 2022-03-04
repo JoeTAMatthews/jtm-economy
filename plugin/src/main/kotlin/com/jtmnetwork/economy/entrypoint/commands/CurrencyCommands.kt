@@ -20,6 +20,11 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
 
     private val localeMessenger = framework.getLocaleMessenger()
 
+    /**
+     * Shows all the commands under "/currency"
+     *
+     * @param player        the command sender.
+     */
     @Command("currency")
     @Permission("currency.admin")
     fun onCurrency(player: Player) {
@@ -36,6 +41,14 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
         player.sendMessage(UtilString.colour(builder.toString()))
     }
 
+    /**
+     * Adds a new currency.
+     *
+     * @param player        the command sender.
+     * @param name          the name of the currency.
+     * @param abbreviation  the abbreviation of the currency
+     * @param symbol        the symbol/prefix to be used by the currency
+     */
     @Command("currency")
     @SubCommand("add")
     @Permission("currency.admin")
@@ -53,6 +66,12 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
         localeMessenger.sendMessage(player, "currency.commands.add", inserted.name)
     }
 
+    /**
+     * Removes a currency
+     *
+     * @param player        the command sender.
+     * @param name          the name of the currency.
+     */
     @Command("currency")
     @SubCommand("remove")
     @Permission("currency.admin")
@@ -70,6 +89,14 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
         localeMessenger.sendMessage(player, "currency.commands.remove", removed.name)
     }
 
+    /**
+     * Update a currency field.
+     *
+     * @param player        the command sender.
+     * @param name          the name of the currency.
+     * @param setting       the field to be updated.
+     * @param value         the value to be used.
+     */
     @Command("currency")
     @SubCommand("update")
     @Permission("currency.admin")
@@ -97,6 +124,12 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
         localeMessenger.sendMessage(player, "currency.commands.update", setting, value)
     }
 
+    /**
+     * Show information on the currency
+     *
+     * @param player        the command sender.
+     * @param name          the name of the currency.
+     */
     @Command("currency")
     @SubCommand("info")
     @Permission("currency.admin")
@@ -111,6 +144,11 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
         player.sendMessage(UtilString.colour(currency.info()))
     }
 
+    /**
+     * List all the currencies saved.
+     *
+     * @param player        the command sender.
+     */
     @Command("currency")
     @SubCommand("list")
     @Permission("currency.admin")

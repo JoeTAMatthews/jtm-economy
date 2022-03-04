@@ -17,6 +17,11 @@ import org.bukkit.entity.Player
 @Singleton
 class EconomyCommands @Inject constructor(private val framework: Framework, private val economyAPI: EconomyAPI, private val localeMessenger: LocaleMessenger) {
 
+    /**
+     * Shows all the commands under "/econ"
+     *
+     * @param player        the command sender.
+     */
     @Command("econ")
     @Permission("econ.admin")
     fun onEcon(player: Player) {
@@ -31,6 +36,14 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
         player.sendMessage(UtilString.colour(builder.toString()))
     }
 
+    /**
+     * Deposits a currency amount to the target player.
+     *
+     * @param player        the command sender.
+     * @param target        the target player.
+     * @param currency      the currency to be used.
+     * @param amount        the amount of currency to be deposited.
+     */
     @Command("econ")
     @SubCommand("deposit")
     @Usage("/econ deposit <player> <currency> <amount>")
@@ -61,6 +74,14 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
         }
     }
 
+    /**
+     * Withdraw a currency amount from the target player.
+     *
+     * @param player        the command sender.
+     * @param target        the target player.
+     * @param currency      the currency to be used.
+     * @param amount        the amount of currency to be withdrawn.
+     */
     @Command("econ")
     @SubCommand("withdraw")
     @Usage("/econ withdraw <player> <currency> <amount>")
@@ -91,6 +112,13 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
         }
     }
 
+    /**
+     * Retrieve the balance of currency under a target player's wallet.
+     *
+     * @param player        the command sender.
+     * @param target        the target player.
+     * @param currency      the currency to be used.
+     */
     @Command("econ")
     @SubCommand("balance")
     @Usage("/econ balance <player> <currency>")
