@@ -13,6 +13,11 @@ class CurrencyListener @Inject constructor(private val cache: WalletCache): List
 
     private val logger = LoggerFactory.getLogger(CurrencyListener::class.java)
 
+    /**
+     * Handle currency add event by adding a new currency balance to all the wallets.
+     *
+     * @param event     the currency add event.
+     */
     @EventHandler
     fun onCurrencyAdd(event: CurrencyAddEvent) {
         val currency = event.currency
@@ -25,6 +30,11 @@ class CurrencyListener @Inject constructor(private val cache: WalletCache): List
         }
     }
 
+    /**
+     * Handle currency remove event by removing all currency balances from all the wallets.
+     *
+     * @param event     the currency remove event.
+     */
     @EventHandler
     fun onCurrencyRemove(event: CurrencyRemoveEvent) {
         val currency = event.currency

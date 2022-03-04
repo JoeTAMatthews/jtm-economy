@@ -13,12 +13,22 @@ import org.bukkit.event.player.PlayerQuitEvent
 
 class PlayerListener @Inject constructor(private val framework: Framework, private val service: WalletService, private val cache: WalletCache): Listener {
 
+    /**
+     * Handle the player join event.
+     *
+     * @param event         the join event.
+     */
     @EventHandler
     fun onJoin(event: PlayerJoinEvent) {
         val player = event.player
         framework.runTaskAsync(WalletLoader(framework, service, player))
     }
 
+    /**
+     * Handle the player quit event.
+     *
+     * @param event         the quit event.
+     */
     @EventHandler
     fun onQuit(event: PlayerQuitEvent) {
         val player = event.player

@@ -13,6 +13,11 @@ class WalletListener @Inject constructor(private val cache: WalletCache, private
 
     private val logger = LoggerFactory.getLogger(WalletListener::class.java)
 
+    /**
+     * Handle the load of the wallet by adding all currencies it doesn't have.
+     *
+     * @param event         the wallet load event.
+     */
     @EventHandler
     fun onLoad(event: WalletLoadEvent) {
         val wallet = event.wallet
@@ -22,6 +27,11 @@ class WalletListener @Inject constructor(private val cache: WalletCache, private
         logger.info("Successfully loaded wallet: ${saved.id}")
     }
 
+    /**
+     * Handle unloading the wallet from the cache.
+     *
+     * @param event         the wallet unload event.
+     */
     @EventHandler
     fun onUnload(event: WalletUnloadEvent) {
         val wallet = event.wallet
