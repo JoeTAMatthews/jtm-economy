@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'com.jtmnetwork.economy'
-version '0.30'
+version '0.31'
 
 publishing {
     repositories {
@@ -88,5 +88,5 @@ test {
 }
 
 shadowJar {
-    destinationDirectory = file("/media/michelle/Network space/Minecraft Tests/1.18/plugins")
+    destinationDirectory = file("/mnt/65f8f8c0-a736-45bf-a047-782b19fc195b/Programming/Servers/lobby/plugins")
 }

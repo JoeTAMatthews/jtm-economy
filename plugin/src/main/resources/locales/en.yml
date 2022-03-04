@@ -25,3 +25,14 @@ exchangerate:
     updated:
       rate: "&aSuccessfully updated rate of exchange rate to: '&f%s&a'"
     same_currency: "&4Error: &cCan't add a exchange rate of 2 of the same currency."
+
+pay:
+  sender_success: "&aSuccessfully paid &f%s &b%s&a."
+  sender_failed: "&4Error: &cFailed to send payment."
+  receiver_success: "&aYou have received &b%s &afrom &f%s&a."
+
+rollback:
+  start: "&fStarting rollback operation on &c%s"
+  end: "&fEnding rollback operation on &c%s"
+  failed: "&4Error: &cRollback operation has failed."
+  success: "&aSuccessfully completed rollback operation on &e%s"
