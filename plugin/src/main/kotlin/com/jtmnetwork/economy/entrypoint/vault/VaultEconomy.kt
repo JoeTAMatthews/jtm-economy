@@ -1,13 +1,14 @@
 package com.jtmnetwork.economy.entrypoint.vault
 
+import com.jtmnetwork.economy.Economy
 import com.jtmnetwork.economy.entrypoint.api.EconomyAPI
 import net.milkbowl.vault.economy.AbstractEconomy
 import net.milkbowl.vault.economy.EconomyResponse
 
-class VaultEconomy(private val economyAPI: EconomyAPI): AbstractEconomy() {
+class VaultEconomy(private val economy: Economy, private val economyAPI: EconomyAPI): AbstractEconomy() {
 
     override fun isEnabled(): Boolean {
-        return true
+        return economy.isVaultEnabled()
     }
 
     override fun getName(): String {
@@ -15,7 +16,7 @@ class VaultEconomy(private val economyAPI: EconomyAPI): AbstractEconomy() {
     }
 
     override fun hasBankSupport(): Boolean {
-        return true
+        return false
     }
 
     override fun fractionalDigits(): Int {
@@ -115,6 +116,6 @@ class VaultEconomy(private val economyAPI: EconomyAPI): AbstractEconomy() {
     }
 
     override fun createPlayerAccount(playerName: String?, worldName: String?): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 }

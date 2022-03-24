@@ -26,7 +26,7 @@ class TransactionServiceTest {
 
     private val transactionRepository: TransactionRepository = mock()
     private val transactionService = TransactionService(transactionRepository)
-    private val created = Transaction(UUID.randomUUID(), TransactionType.IN, UUID.randomUUID(), UUID.randomUUID(), 500.50, 550.50)
+    private val created = Transaction(UUID.randomUUID(), TransactionType.IN, UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), 500.50, 50.50, 550.50, System.currentTimeMillis())
 
     @Test
     fun insertTransaction_thenFound() {
@@ -55,9 +55,11 @@ class TransactionServiceTest {
         StepVerifier.create(returned)
             .assertNext {
                 assertThat(it.id).isEqualTo(created.id)
-                assertThat(it.playerId).isEqualTo(created.playerId)
+                assertThat(it.sender).isEqualTo(created.sender)
+                assertThat(it.receiver).isEqualTo(created.receiver)
                 assertThat(it.currency).isEqualTo(created.currency)
-                assertThat(it.balance).isEqualTo(created.balance)
+                assertThat(it.previous_balance).isEqualTo(created.previous_balance)
+                assertThat(it.new_balance).isEqualTo(created.new_balance)
                 assertThat(it.amount).isEqualTo(created.amount)
             }
             .verifyComplete()
@@ -90,9 +92,11 @@ class TransactionServiceTest {
         StepVerifier.create(returned)
             .assertNext {
                 assertThat(it.id).isEqualTo(created.id)
-                assertThat(it.playerId).isEqualTo(created.playerId)
+                assertThat(it.sender).isEqualTo(created.sender)
+                assertThat(it.receiver).isEqualTo(created.receiver)
                 assertThat(it.currency).isEqualTo(created.currency)
-                assertThat(it.balance).isEqualTo(created.balance)
+                assertThat(it.previous_balance).isEqualTo(created.previous_balance)
+                assertThat(it.new_balance).isEqualTo(created.new_balance)
                 assertThat(it.amount).isEqualTo(created.amount)
             }
             .verifyComplete()
@@ -124,9 +128,11 @@ class TransactionServiceTest {
         StepVerifier.create(returned)
             .assertNext {
                 assertThat(it.id).isEqualTo(created.id)
-                assertThat(it.playerId).isEqualTo(created.playerId)
+                assertThat(it.sender).isEqualTo(created.sender)
+                assertThat(it.receiver).isEqualTo(created.receiver)
                 assertThat(it.currency).isEqualTo(created.currency)
-                assertThat(it.balance).isEqualTo(created.balance)
+                assertThat(it.previous_balance).isEqualTo(created.previous_balance)
+                assertThat(it.new_balance).isEqualTo(created.new_balance)
                 assertThat(it.amount).isEqualTo(created.amount)
             }
             .verifyComplete()
@@ -144,9 +150,11 @@ class TransactionServiceTest {
         StepVerifier.create(returned)
             .assertNext {
                 assertThat(it.id).isEqualTo(created.id)
-                assertThat(it.playerId).isEqualTo(created.playerId)
+                assertThat(it.sender).isEqualTo(created.sender)
+                assertThat(it.receiver).isEqualTo(created.receiver)
                 assertThat(it.currency).isEqualTo(created.currency)
-                assertThat(it.balance).isEqualTo(created.balance)
+                assertThat(it.previous_balance).isEqualTo(created.previous_balance)
+                assertThat(it.new_balance).isEqualTo(created.new_balance)
                 assertThat(it.amount).isEqualTo(created.amount)
             }
             .verifyComplete()
@@ -179,9 +187,11 @@ class TransactionServiceTest {
         StepVerifier.create(returned)
             .assertNext {
                 assertThat(it.id).isEqualTo(created.id)
-                assertThat(it.playerId).isEqualTo(created.playerId)
+                assertThat(it.sender).isEqualTo(created.sender)
+                assertThat(it.receiver).isEqualTo(created.receiver)
                 assertThat(it.currency).isEqualTo(created.currency)
-                assertThat(it.balance).isEqualTo(created.balance)
+                assertThat(it.previous_balance).isEqualTo(created.previous_balance)
+                assertThat(it.new_balance).isEqualTo(created.new_balance)
                 assertThat(it.amount).isEqualTo(created.amount)
             }
             .verifyComplete()

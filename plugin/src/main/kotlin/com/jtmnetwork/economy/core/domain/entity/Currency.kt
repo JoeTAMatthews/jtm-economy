@@ -6,7 +6,10 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "currencies")
-data class Currency(@Id @Convert(converter = UUIDConverter::class) @Column(length = 36) val id: UUID = UUID.randomUUID(), var name: String = "", var abbreviation: String = "", var symbol: String = "") {
+data class Currency(@Id @Convert(converter = UUIDConverter::class) @Column(length = 36) val id: UUID = UUID.randomUUID(),
+                    var name: String = "",
+                    var abbreviation: String = "",
+                    var symbol: String = "") {
 
     fun info(): String {
         val builder = StringBuilder()

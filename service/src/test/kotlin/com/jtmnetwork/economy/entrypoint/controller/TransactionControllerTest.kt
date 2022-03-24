@@ -32,24 +32,26 @@ class TransactionControllerTest {
     @MockBean
     lateinit var transactionService: TransactionService
 
-    private val created = Transaction(UUID.randomUUID(), TransactionType.IN, UUID.randomUUID(), UUID.randomUUID(), 500.50, 550.50)
+    private val created = Transaction(UUID.randomUUID(), TransactionType.IN, UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), 500.50, 50.50, 550.50, System.currentTimeMillis())
 
     @Test
     fun postTransaction() {
         `when`(transactionService.insertTransaction(anyOrNull())).thenReturn(Mono.just(created))
 
         testClient.post()
-            .uri("/transaction")
-            .bodyValue(created)
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.id").isEqualTo(created.id.toString())
-            .jsonPath("$.type").isEqualTo(created.type.name)
-            .jsonPath("$.playerId").isEqualTo(created.playerId.toString())
-            .jsonPath("$.currency").isEqualTo(created.currency.toString())
-            .jsonPath("$.amount").isEqualTo(created.amount)
-            .jsonPath("$.balance").isEqualTo(created.balance)
+                .uri("/transaction")
+                .bodyValue(created)
+                .exchange()
+                .expectStatus().isOk
+                .expectBody()
+                .jsonPath("$.id").isEqualTo(created.id.toString())
+                .jsonPath("$.type").isEqualTo(created.type.name)
+                .jsonPath("$.sender").isEqualTo(created.sender.toString())
+                .jsonPath("$.receiver").isEqualTo(created.receiver.toString())
+                .jsonPath("$.currency").isEqualTo(created.currency.toString())
+                .jsonPath("$.amount").isEqualTo(created.amount)
+                .jsonPath("$.previous_balance").isEqualTo(created.previous_balance)
+                .jsonPath("$.new_balance").isEqualTo(created.new_balance)
 
         verify(transactionService, times(1)).insertTransaction(anyOrNull())
         verifyNoMoreInteractions(transactionService)
@@ -60,17 +62,19 @@ class TransactionControllerTest {
         `when`(transactionService.updateTransaction(anyOrNull())).thenReturn(Mono.just(created))
 
         testClient.put()
-            .uri("/transaction")
-            .bodyValue(created)
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.id").isEqualTo(created.id.toString())
-            .jsonPath("$.type").isEqualTo(created.type.name)
-            .jsonPath("$.playerId").isEqualTo(created.playerId.toString())
-            .jsonPath("$.currency").isEqualTo(created.currency.toString())
-            .jsonPath("$.amount").isEqualTo(created.amount)
-            .jsonPath("$.balance").isEqualTo(created.balance)
+                .uri("/transaction")
+                .bodyValue(created)
+                .exchange()
+                .expectStatus().isOk
+                .expectBody()
+                .jsonPath("$.id").isEqualTo(created.id.toString())
+                .jsonPath("$.type").isEqualTo(created.type.name)
+                .jsonPath("$.sender").isEqualTo(created.sender.toString())
+                .jsonPath("$.receiver").isEqualTo(created.receiver.toString())
+                .jsonPath("$.currency").isEqualTo(created.currency.toString())
+                .jsonPath("$.amount").isEqualTo(created.amount)
+                .jsonPath("$.previous_balance").isEqualTo(created.previous_balance)
+                .jsonPath("$.new_balance").isEqualTo(created.new_balance)
 
         verify(transactionService, times(1)).updateTransaction(anyOrNull())
         verifyNoMoreInteractions(transactionService)
@@ -81,16 +85,18 @@ class TransactionControllerTest {
         `when`(transactionService.getTransaction(anyOrNull())).thenReturn(Mono.just(created))
 
         testClient.get()
-            .uri("/transaction/${UUID.randomUUID()}")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.id").isEqualTo(created.id.toString())
-            .jsonPath("$.type").isEqualTo(created.type.name)
-            .jsonPath("$.playerId").isEqualTo(created.playerId.toString())
-            .jsonPath("$.currency").isEqualTo(created.currency.toString())
-            .jsonPath("$.amount").isEqualTo(created.amount)
-            .jsonPath("$.balance").isEqualTo(created.balance)
+                .uri("/transaction/${UUID.randomUUID()}")
+                .exchange()
+                .expectStatus().isOk
+                    .expectBody()
+                .jsonPath("$.id").isEqualTo(created.id.toString())
+                .jsonPath("$.type").isEqualTo(created.type.name)
+                .jsonPath("$.sender").isEqualTo(created.sender.toString())
+                .jsonPath("$.receiver").isEqualTo(created.receiver.toString())
+                .jsonPath("$.currency").isEqualTo(created.currency.toString())
+                .jsonPath("$.amount").isEqualTo(created.amount)
+                .jsonPath("$.previous_balance").isEqualTo(created.previous_balance)
+                .jsonPath("$.new_balance").isEqualTo(created.new_balance)
 
         verify(transactionService, times(1)).getTransaction(anyOrNull())
         verifyNoMoreInteractions(transactionService)
@@ -98,23 +104,26 @@ class TransactionControllerTest {
 
     @Test
     fun getTransactions() {
-        `when`(transactionService.getTransactions()).thenReturn(Flux.just(created, Transaction(UUID.randomUUID(), TransactionType.OUT, null, UUID.randomUUID(), 1000.0, 1500.0)))
+        `when`(transactionService.getTransactions()).thenReturn(Flux.just(created, Transaction(UUID.randomUUID(), TransactionType.OUT, null, UUID.randomUUID(), UUID.randomUUID(), 1000.0, 500.0, 1500.0, System.currentTimeMillis())))
 
         testClient.get()
-            .uri("/transaction/all")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$[0].id").isEqualTo(created.id.toString())
-            .jsonPath("$[0].type").isEqualTo(created.type.name)
-            .jsonPath("$[0].playerId").isEqualTo(created.playerId.toString())
-            .jsonPath("$[0].currency").isEqualTo(created.currency.toString())
-            .jsonPath("$[0].amount").isEqualTo(created.amount)
-            .jsonPath("$[0].balance").isEqualTo(created.balance)
+                .uri("/transaction/all")
+                .exchange()
+                .expectStatus().isOk
+                .expectBody()
+                .jsonPath("$[0].id").isEqualTo(created.id.toString())
+                .jsonPath("$[0].type").isEqualTo(created.type.name)
+                .jsonPath("$.sender").isEqualTo(created.sender.toString())
+                .jsonPath("$.receiver").isEqualTo(created.receiver.toString())
+                .jsonPath("$.currency").isEqualTo(created.currency.toString())
+                .jsonPath("$.amount").isEqualTo(created.amount)
+                .jsonPath("$.previous_balance").isEqualTo(created.previous_balance)
+                .jsonPath("$.new_balance").isEqualTo(created.new_balance)
 
-            .jsonPath("$[1].type").isEqualTo(TransactionType.OUT.name)
-            .jsonPath("$[1].amount").isEqualTo(1000.0)
-            .jsonPath("$[1].balance").isEqualTo(1500.0)
+                .jsonPath("$[1].type").isEqualTo(TransactionType.OUT.name)
+                .jsonPath("$[1].amount").isEqualTo(1000.0)
+                .jsonPath("$[1].previous_balance").isEqualTo(500.0)
+                .jsonPath("$[1].new_balance").isEqualTo(1500.0)
 
         verify(transactionService, times(1)).getTransactions()
         verifyNoMoreInteractions(transactionService)
@@ -125,16 +134,18 @@ class TransactionControllerTest {
         `when`(transactionService.deleteTransaction(anyOrNull())).thenReturn(Mono.just(created))
 
         testClient.delete()
-            .uri("/transaction/${UUID.randomUUID()}")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.id").isEqualTo(created.id.toString())
-            .jsonPath("$.type").isEqualTo(created.type.name)
-            .jsonPath("$.playerId").isEqualTo(created.playerId.toString())
-            .jsonPath("$.currency").isEqualTo(created.currency.toString())
-            .jsonPath("$.amount").isEqualTo(created.amount)
-            .jsonPath("$.balance").isEqualTo(created.balance)
+                .uri("/transaction/${UUID.randomUUID()}")
+                .exchange()
+                .expectStatus().isOk
+                .expectBody()
+                .jsonPath("$.id").isEqualTo(created.id.toString())
+                .jsonPath("$.type").isEqualTo(created.type.name)
+                .jsonPath("$.sender").isEqualTo(created.sender.toString())
+                .jsonPath("$.receiver").isEqualTo(created.receiver.toString())
+                .jsonPath("$.currency").isEqualTo(created.currency.toString())
+                .jsonPath("$.amount").isEqualTo(created.amount)
+                .jsonPath("$.previous_balance").isEqualTo(created.previous_balance)
+                .jsonPath("$.new_balance").isEqualTo(created.new_balance)
 
         verify(transactionService, times(1)).deleteTransaction(anyOrNull())
         verifyNoMoreInteractions(transactionService)

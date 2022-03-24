@@ -1,4 +1,4 @@
-FROM java:8
+FROM openjdk:11-buster
 VOLUME /tmp
 EXPOSE 8095
 ARG JAR_FILE

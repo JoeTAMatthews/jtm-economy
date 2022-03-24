@@ -8,17 +8,20 @@ import java.util.*
 @Document("transactions")
 data class Transaction(@Id val id: UUID,
                        var type: TransactionType,
-                       var playerId: UUID?,
+                       var sender: UUID?,
+                       var receiver: UUID?,
                        var currency: UUID,
                        var amount: Double,
-                       var balance: Double) {
+                       val previous_balance: Double = 0.0,
+                       val new_balance: Double = 0.0,
+                       val created: Long = 0) {
 
     fun update(update: Transaction): Transaction {
         if (type != update.type) type = update.type
-        if (playerId != update.playerId) playerId = update.playerId
+        if (sender != update.sender) sender = update.sender
+        if (receiver != update.receiver) receiver = update.receiver
         if (currency != update.currency) currency = update.currency
         if (amount != update.amount) amount = update.amount
-        if (balance != update.balance) balance = update.balance
         return this
     }
 }

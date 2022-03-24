@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: economy
-          image: drennydev/economy-service:k8-latest
+          image: drennydev/economy-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8095
@@ -41,13 +41,13 @@ spec:
                   key: mongo.database
             - name: MONGO_USERNAME
               valueFrom:
-                configMapKeyRef:
-                  name: mongo
+                secretKeyRef:
+                  name: mongo-secret
                   key: mongo.username
             - name: MONGO_PASSWORD
               valueFrom:
-                configMapKeyRef:
-                  name: mongo
+                secretKeyRef:
+                  name: mongo-secret
                   key: mongo.password
 ---
 apiVersion: v1
