@@ -50,7 +50,7 @@ class Economy: Framework(false) {
         getCurrencyCache().enable()
         getWalletCache().enable()
 
-        registerVault()
+//        registerVault()
     }
 
     override fun disable() {
@@ -78,13 +78,17 @@ class Economy: Framework(false) {
     }
 
     fun registerVault() {
-        if (!server.pluginManager.isPluginEnabled("Vault")) {
+        if (!isVaultEnabled()) {
             getLogging().warn("Vault not found, using standard EconomyAPI!")
             return
         }
         val vault = server.pluginManager.getPlugin("Vault") ?: return
-        server.servicesManager.register(net.milkbowl.vault.economy.Economy::class.java, VaultEconomy(getEconomyAPI()), vault, ServicePriority.High)
+        server.servicesManager.register(net.milkbowl.vault.economy.Economy::class.java, VaultEconomy(this, getEconomyAPI()), vault, ServicePriority.High)
         getLogging().info("Vault found. Registered Vault Economy Service provider.")
+    }
+
+    fun isVaultEnabled(): Boolean {
+        return server.pluginManager.isPluginEnabled("Vault")
     }
 
     private fun getWalletCache(): WalletCache {

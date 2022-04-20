@@ -33,7 +33,6 @@ class EconomyCommandsTest {
     fun setup() {
         `when`(target.player).thenReturn(player)
         `when`(target.name).thenReturn("test")
-        `when`(player.uniqueId).thenReturn(UUID.randomUUID())
     }
 
     @Test

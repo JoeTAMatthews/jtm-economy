@@ -31,6 +31,7 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
         builder.append("\n&f- &c/econ deposit <player> <currency> <amount>")
         builder.append("\n&f- &c/econ withdraw <player> <currency> <amount>")
         builder.append("\n&f- &c/econ balance <player> <currency>")
+        builder.append("\n&f- &c/econ help")
         builder.append("\n&b&m                               ")
 
         player.sendMessage(UtilString.colour(builder.toString()))
@@ -143,5 +144,30 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
                 }
             }
         }
+    }
+
+    /**
+     * Shows commands for all the economy commands.
+     *
+     * @param player        the command sender.
+     */
+    @Command("econ")
+    @SubCommand("help")
+    @Usage("/econ help")
+    @Permission("econ.admin")
+    fun onEconHelp(player: Player) {
+        val builder = StringBuilder()
+
+        builder.append("&b&m                               ")
+        builder.append("\n&aGeneral Commands")
+        builder.append("\n&f- &e/currency &f- &bList of commands for currencies.")
+        builder.append("\n&f- &e/erate &f- &bList of commands for exchange rate.")
+        builder.append("\n&f- &e/exchange &f- &bExchange currencies between each other.")
+        builder.append("\n&f- &e/wallet &f- &bOpen your personal wallet.")
+        builder.append("\n&f- &e/rollback &f- &bRollback a player's wallet to a certain transaction level.")
+        builder.append("\n&f- &e/pay &f- Pay other player's.")
+        builder.append("\n&b&m                               ")
+
+        player.sendMessage(UtilString.colour(builder.toString()))
     }
 }

@@ -129,7 +129,7 @@ interface EconomyAPI {
      * @param amount        the currency amount
      * @return              if successful return true, if unsuccessful return false
      */
-    fun exchangeAmount(player: OfflinePlayer, from: UUID, to: UUID, amount: Double): Boolean
+    fun exchangeAmountOffline(player: OfflinePlayer, from: UUID, to: UUID, amount: Double): Boolean
 
     /**
      * Return the wallet from a target player

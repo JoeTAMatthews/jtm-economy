@@ -90,13 +90,13 @@ class EconomyAPIImpl @Inject constructor(private val framework: Framework, priva
         return true
     }
 
-    override fun exchangeAmount(player: OfflinePlayer, from: UUID, to: UUID, amount: Double): Boolean {
+    override fun exchangeAmountOffline(player: OfflinePlayer, from: UUID, to: UUID, amount: Double): Boolean {
         val currencyFrom = currencyCache.getById(from) ?: return false
         val currencyTo = currencyCache.getById(to) ?: return false
         val rate = exchangeRateCache.getBySymbol("${currencyFrom.abbreviation}${currencyTo.abbreviation}") ?: return false
         val wallet = walletService.get(player.uniqueId.toString()) ?: return false
 
-        if (!walletCache.hasBalance(player, from, amount))  return false
+        if (!walletCache.hasBalanceOffline(player, from, amount)) return false
 
         val converted = amount * (rate.rate)
         val added = wallet.addBalance(to, converted) ?: return false

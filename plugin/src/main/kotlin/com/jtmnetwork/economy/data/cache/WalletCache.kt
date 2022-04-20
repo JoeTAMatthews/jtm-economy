@@ -50,14 +50,14 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
     }
 
     /**
-     * Check the balance of a offline player against an amount, ensuring that the player has the sufficient funds.
+     * Check the balance of an offline player against an amount, ensuring that the player has the sufficient funds.
      *
      * @param player        the target offline player
      * @param currency      the currency to be used.
      * @param amount        the currency amount.
      * @return              if the player has sufficient amount return true, if they don't return false
      */
-    fun hasBalance(player: OfflinePlayer, currency: UUID, amount: Double): Boolean {
+    fun hasBalanceOffline(player: OfflinePlayer, currency: UUID, amount: Double): Boolean {
         val wallet = service.get(player.uniqueId.toString()) ?: return false
         val balance = wallet.balances[currency] ?: return false
         return balance >= amount

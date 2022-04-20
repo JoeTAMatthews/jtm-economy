@@ -17,6 +17,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.*
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyDouble
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
@@ -40,8 +41,8 @@ class EconomyAPIImplTest {
     private val player: Player = mock()
     private val offlinePlayer: OfflinePlayer = mock()
     private val wallet = Wallet(UUID.randomUUID().toString(), "test")
-    private val depositTrans = Transaction(type = TransactionType.IN, sender = UUID.randomUUID(), receiver = UUID.randomUUID(), currency = UUID.randomUUID(), amount = 2.0, balance = 5.0)
-    private val withdrawTrans = Transaction(type = TransactionType.OUT, sender = UUID.randomUUID(), receiver = UUID.randomUUID(), currency = UUID.randomUUID(), amount = 4.0, balance = 6.0)
+    private val depositTrans = Transaction(type = TransactionType.IN, sender = UUID.randomUUID(), receiver = UUID.randomUUID(), currency = UUID.randomUUID(), amount = 2.0, previous_balance = 3.0, new_balance = 5.0)
+    private val withdrawTrans = Transaction(type = TransactionType.OUT, sender = UUID.randomUUID(), receiver = UUID.randomUUID(), currency = UUID.randomUUID(), amount = 4.0, previous_balance = 2.0, new_balance = 6.0)
     private val currency = Currency(name = "test", abbreviation = "tes", symbol = "£")
     private val rate = ExchangeRate(currency_from = UUID.randomUUID(), currency_to = UUID.randomUUID(), symbol = "TestDS", rate = 2.4)
     private val mockWallet: Wallet = mock()
@@ -321,11 +322,11 @@ class EconomyAPIImplTest {
 
     @Test
     fun getTransactionsWithCurrencyPlayer() {
-        `when`(transactionService.getByReceiverAndCurrency(anyOrNull(), anyOrNull())).thenReturn(listOf(withdrawTrans))
+        `when`(transactionService.getByCurrency(anyOrNull(), anyOrNull())).thenReturn(listOf(withdrawTrans))
 
         val returned = economyAPI.getTransactions(player, UUID.randomUUID())
 
-        verify(transactionService, times(1)).getByReceiverAndCurrency(anyOrNull(), anyOrNull())
+        verify(transactionService, times(1)).getByCurrency(anyOrNull(), anyOrNull())
         verifyNoMoreInteractions(transactionService)
 
         assertEquals(1, returned.size)
@@ -333,11 +334,11 @@ class EconomyAPIImplTest {
 
     @Test
     fun getTransactionsWithCurrencyOfflinePlayer() {
-        `when`(transactionService.getByReceiverAndCurrency(anyOrNull(), anyOrNull())).thenReturn(listOf(withdrawTrans))
+        `when`(transactionService.getByCurrency(anyOrNull(), anyOrNull())).thenReturn(listOf(withdrawTrans))
 
         val returned = economyAPI.getTransactions(offlinePlayer, UUID.randomUUID())
 
-        verify(transactionService, times(1)).getByReceiverAndCurrency(anyOrNull(), anyOrNull())
+        verify(transactionService, times(1)).getByCurrency(anyOrNull(), anyOrNull())
         verifyNoMoreInteractions(transactionService)
 
         assertEquals(1, returned.size)
@@ -375,6 +376,7 @@ class EconomyAPIImplTest {
         `when`(exchangeRateCache.getBySymbol(anyString())).thenReturn(rate)
         `when`(walletCache.getById(anyOrNull())).thenReturn(mockWallet)
         `when`(walletCache.update(anyOrNull(), anyOrNull())).thenReturn(mockWallet)
+        `when`(walletCache.hasBalance(anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(true)
 
         val returned = economyAPI.exchangeAmount(player, UUID.randomUUID(), UUID.randomUUID(), 2.4)
 
@@ -386,6 +388,8 @@ class EconomyAPIImplTest {
 
         verify(walletCache, times(1)).service
         verify(walletCache, times(1)).getById(anyOrNull())
+        verify(walletCache, times(1)).hasBalance(anyOrNull(), anyOrNull(), anyOrNull())
+        verify(walletCache, times(1)).hasBalance(anyOrNull(), anyOrNull(), anyOrNull())
         verify(walletCache, times(1)).update(anyOrNull(), anyOrNull())
         verifyNoMoreInteractions(walletCache)
 
@@ -402,11 +406,12 @@ class EconomyAPIImplTest {
     fun exchangeAmountOfflinePlayer() {
         `when`(mockWallet.addBalance(anyOrNull(), anyDouble())).thenReturn(mockWallet)
         `when`(mockWallet.removeBalance(anyOrNull(), anyDouble())).thenReturn(mockWallet)
+        `when`(walletCache.hasBalanceOffline(anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(true)
         `when`(currencyCache.getById(anyOrNull())).thenReturn(currency)
         `when`(exchangeRateCache.getBySymbol(anyString())).thenReturn(rate)
         `when`(walletService.get(anyOrNull())).thenReturn(mockWallet)
 
-        val returned = economyAPI.exchangeAmount(offlinePlayer, UUID.randomUUID(), UUID.randomUUID(), 2.5)
+        val returned = economyAPI.exchangeAmountOffline(offlinePlayer, UUID.randomUUID(), UUID.randomUUID(), 2.5)
 
         verify(currencyCache, times(2)).getById(anyOrNull())
         verifyNoMoreInteractions(currencyCache)
@@ -415,6 +420,7 @@ class EconomyAPIImplTest {
         verifyNoMoreInteractions(exchangeRateCache)
 
         verify(walletCache, times(1)).service
+        verify(walletCache, times(1)).hasBalanceOffline(anyOrNull(), anyOrNull(), anyOrNull())
         verifyNoMoreInteractions(walletCache)
 
         verify(walletService, times(1)).get(anyOrNull())
