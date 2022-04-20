@@ -29,6 +29,11 @@ class WalletService @Autowired constructor(private val walletRepository: WalletR
             .switchIfEmpty(Mono.defer { Mono.error(WalletNotFound()) })
     }
 
+    fun getWalletByName(name: String): Mono<Wallet> {
+        return walletRepository.findByName(name)
+            .switchIfEmpty(Mono.defer { Mono.error(WalletNotFound()) })
+    }
+
     fun getWallets(): Flux<Wallet> {
         return walletRepository.findAll()
     }

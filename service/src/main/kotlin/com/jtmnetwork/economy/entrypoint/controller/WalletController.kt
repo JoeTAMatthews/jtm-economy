@@ -26,6 +26,11 @@ class WalletController @Autowired constructor(private val walletService: WalletS
         return walletService.getWallet(id)
     }
 
+    @GetMapping("/name/{name}")
+    fun getWalletByName(@PathVariable name: String): Mono<Wallet> {
+        return walletService.getWalletByName(name)
+    }
+
     @GetMapping("/all")
     fun getWallets(): Flux<Wallet> {
         return walletService.getWallets()
