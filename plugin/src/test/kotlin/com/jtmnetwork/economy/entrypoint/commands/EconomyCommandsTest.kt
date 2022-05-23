@@ -3,6 +3,7 @@ package com.jtmnetwork.economy.entrypoint.commands
 import com.jtm.framework.Framework
 import com.jtm.framework.presenter.locale.LocaleMessenger
 import com.jtmnetwork.economy.core.domain.entity.Currency
+import com.jtmnetwork.economy.core.domain.entity.Transaction
 import com.jtmnetwork.economy.entrypoint.api.EconomyAPI
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
@@ -29,6 +30,8 @@ class EconomyCommandsTest {
     private val target: OfflinePlayer = mock()
     private val currency = Currency(name = "test", abbreviation = "abb", symbol = "£")
 
+    private val mockTrans: Transaction = mock()
+
     @Before
     fun setup() {
         `when`(target.player).thenReturn(player)
@@ -46,7 +49,7 @@ class EconomyCommandsTest {
     @Test
     fun onEconDepositOnline() {
         `when`(target.isOnline).thenReturn(true)
-        `when`(economyAPI.deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(true)
+        `when`(economyAPI.deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(mockTrans)
 
         economyCommands.onEconDeposit(player, target, currency, 5.0)
 
@@ -65,7 +68,7 @@ class EconomyCommandsTest {
     @Test
     fun onEconDepositOnline_thenDepositFailed() {
         `when`(target.isOnline).thenReturn(true)
-        `when`(economyAPI.deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(false)
+        `when`(economyAPI.deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(null)
 
         economyCommands.onEconDeposit(player, target, currency, 5.0)
 
@@ -93,7 +96,7 @@ class EconomyCommandsTest {
     @Test
     fun onEconWithdrawOnline() {
         `when`(target.isOnline).thenReturn(true)
-        `when`(economyAPI.withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(true)
+        `when`(economyAPI.withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(mockTrans)
 
         economyCommands.onEconWithdraw(player, target, currency, 5.0)
 
@@ -112,7 +115,7 @@ class EconomyCommandsTest {
     @Test
     fun onEconWithdrawOnline_thenDepositFailed() {
         `when`(target.isOnline).thenReturn(true)
-        `when`(economyAPI.withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(false)
+        `when`(economyAPI.withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(null)
 
         economyCommands.onEconWithdraw(player, target, currency, 5.0)
 

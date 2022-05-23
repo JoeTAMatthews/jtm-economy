@@ -3,7 +3,6 @@ package com.jtmnetwork.economy.entrypoint.api
 import com.google.inject.Inject
 import com.jtm.framework.Framework
 import com.jtm.framework.core.util.UtilString
-import com.jtmnetwork.economy.core.domain.constants.TransactionType
 import com.jtmnetwork.economy.core.domain.entity.Currency
 import com.jtmnetwork.economy.core.domain.entity.Transaction
 import com.jtmnetwork.economy.core.domain.entity.Wallet
@@ -15,36 +14,36 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.util.*
 
-class EconomyAPIImpl @Inject constructor(private val framework: Framework, private val transactionService: TransactionService, private val walletCache: WalletCache, private val currencyCache: CurrencyCache, private val exchangeRateCache: ExchangeRateCache): EconomyAPI {
+class DefaultEconomyAPI @Inject constructor(private val framework: Framework, private val transactionService: TransactionService, private val walletCache: WalletCache, private val currencyCache: CurrencyCache, private val exchangeRateCache: ExchangeRateCache): EconomyAPI {
 
     private val walletService = walletCache.service
 
-    override fun deposit(player: Player, currency: UUID, from: UUID?, amount: Double): Boolean {
-        val wallet = walletCache.getById(player.uniqueId.toString()) ?: return false
-        val transaction = walletCache.deposit(from, wallet, currency, amount) ?: return false
+    override fun deposit(player: Player, currency: UUID, from: UUID?, amount: Double): Transaction? {
+        val wallet = walletCache.getById(player.uniqueId.toString()) ?: return null
+        val transaction = walletCache.deposit(from, wallet, currency, amount) ?: return null
         framework.runTaskAsync { transactionService.insert(transaction) }
-        return true
+        return transaction
     }
 
-    override fun deposit(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Boolean {
-        val wallet = walletService.get(player.uniqueId.toString()) ?: return false
-        val transaction = walletCache.deposit(from, wallet, currency, amount) ?: return false
+    override fun deposit(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Transaction? {
+        val wallet = walletService.get(player.uniqueId.toString()) ?: return null
+        val transaction = walletCache.deposit(from, wallet, currency, amount) ?: return null
         transactionService.insert(transaction)
-        return true
+        return transaction
     }
 
-    override fun withdraw(player: Player, currency: UUID, from: UUID?, amount: Double): Boolean {
-        val wallet = walletCache.getById(player.uniqueId.toString()) ?: return false
-        val transaction = walletCache.withdraw(from, wallet, currency, amount) ?: return false
+    override fun withdraw(player: Player, currency: UUID, from: UUID?, amount: Double): Transaction? {
+        val wallet = walletCache.getById(player.uniqueId.toString()) ?: return null
+        val transaction = walletCache.withdraw(from, wallet, currency, amount) ?: return null
         framework.runTaskAsync { transactionService.insert(transaction) }
-        return true
+        return transaction
     }
 
-    override fun withdraw(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Boolean {
-        val wallet = walletService.get(player.uniqueId.toString()) ?: return false
-        val transaction = walletCache.withdraw(from, wallet, currency, amount) ?: return false
+    override fun withdraw(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Transaction? {
+        val wallet = walletService.get(player.uniqueId.toString()) ?: return null
+        val transaction = walletCache.withdraw(from, wallet, currency, amount) ?: return null
         transactionService.insert(transaction)
-        return true
+        return transaction
     }
 
     override fun balance(player: Player, currency: UUID): Double? {
@@ -114,12 +113,20 @@ class EconomyAPIImpl @Inject constructor(private val framework: Framework, priva
         return walletService.get(player.uniqueId.toString())
     }
 
+    override fun getGlobalCurrency(): Currency? {
+        return currencyCache.getGlobalCurrency()
+    }
+
     override fun getCurrency(id: UUID): Currency? {
         return currencyCache.getById(id)
     }
 
     override fun getCurrency(name: String): Currency? {
         return currencyCache.getByName(name)
+    }
+
+    override fun getCurrencies(): List<Currency> {
+        return currencyCache.getAll() ?: emptyList()
     }
 
     override fun processRollback(initiator: Player, target: Player, transactionId: Int): Boolean {

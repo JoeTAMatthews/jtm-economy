@@ -9,7 +9,9 @@ import javax.persistence.*
 data class Currency(@Id @Convert(converter = UUIDConverter::class) @Column(length = 36) val id: UUID = UUID.randomUUID(),
                     var name: String = "",
                     var abbreviation: String = "",
-                    var symbol: String = "") {
+                    var symbol: String = "",
+                    var main: Boolean = false,
+                    val created: Long = System.currentTimeMillis()) {
 
     fun info(): String {
         val builder = StringBuilder()
@@ -33,6 +35,11 @@ data class Currency(@Id @Convert(converter = UUIDConverter::class) @Column(lengt
 
     fun updateSymbol(symbol: String): Currency {
         this.symbol = symbol
+        return this
+    }
+
+    fun updateMain(): Currency {
+        this.main = !this.main
         return this
     }
 

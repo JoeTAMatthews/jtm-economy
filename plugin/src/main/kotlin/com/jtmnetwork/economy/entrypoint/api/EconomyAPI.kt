@@ -18,7 +18,7 @@ interface EconomyAPI {
      * @param amount        the amount of the currency to be deposited
      * @return              if completed return true, if failed return false
      */
-    fun deposit(player: Player, currency: UUID, from: UUID?, amount: Double): Boolean
+    fun deposit(player: Player, currency: UUID, from: UUID?, amount: Double): Transaction?
 
     /**
      * Deposit currency amount to a offline player.
@@ -29,7 +29,7 @@ interface EconomyAPI {
      * @param amount        the amount of the currency to be deposited
      * @return              if completed return true, if failed return false
      */
-    fun deposit(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Boolean
+    fun deposit(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Transaction?
 
     /**
      * Withdraw currency amount from a online player.
@@ -40,7 +40,7 @@ interface EconomyAPI {
      * @param amount        the amount of the currency to be withdrawn.
      * @return              if completed return true, if failed return false
      */
-    fun withdraw(player: Player, currency: UUID, from: UUID?, amount: Double): Boolean
+    fun withdraw(player: Player, currency: UUID, from: UUID?, amount: Double): Transaction?
 
     /**
      * Withdraw currency amount from a offline player.
@@ -51,7 +51,7 @@ interface EconomyAPI {
      * @param amount        the amount of the currency to be withdrawn.
      * @return              if completed return true, if failed return false
      */
-    fun withdraw(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Boolean
+    fun withdraw(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Transaction?
 
     /**
      * Returns the balance amount of the currency found in the online player's wallet.
@@ -148,6 +148,14 @@ interface EconomyAPI {
     fun getWallet(player: OfflinePlayer): Wallet?
 
     /**
+     * Return the global standard currency for the server.
+     *
+     * @return              the currency that has been set.
+     * @see                 Currency
+     */
+    fun getGlobalCurrency(): Currency?
+
+    /**
      * Return the currency from an identifier
      *
      * @param id            the unique identifier
@@ -162,6 +170,13 @@ interface EconomyAPI {
      * @return              the currency found.
      */
     fun getCurrency(name: String): Currency?
+
+    /**
+     * List all currencies available.
+     *
+     * @return              the list of currencies created.
+     */
+    fun getCurrencies(): List<Currency>
 
     /**
      * Start a rollback operation for the online player from previous transactions, and stopping

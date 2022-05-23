@@ -58,4 +58,8 @@ class CurrencyCache @Inject constructor(private val framework: Framework, privat
         getAll()?.forEach { if (it.name.equals(name, true)) return it }
         return null
     }
+
+    fun getGlobalCurrency(): Currency? {
+        return this.getAll()?.stream()?.filter { it.main }?.findFirst()?.get()
+    }
 }

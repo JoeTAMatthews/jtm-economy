@@ -17,7 +17,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.*
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyDouble
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
@@ -28,7 +27,7 @@ import org.mockito.kotlin.verifyNoMoreInteractions
 import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
-class EconomyAPIImplTest {
+class DefaultEconomyAPITest {
 
     private val framework: Framework = mock()
     private val transactionService: TransactionService = mock()
@@ -52,10 +51,11 @@ class EconomyAPIImplTest {
     fun setup() {
         `when`(walletCache.service).thenReturn(walletService)
 
-        economyAPI = EconomyAPIImpl(framework, transactionService, walletCache, currencyCache, exchangeRateCache)
+        economyAPI = DefaultEconomyAPI(framework, transactionService, walletCache, currencyCache, exchangeRateCache)
 
         `when`(player.uniqueId).thenReturn(UUID.randomUUID())
         `when`(offlinePlayer.uniqueId).thenReturn(UUID.randomUUID())
+        `when`(mockCurrency.main).thenReturn(true)
 
         wallet.addBalance(UUID.randomUUID())
     }
@@ -71,7 +71,7 @@ class EconomyAPIImplTest {
         verifyNoMoreInteractions(walletCache)
         verifyNoInteractions(framework)
 
-        assertFalse { returned }
+        assertNotNull(returned)
     }
 
     @Test
@@ -87,7 +87,7 @@ class EconomyAPIImplTest {
         verifyNoMoreInteractions(walletCache)
         verifyNoInteractions(framework)
 
-        assertFalse(returned)
+        assertNotNull(returned)
     }
 
     @Test
@@ -105,7 +105,7 @@ class EconomyAPIImplTest {
         verify(framework, times(1)).runTaskAsync(anyOrNull())
         verifyNoMoreInteractions(framework)
 
-        assertTrue { returned }
+        assertNotNull(returned)
     }
 
     @Test
@@ -122,7 +122,7 @@ class EconomyAPIImplTest {
 
         verifyNoInteractions(transactionService)
 
-        assertFalse(returned)
+        assertNotNull(returned)
     }
 
     @Test
@@ -141,7 +141,7 @@ class EconomyAPIImplTest {
 
         verifyNoInteractions(transactionService)
 
-        assertFalse(returned)
+        assertNotNull(returned)
     }
 
     @Test
@@ -161,7 +161,7 @@ class EconomyAPIImplTest {
         verify(transactionService, times(1)).insert(anyOrNull())
         verifyNoMoreInteractions(transactionService)
 
-        assertTrue(returned)
+        assertNotNull(returned)
     }
 
     @Test
@@ -176,7 +176,7 @@ class EconomyAPIImplTest {
 
         verifyNoInteractions(framework)
 
-        assertFalse(returned)
+        assertNotNull(returned)
     }
 
     @Test
@@ -193,7 +193,7 @@ class EconomyAPIImplTest {
 
         verifyNoInteractions(framework)
 
-        assertFalse(returned)
+        assertNotNull(returned)
     }
 
     @Test
@@ -211,7 +211,7 @@ class EconomyAPIImplTest {
         verify(framework, times(1)).runTaskAsync(anyOrNull())
         verifyNoMoreInteractions(framework)
 
-        assertTrue(returned)
+        assertNotNull(returned)
     }
 
     @Test
@@ -227,7 +227,7 @@ class EconomyAPIImplTest {
         verifyNoMoreInteractions(walletCache)
         verifyNoInteractions(transactionService)
 
-        assertFalse(returned)
+        assertNotNull(returned)
     }
 
     @Test
@@ -245,7 +245,7 @@ class EconomyAPIImplTest {
         verifyNoMoreInteractions(walletCache)
         verifyNoInteractions(transactionService)
 
-        assertFalse(returned)
+        assertNotNull(returned)
     }
 
     @Test
@@ -265,7 +265,7 @@ class EconomyAPIImplTest {
         verify(transactionService, times(1)).insert(anyOrNull())
         verifyNoMoreInteractions(transactionService)
 
-        assertTrue(returned)
+        assertNotNull(returned)
     }
 
     @Test
@@ -482,5 +482,21 @@ class EconomyAPIImplTest {
         verifyNoMoreInteractions(currencyCache)
 
         assertNotNull(returned)
+    }
+
+    @Test
+    fun getGlobalCurrency() {
+        `when`(currencyCache.getGlobalCurrency()).thenReturn(mockCurrency)
+
+        val returned = economyAPI.getGlobalCurrency()
+
+        verify(currencyCache, times(1)).getGlobalCurrency()
+        verifyNoMoreInteractions(currencyCache)
+
+        assertNotNull(returned)
+
+        if (returned != null) {
+            assertTrue(returned.main)
+        }
     }
 }
