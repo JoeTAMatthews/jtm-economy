@@ -23,7 +23,7 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
      * @param player        the command sender.
      */
     @Command("econ")
-    @Permission("econ.admin")
+    @Permission(["econ.admin"])
     fun onEcon(player: Player) {
         val builder = StringBuilder()
         builder.append("&b&m                               ")
@@ -48,7 +48,7 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
     @Command("econ")
     @SubCommand("deposit")
     @Usage("/econ deposit <player> <currency> <amount>")
-    @Permission("econ.admin")
+    @Permission(["econ.admin"])
     fun onEconDeposit(player: Player, target: OfflinePlayer, currency: Currency, amount: Double) {
         when (target.isOnline) {
             true -> {
@@ -58,7 +58,8 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
                     return
                 }
 
-                if (economyAPI.deposit(targetPlayer, currency.id, null, amount) != null) {
+                val optTrans = economyAPI.deposit(targetPlayer, currency.id, null, amount)
+                if (optTrans.isPresent) {
                     localeMessenger.sendMessage(player, "economy.deposited.sender_success", currency.getAbbreviationAmount(amount), target.name)
                     localeMessenger.sendMessage(targetPlayer, "economy.deposited.target_success", currency.getAbbreviationAmount(amount))
                 } else localeMessenger.sendMessage(player, "economy.deposited.sender_failed")
@@ -66,7 +67,9 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
 
             false -> {
                 framework.runTaskAsync {
-                    if (economyAPI.deposit(target, currency.id, null, amount) != null)
+                    val optTrans = economyAPI.deposit(target, currency.id, null, amount)
+
+                    if (optTrans.isPresent)
                         localeMessenger.sendMessage(player, "economy.deposited.sender_success", currency.getAbbreviationAmount(amount), target.name)
                     else
                         localeMessenger.sendMessage(player, "economy.deposited.sender_failed")
@@ -86,7 +89,7 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
     @Command("econ")
     @SubCommand("withdraw")
     @Usage("/econ withdraw <player> <currency> <amount>")
-    @Permission("econ.admin")
+    @Permission(["econ.admin"])
     fun onEconWithdraw(player: Player, target: OfflinePlayer, currency: Currency, amount: Double) {
         when(target.isOnline) {
             true -> {
@@ -96,7 +99,8 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
                     return
                 }
 
-                if (economyAPI.withdraw(targetPlayer, currency.id, null, amount) != null) {
+                val optTrans = economyAPI.withdraw(targetPlayer, currency.id, null, amount)
+                if (optTrans.isPresent) {
                     localeMessenger.sendMessage(player, "economy.withdraw.sender_success", currency.getAbbreviationAmount(amount), target.name)
                     localeMessenger.sendMessage(targetPlayer, "economy.withdraw.target_success", currency.getAbbreviationAmount(amount))
                 } else localeMessenger.sendMessage(player, "economy.withdraw.sender_failed")
@@ -104,7 +108,8 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
 
             false -> {
                 framework.runTaskAsync {
-                    if (economyAPI.withdraw(target, currency.id, null, amount) != null)
+                    val optTrans = economyAPI.withdraw(target, currency.id, null, amount)
+                    if (optTrans.isPresent)
                         localeMessenger.sendMessage(player, "economy.withdraw.sender_success", currency.getAbbreviationAmount(amount), target.name)
                     else
                         localeMessenger.sendMessage(player, "economy.withdraw.sender_failed")
@@ -123,7 +128,7 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
     @Command("econ")
     @SubCommand("balance")
     @Usage("/econ balance <player> <currency>")
-    @Permission("econ.admin")
+    @Permission(["econ.admin"])
     fun onEconBalance(player: Player, target: OfflinePlayer, currency: Currency) {
         when(target.isOnline) {
             true -> {
@@ -133,14 +138,15 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
                     return
                 }
 
-                val balance = economyAPI.balance(targetPlayer, currency.id) ?: 0.0
-                localeMessenger.sendMessage(player, "economy.balance", target.name, currency.getAbbreviationAmount(balance))
+                val balance = economyAPI.balance(targetPlayer, currency.id)
+                balance.ifPresent { bal -> localeMessenger.sendMessage(player, "economy.balance", target.name, currency.getAbbreviationAmount(bal)) }
             }
 
             false -> {
                 framework.runTaskAsync {
-                    val balance = economyAPI.balance(target, currency.id) ?: 0.0
-                    localeMessenger.sendMessage(player, "economy.balance", target.name, currency.getAbbreviationAmount(balance))
+                    val balance = economyAPI.balance(target, currency.id)
+                    balance.ifPresent { bal -> localeMessenger.sendMessage(player, "economy.balance", target.name, currency.getAbbreviationAmount(bal)) }
+
                 }
             }
         }
@@ -154,7 +160,7 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
     @Command("econ")
     @SubCommand("help")
     @Usage("/econ help")
-    @Permission("econ.admin")
+    @Permission(["econ.admin"])
     fun onEconHelp(player: Player) {
         val builder = StringBuilder()
 

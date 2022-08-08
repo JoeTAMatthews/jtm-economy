@@ -1,15 +1,15 @@
 package com.jtmnetwork.economy.entrypoint.vault
 
-import com.jtmnetwork.economy.Economy
+import com.jtmnetwork.economy.JtmEconomy
 import com.jtmnetwork.economy.entrypoint.api.EconomyAPI
 import net.milkbowl.vault.economy.AbstractEconomy
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.Bukkit
 
-class VaultEconomy(private val economy: Economy, private val economyAPI: EconomyAPI): AbstractEconomy() {
+open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyAPI: EconomyAPI): AbstractEconomy() {
 
     override fun isEnabled(): Boolean {
-        return economy.isVaultEnabled()
+        return jtmEconomy.isVaultEnabled()
     }
 
     override fun getName(): String {
@@ -25,78 +25,145 @@ class VaultEconomy(private val economy: Economy, private val economyAPI: Economy
     }
 
     override fun format(amount: Double): String {
-        return ""
+        val opt = economyAPI.getGlobalCurrency()
+        if (opt.isEmpty) return ""
+        val currency = opt.get()
+        return currency.getSymbolAmount(amount)
     }
 
     override fun currencyNamePlural(): String {
-        val global = economyAPI.getGlobalCurrency() ?: return ""
-        return global.abbreviation
+        val opt = economyAPI.getGlobalCurrency()
+        if (opt.isEmpty) return ""
+        val currency = opt.get()
+        return currency.abbreviation
     }
 
     override fun currencyNameSingular(): String {
-        val global = economyAPI.getGlobalCurrency() ?: return ""
-        return global.abbreviation
+        val opt = economyAPI.getGlobalCurrency()
+        if (opt.isEmpty) return ""
+        val currency = opt.get()
+        return currency.abbreviation
     }
 
     override fun hasAccount(playerName: String): Boolean {
         val player = Bukkit.getPlayer(playerName) ?: return false
-        economyAPI.getWallet(player) ?: return false
+        val opt = economyAPI.getWallet(player)
+        if (opt.isEmpty) return false
         return true
     }
 
     override fun hasAccount(playerName: String, worldName: String?): Boolean {
         val player = Bukkit.getPlayer(playerName) ?: return false
-        economyAPI.getWallet(player) ?: return false
+        val opt = economyAPI.getWallet(player)
+        if (opt.isEmpty) return false
         return true
     }
 
     override fun getBalance(playerName: String): Double {
         val player = Bukkit.getPlayer(playerName) ?: return 0.0
-        val wallet = economyAPI.getWallet(player) ?: return 0.0
-        val currency = economyAPI.getGlobalCurrency() ?: return 0.0
+        val opt = economyAPI.getWallet(player)
+        if (opt.isEmpty) return 0.0
+        val wallet = opt.get()
+
+        val optCurrency = economyAPI.getGlobalCurrency()
+        if (optCurrency.isEmpty) return 0.0
+        val currency = optCurrency.get()
+
         return wallet.getBalance(currency.id)
     }
 
     override fun getBalance(playerName: String, world: String?): Double {
         val player = Bukkit.getPlayer(playerName) ?: return 0.0
-        val wallet = economyAPI.getWallet(player) ?: return 0.0
-        val currency = economyAPI.getGlobalCurrency() ?: return 0.0
+        val opt = economyAPI.getWallet(player)
+        if (opt.isEmpty) return 0.0
+        val wallet = opt.get()
+
+        val optCurrency = economyAPI.getGlobalCurrency()
+        if (optCurrency.isEmpty) return 0.0
+        val currency = optCurrency.get()
+
         return wallet.getBalance(currency.id)
     }
 
-    override fun has(playerName: String?, amount: Double): Boolean {
-        return false
+    override fun has(playerName: String, amount: Double): Boolean {
+        val player = Bukkit.getPlayer(playerName) ?: return false
+
+        val optCurrency = economyAPI.getGlobalCurrency()
+        if (optCurrency.isEmpty) return false
+        val currency = optCurrency.get()
+
+        val balance = economyAPI.balance(player, currency.id)
+        if (balance.isEmpty) return false
+        val bal = balance.get()
+
+        return amount <= bal
     }
 
-    override fun has(playerName: String?, worldName: String?, amount: Double): Boolean {
-        return false
+    override fun has(playerName: String, worldName: String?, amount: Double): Boolean {
+        val player = Bukkit.getPlayer(playerName) ?: return false
+        val optCurrency = economyAPI.getGlobalCurrency()
+        if (optCurrency.isEmpty) return false
+        val currency = optCurrency.get()
+
+        val balance = economyAPI.balance(player, currency.id)
+        if (balance.isEmpty) return false
+        val bal = balance.get()
+        return amount <= bal
     }
 
     override fun withdrawPlayer(playerName: String, amount: Double): EconomyResponse {
         val player = Bukkit.getPlayer(playerName) ?: return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find player.")
-        val currency = economyAPI.getGlobalCurrency() ?: return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find global currency.")
-        val trans = economyAPI.withdraw(player, currency.id, null, amount) ?: return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Failed to withdraw.")
+
+        val opt = economyAPI.getGlobalCurrency()
+        if (opt.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find global currency.")
+        val currency = opt.get()
+
+        val optTrans = economyAPI.withdraw(player, currency.id, null, amount)
+        if (optTrans.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Insufficient funds.")
+        val trans = optTrans.get()
+
         return EconomyResponse(amount, trans.new_balance, EconomyResponse.ResponseType.SUCCESS, "")
     }
 
     override fun withdrawPlayer(playerName: String, worldName: String?, amount: Double): EconomyResponse {
         val player = Bukkit.getPlayer(playerName) ?: return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find player.")
-        val currency = economyAPI.getGlobalCurrency() ?: return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find global currency.")
-        val trans = economyAPI.withdraw(player, currency.id, null, amount) ?: return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Failed to withdraw.")
+
+        val opt = economyAPI.getGlobalCurrency()
+        if (opt.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find global currency.")
+        val currency = opt.get()
+
+        val optTrans = economyAPI.withdraw(player, currency.id, null, amount)
+        if (optTrans.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Failed to withdraw.")
+        val trans = optTrans.get()
+
         return EconomyResponse(amount, trans.new_balance, EconomyResponse.ResponseType.SUCCESS, "")
     }
 
     override fun depositPlayer(playerName: String, amount: Double): EconomyResponse {
         val player = Bukkit.getPlayer(playerName) ?: return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find player.")
-        val currency = economyAPI.getGlobalCurrency() ?: return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find global currency.")
-        val trans = economyAPI.deposit(player, currency.id, null, amount) ?: return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Failed to deposit.")
+
+        val opt = economyAPI.getGlobalCurrency()
+        if (opt.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find global currency.")
+        val currency = opt.get()
+
+        val optTrans = economyAPI.deposit(player, currency.id, null, amount)
+        if (optTrans.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Failed to withdraw.")
+        val trans = optTrans.get()
+
         return EconomyResponse(amount, trans.new_balance, EconomyResponse.ResponseType.SUCCESS, "")
     }
 
     override fun depositPlayer(playerName: String, worldName: String?, amount: Double): EconomyResponse {
         val player = Bukkit.getPlayer(playerName) ?: return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find player.")
-        val currency = economyAPI.getGlobalCurrency() ?: return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find global currency.")
-        val trans = economyAPI.deposit(player, currency.id, null, amount) ?: return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Failed to withdraw.")
+
+        val opt = economyAPI.getGlobalCurrency()
+        if (opt.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find global currency.")
+        val currency = opt.get()
+
+        val optTrans = economyAPI.deposit(player, currency.id, null, amount)
+        if (optTrans.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Failed to withdraw.")
+        val trans = optTrans.get()
+
         return EconomyResponse(amount, trans.new_balance, EconomyResponse.ResponseType.SUCCESS, "")
     }
 
@@ -139,10 +206,10 @@ class VaultEconomy(private val economy: Economy, private val economyAPI: Economy
     }
 
     override fun createPlayerAccount(playerName: String?): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     override fun createPlayerAccount(playerName: String?, worldName: String?): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 }

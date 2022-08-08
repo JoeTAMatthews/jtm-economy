@@ -21,22 +21,24 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
 
     fun enable() {
         Bukkit.getServer().onlinePlayers.forEach {
-            val wallet = service.get(it.uniqueId.toString()) ?: return
-            insert(it.uniqueId.toString(), wallet)
+            val opt = service.get(it.uniqueId.toString())
+            opt.ifPresent { wallet -> insert(it.uniqueId.toString(), wallet) }
         }
     }
 
     fun disable() {
         logging.info("Saving wallets:")
-        getAll()?.forEach {
-            val wallet = service.update(it) ?: return
-            remove(wallet.id)
-            logging.info("- ${wallet.id}")
+        getAll().forEach {
+            val opt = service.update(it)
+            opt.ifPresent { wallet ->
+                remove(wallet.id)
+                logging.info("- ${wallet.id}")
+            }
         }
     }
 
     /**
-     * Check the balance of a online player against an amount, ensuring that the player has the sufficient funds.
+     * Check the balance of an online player against an amount, ensuring that the player has the sufficient funds.
      *
      * @param player        the target online player
      * @param currency      the currency to be used.
@@ -44,7 +46,9 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
      * @return              if the player has sufficient amount return true, if they don't return false
      */
     fun hasBalance(player: Player, currency: UUID, amount: Double): Boolean {
-        val wallet = getById(player.uniqueId.toString()) ?: return false
+        val opt = getById(player.uniqueId.toString())
+        if (opt.isEmpty) return false
+        val wallet = opt.get()
         val balance = wallet.balances[currency] ?: return false
         return balance >= amount
     }
@@ -58,7 +62,9 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
      * @return              if the player has sufficient amount return true, if they don't return false
      */
     fun hasBalanceOffline(player: OfflinePlayer, currency: UUID, amount: Double): Boolean {
-        val wallet = service.get(player.uniqueId.toString()) ?: return false
+        val opt = service.get(player.uniqueId.toString())
+        if (opt.isEmpty) return false
+        val wallet = opt.get()
         val balance = wallet.balances[currency] ?: return false
         return balance >= amount
     }

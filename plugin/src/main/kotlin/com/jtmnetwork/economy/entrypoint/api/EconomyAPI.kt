@@ -18,7 +18,7 @@ interface EconomyAPI {
      * @param amount        the amount of the currency to be deposited
      * @return              if completed return true, if failed return false
      */
-    fun deposit(player: Player, currency: UUID, from: UUID?, amount: Double): Transaction?
+    fun deposit(player: Player, currency: UUID, from: UUID?, amount: Double): Optional<Transaction>
 
     /**
      * Deposit currency amount to a offline player.
@@ -29,7 +29,7 @@ interface EconomyAPI {
      * @param amount        the amount of the currency to be deposited
      * @return              if completed return true, if failed return false
      */
-    fun deposit(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Transaction?
+    fun deposit(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Optional<Transaction>
 
     /**
      * Withdraw currency amount from a online player.
@@ -40,7 +40,7 @@ interface EconomyAPI {
      * @param amount        the amount of the currency to be withdrawn.
      * @return              if completed return true, if failed return false
      */
-    fun withdraw(player: Player, currency: UUID, from: UUID?, amount: Double): Transaction?
+    fun withdraw(player: Player, currency: UUID, from: UUID?, amount: Double): Optional<Transaction>
 
     /**
      * Withdraw currency amount from a offline player.
@@ -51,7 +51,7 @@ interface EconomyAPI {
      * @param amount        the amount of the currency to be withdrawn.
      * @return              if completed return true, if failed return false
      */
-    fun withdraw(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Transaction?
+    fun withdraw(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Optional<Transaction>
 
     /**
      * Returns the balance amount of the currency found in the online player's wallet.
@@ -60,7 +60,7 @@ interface EconomyAPI {
      * @param currency      the currency unique identifier
      * @return              the balance found in the wallet
      */
-    fun balance(player: Player, currency: UUID): Double?
+    fun balance(player: Player, currency: UUID): Optional<Double>
 
     /**
      * Returns the balance amount of the currency found in the offline player's wallet.
@@ -69,7 +69,7 @@ interface EconomyAPI {
      * @param currency      the currency unique identifier
      * @return              the balance found in the wallet
      */
-    fun balance(player: OfflinePlayer, currency: UUID): Double?
+    fun balance(player: OfflinePlayer, currency: UUID): Optional<Double>
 
     /**
      * Returns the transactions the online player has been involved in under a currency.
@@ -137,7 +137,7 @@ interface EconomyAPI {
      * @param player        the target player
      * @return              the wallet of the targeted player.
      */
-    fun getWallet(player: Player): Wallet?
+    fun getWallet(player: Player): Optional<Wallet>
 
     /**
      * Return the wallet from a target player
@@ -145,7 +145,7 @@ interface EconomyAPI {
      * @param player        the target player
      * @return              the wallet of the targeted player.
      */
-    fun getWallet(player: OfflinePlayer): Wallet?
+    fun getWallet(player: OfflinePlayer): Optional<Wallet>
 
     /**
      * Return the global standard currency for the server.
@@ -153,7 +153,7 @@ interface EconomyAPI {
      * @return              the currency that has been set.
      * @see                 Currency
      */
-    fun getGlobalCurrency(): Currency?
+    fun getGlobalCurrency(): Optional<Currency>
 
     /**
      * Return the currency from an identifier
@@ -161,7 +161,7 @@ interface EconomyAPI {
      * @param id            the unique identifier
      * @return              the currency found.
      */
-    fun getCurrency(id: UUID): Currency?
+    fun getCurrency(id: UUID): Optional<Currency>
 
     /**
      * Return the currency from a name
@@ -169,7 +169,7 @@ interface EconomyAPI {
      * @param name          the name of the currency
      * @return              the currency found.
      */
-    fun getCurrency(name: String): Currency?
+    fun getCurrency(name: String): Optional<Currency>
 
     /**
      * List all currencies available.

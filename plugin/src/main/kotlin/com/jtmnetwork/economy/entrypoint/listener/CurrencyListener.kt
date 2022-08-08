@@ -21,7 +21,7 @@ class CurrencyListener @Inject constructor(private val cache: WalletCache): List
     @EventHandler
     fun onCurrencyAdd(event: CurrencyAddEvent) {
         val currency = event.currency
-        cache.getAll()?.forEach {
+        cache.getAll().forEach {
             if (!it.hasBalance(currency.id)) {
                 val curr = it.addBalance(currency.id)
                 cache.update(it.id, curr)
@@ -38,7 +38,7 @@ class CurrencyListener @Inject constructor(private val cache: WalletCache): List
     @EventHandler
     fun onCurrencyRemove(event: CurrencyRemoveEvent) {
         val currency = event.currency
-        cache.getAll()?.forEach {
+        cache.getAll().forEach {
             if (it.hasBalance(currency.id)) {
                 val curr = it.removeBalance(currency.id)
                 cache.update(it.id, curr)

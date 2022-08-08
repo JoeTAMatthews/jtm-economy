@@ -1,11 +1,8 @@
 package com.jtmnetwork.economy.core.domain.entity
 
-import com.jtmnetwork.economy.core.domain.model.Balance
 import org.springframework.data.annotation.Id
-import org.springframework.data.annotation.Transient
 import org.springframework.data.mongodb.core.mapping.Document
 import java.util.*
-import kotlin.collections.HashMap
 
 @Document("wallets")
 data class Wallet(@Id val id: String,

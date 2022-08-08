@@ -22,9 +22,9 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
      */
     fun getByReceiver(id: UUID): List<Transaction> {
         return getAll()
-                ?.stream()
-                ?.filter { it.receiver == id && it.type == TransactionType.IN }
-                ?.collect(Collectors.toList()) ?: listOf()
+                .stream()
+                .filter { it.receiver == id && it.type == TransactionType.IN }
+                .collect(Collectors.toList()) ?: listOf()
     }
 
     /**
@@ -35,9 +35,9 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
      */
     fun getBySender(id: UUID): List<Transaction> {
         return getAll()
-                ?.stream()
-                ?.filter { it.sender == id && it.type == TransactionType.OUT }
-                ?.collect(Collectors.toList()) ?: listOf()
+                .stream()
+                .filter { it.sender == id && it.type == TransactionType.OUT }
+                .collect(Collectors.toList()) ?: listOf()
     }
 
     /**
@@ -48,9 +48,9 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
      */
     fun getByReceiverAndSender(id: UUID): List<Transaction> {
         return getAll()
-                ?.stream()
-                ?.filter { it.receiver == id && it.type == TransactionType.IN || it.sender == id && it.type == TransactionType.OUT }
-                ?.collect(Collectors.toList()) ?: listOf()
+                .stream()
+                .filter { it.receiver == id && it.type == TransactionType.IN || it.sender == id && it.type == TransactionType.OUT }
+                .collect(Collectors.toList()) ?: listOf()
     }
 
     /**
@@ -62,9 +62,9 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
      */
     fun getByCurrency(id: UUID, currency: UUID): List<Transaction> {
         return getAll()
-                ?.stream()
-                ?.filter { (it.receiver == id && it.type == TransactionType.IN || it.sender == id && it.type == TransactionType.OUT) && it.currency == currency }
-                ?.collect(Collectors.toList()) ?: listOf()
+                .stream()
+                .filter { (it.receiver == id && it.type == TransactionType.IN || it.sender == id && it.type == TransactionType.OUT) && it.currency == currency }
+                .collect(Collectors.toList()) ?: listOf()
     }
 
     /**

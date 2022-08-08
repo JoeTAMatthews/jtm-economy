@@ -21,10 +21,12 @@ class WalletListener @Inject constructor(private val cache: WalletCache, private
     @EventHandler
     fun onLoad(event: WalletLoadEvent) {
         val wallet = event.wallet
-        val saved = cache.insert(wallet.id, wallet) ?: return
-        currencyCache.getAll()?.forEach { if (!wallet.hasBalance(it.id)) wallet.addBalance(it.id) }
-        wallet.balances.keys.forEach { if (!currencyCache.exists(it)) wallet.removeBalance(it) }
-        logger.info("Successfully loaded wallet: ${saved.id}")
+        val saved = cache.insert(wallet.id, wallet)
+        saved.ifPresent { updated ->
+            currencyCache.getAll().forEach { if (!wallet.hasBalance(it.id)) wallet.addBalance(it.id) }
+            wallet.balances.keys.forEach { if (!currencyCache.exists(it)) wallet.removeBalance(it) }
+            logger.info("Successfully loaded wallet: ${updated.id}")
+        }
     }
 
     /**
@@ -35,7 +37,7 @@ class WalletListener @Inject constructor(private val cache: WalletCache, private
     @EventHandler
     fun onUnload(event: WalletUnloadEvent) {
         val wallet = event.wallet
-        val removed = cache.remove(wallet.id) ?: return
-        logger.info("Successfully unloaded wallet: ${removed.id}")
+        val removed = cache.remove(wallet.id)
+        removed.ifPresent { returned -> logger.info("Successfully unloaded wallet: ${returned.id}") }
     }
 }

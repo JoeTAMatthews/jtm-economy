@@ -11,7 +11,7 @@ class WalletLoader(private val framework: Framework, private val service: Wallet
     private val logging = framework.getLogging()
 
     override fun run() {
-        val wallet: Wallet = if (service.exists(player.uniqueId.toString())) service.get(player.uniqueId.toString())!! else service.insert(Wallet(player.uniqueId.toString(), player.name))!!
-        framework.runTask { framework.callEvent(WalletLoadEvent(wallet)) }
+        val opt = if (service.exists(player.uniqueId.toString())) service.get(player.uniqueId.toString()) else service.insert(Wallet(player.uniqueId.toString(), player.name))
+        opt.ifPresent { wallet -> framework.runTask { framework.callEvent(WalletLoadEvent(wallet)) } }
     }
 }

@@ -19,6 +19,7 @@ data class Currency(@Id @Convert(converter = UUIDConverter::class) @Column(lengt
         builder.append("\n&fName: &e$name")
         builder.append("\n&fAbbreviation: &e$abbreviation")
         builder.append("\n&fSymbol: &e$symbol")
+        builder.append("\n&fGlobal: &e$main")
         builder.append("\n&7&m-----------------")
         return builder.toString()
     }

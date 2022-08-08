@@ -28,12 +28,10 @@ class WalletCommands @Inject constructor(private val transactionService: Transac
     @Usage("/wallet")
     fun onWallet(player: Player, @Optional target: OfflinePlayer?) {
         val wallet = if (target == null) walletCache.getById(player.uniqueId.toString()) else if (target.isOnline) walletCache.getById(target.uniqueId.toString()) else walletService.get(target.uniqueId.toString())
-        if (wallet == null) {
-            player.sendMessage(UtilString.colour("&4Error: &cWallet not found."))
-            return
-        }
-        val walletUI = WalletUI(wallet, currencyCache, player)
-        walletUI.showInventory(player, true)
+        wallet.ifPresentOrElse({
+                val walletUI = WalletUI(it, currencyCache, player)
+                walletUI.showInventory(player, true) },
+            { player.sendMessage(UtilString.colour("&4Error: &cWallet not found.")) })
     }
 
     /**

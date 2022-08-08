@@ -21,7 +21,7 @@ class RollbackCommands @Inject constructor(private val framework: Framework, pri
      */
     @Command("rollback")
     @Usage("/rollback <target> <transaction_id>")
-    @Permission("economy.rollback")
+    @Permission(["economy.rollback"])
     fun onRollback(player: Player, target: OfflinePlayer, id: Int) {
         localeMessenger.sendMessage(player, "rollback.start", target.name)
         framework.runTaskAsync {

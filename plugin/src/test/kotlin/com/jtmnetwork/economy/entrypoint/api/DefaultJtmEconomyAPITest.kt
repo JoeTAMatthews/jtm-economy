@@ -27,7 +27,7 @@ import org.mockito.kotlin.verifyNoMoreInteractions
 import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
-class DefaultEconomyAPITest {
+class DefaultJtmEconomyAPITest {
 
     private val framework: Framework = mock()
     private val transactionService: TransactionService = mock()

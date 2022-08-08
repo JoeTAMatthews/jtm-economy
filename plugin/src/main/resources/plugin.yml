@@ -1,7 +1,7 @@
 name: JtmEconomy
-version: 0.31
+version: 0.38
 author: DrennyDev
 api-version: 1.13
-main: com.jtmnetwork.economy.Economy
+main: com.jtmnetwork.economy.JtmEconomy
 softdepend:
   - Vault

@@ -3,7 +3,7 @@ package com.jtmnetwork.economy
 import com.jtmnetwork.economy.data.cache.WalletCacheTest
 import com.jtmnetwork.economy.data.worker.WalletLoaderTest
 import com.jtmnetwork.economy.data.worker.WalletSaverTest
-import com.jtmnetwork.economy.entrypoint.api.DefaultEconomyAPITest
+import com.jtmnetwork.economy.entrypoint.api.DefaultJtmEconomyAPITest
 import com.jtmnetwork.economy.entrypoint.commands.*
 import com.jtmnetwork.economy.entrypoint.listener.CurrencyListenerTest
 import com.jtmnetwork.economy.entrypoint.listener.PlayerListenerTest
@@ -22,10 +22,10 @@ import org.junit.runners.Suite
     CurrencyListenerTest::class,
 
     CurrencyCommandsTest::class,
-    EconomyCommandsTest::class,
+    JtmEconomyCommandsTest::class,
     ExchangeRateCommandsTest::class,
     ExchangeCommandsTest::class,
 
-    DefaultEconomyAPITest::class
+    DefaultJtmEconomyAPITest::class
 ])
-class EconomyTestSuite
+class JtmEconomyTestSuite

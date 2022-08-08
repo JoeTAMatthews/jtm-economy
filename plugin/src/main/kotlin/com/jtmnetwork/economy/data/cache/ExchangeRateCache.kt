@@ -22,17 +22,17 @@ class ExchangeRateCache @Inject constructor(private val framework: Framework, pr
 
     fun enable() {
         logging.info("Registering exchange rates:")
-        service.getAll()?.forEach {
-            val rate = insert(it.id, it) ?: return
-            logging.info("- ${rate.symbol}")
+        service.getAll().forEach {
+            val opt = insert(it.id, it)
+            opt.ifPresent { rate -> logging.info("- ${rate.symbol}") }
         }
     }
 
     fun disable() {
         logging.info("Saving exchange rates:")
-        getAll()?.forEach {
-            val rate = service.update(it) ?: return
-            logging.info("- ${rate.symbol}")
+        getAll().forEach {
+            val opt = service.update(it)
+            opt.ifPresent { rate -> logging.info("- ${rate.symbol}") }
         }
     }
 
@@ -43,7 +43,7 @@ class ExchangeRateCache @Inject constructor(private val framework: Framework, pr
      * @return              if found return true, if not return false.
      */
     fun existsBySymbol(symbol: String): Boolean {
-        return getBySymbol(symbol) != null
+        return getBySymbol(symbol).isPresent
     }
 
     /**
@@ -52,8 +52,8 @@ class ExchangeRateCache @Inject constructor(private val framework: Framework, pr
      * @param symbol        the pair of the exchange rate
      * @return              the exchange rate found, if not found return null
      */
-    fun getBySymbol(symbol: String): ExchangeRate? {
-        val list = getAll() ?: return null
-        return list.stream().filter { it.symbol == symbol }.findFirst().orElse(null)
+    fun getBySymbol(symbol: String): Optional<ExchangeRate> {
+        val currency = getAll().firstOrNull { it.symbol.equals(symbol, true) } ?: return Optional.empty()
+        return Optional.of(currency)
     }
 }

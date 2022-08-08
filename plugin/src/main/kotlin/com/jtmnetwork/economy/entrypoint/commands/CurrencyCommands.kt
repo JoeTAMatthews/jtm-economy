@@ -26,7 +26,7 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
      * @param player        the command sender.
      */
     @Command("currency")
-    @Permission("currency.admin")
+    @Permission(["currency.admin"])
     fun onCurrency(player: Player) {
         val builder = StringBuilder()
         builder.append("&b&m                       ")
@@ -51,7 +51,7 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
      */
     @Command("currency")
     @SubCommand("add")
-    @Permission("currency.admin")
+    @Permission(["currency.admin"])
     @Usage("/currency add <name> <abbreviation> <symbol>")
     fun onCurrencyAdd(player: Player, name: String, abbreviation: String, symbol: String) {
         if (cache.existsByName(name)) {
@@ -59,11 +59,15 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
             return
         }
 
-        val currency = Currency(name = name, abbreviation = abbreviation.uppercase(Locale.getDefault()), symbol = symbol)
-        val inserted = cache.insert(currency.id, currency) ?: return
-        framework.runTaskAsync { service.insert(inserted) }
-        framework.callEvent(CurrencyAddEvent(inserted))
-        localeMessenger.sendMessage(player, "currency.commands.add", inserted.name)
+        val size = cache.getAll().size
+        val global = size <= 0
+        val currency = Currency(name = name, abbreviation = abbreviation.uppercase(Locale.getDefault()), symbol = symbol, main = global)
+        val inserted = cache.insert(currency.id, currency)
+        inserted.ifPresent { returned ->
+            framework.runTaskAsync { service.insert(returned) }
+            framework.callEvent(CurrencyAddEvent(returned))
+            localeMessenger.sendMessage(player, "currency.commands.add", returned.name)
+        }
     }
 
     /**
@@ -74,7 +78,7 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
      */
     @Command("currency")
     @SubCommand("remove")
-    @Permission("currency.admin")
+    @Permission(["currency.admin"])
     @Usage("/currency remove <name>")
     fun onCurrencyRemove(player: Player, name: String) {
         if (!cache.existsByName(name)) {
@@ -82,11 +86,15 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
             return
         }
 
-        val currency = cache.getByName(name) ?: return
-        val removed = cache.remove(currency.id) ?: return
-        framework.runTaskAsync { service.delete(removed.id) }
-        framework.callEvent(CurrencyRemoveEvent(removed))
-        localeMessenger.sendMessage(player, "currency.commands.remove", removed.name)
+        val currency = cache.getByName(name)
+        currency.ifPresent { returned ->
+            val removed = cache.remove(returned.id)
+            removed.ifPresent { deleted ->
+                framework.runTaskAsync { service.delete(deleted.id) }
+                framework.callEvent(CurrencyRemoveEvent(deleted))
+                localeMessenger.sendMessage(player, "currency.commands.remove", deleted.name)
+            }
+        }
     }
 
     /**
@@ -99,7 +107,7 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
      */
     @Command("currency")
     @SubCommand("update")
-    @Permission("currency.admin")
+    @Permission(["currency.admin"])
     @Usage("/currency update <name> <setting> <value>")
     fun onCurrencyUpdate(player: Player, name: String, setting: String, value: String) {
         if (!cache.existsByName(name)) {
@@ -107,21 +115,23 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
             return
         }
 
-        val currency = cache.getByName(name) ?: return
-        val updated: Currency = when(setting) {
-            "name"  -> currency.updateName(value)
-            "abbreviation" -> currency.updateAbbreviation(value)
-            "symbol" -> currency.updateSymbol(value)
+        val currency = cache.getByName(name)
+        currency.ifPresent { returned ->
+            val updated: Currency = when(setting) {
+                "name"  -> returned.updateName(value)
+                "abbreviation" -> returned.updateAbbreviation(value)
+                "symbol" -> returned.updateSymbol(value)
 
-            else -> {
-                player.sendMessage(UtilString.colour("&4Error: &cValid settings listed: \n  name \n  abbreviation \n  symbol"))
-                return
+                else -> {
+                    player.sendMessage(UtilString.colour("&4Error: &cValid settings listed: \n  name \n  abbreviation \n  symbol"))
+                    return@ifPresent
+                }
             }
-        }
 
-        cache.update(updated.id, updated)
-        framework.runTaskAsync { service.update(updated) }
-        localeMessenger.sendMessage(player, "currency.commands.update", setting, value)
+            cache.update(updated.id, updated)
+            framework.runTaskAsync { service.update(updated) }
+            localeMessenger.sendMessage(player, "currency.commands.update", setting, value)
+        }
     }
 
     /**
@@ -132,7 +142,7 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
      */
     @Command("currency")
     @SubCommand("info")
-    @Permission("currency.admin")
+    @Permission(["currency.admin"])
     @Usage("/currency info <name>")
     fun onCurrencyInfo(player: Player, name: String) {
         if (!cache.existsByName(name)) {
@@ -140,8 +150,8 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
             return
         }
 
-        val currency = cache.getByName(name) ?: return
-        player.sendMessage(UtilString.colour(currency.info()))
+        val currency = cache.getByName(name)
+        currency.ifPresent { returned -> player.sendMessage(UtilString.colour(returned.info())) }
     }
 
     /**
@@ -151,12 +161,12 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
      */
     @Command("currency")
     @SubCommand("list")
-    @Permission("currency.admin")
+    @Permission(["currency.admin"])
     @Usage("/currency list")
     fun onCurrencyList(player: Player) {
         val builder = StringBuilder()
         builder.append("&b&m                        ")
-        cache.getAll()?.forEach { builder.append("\n${it.info()}") }
+        cache.getAll().forEach { builder.append("\n${it.info()}") }
         builder.append("\n&b&m                        ")
         player.sendMessage(UtilString.colour(builder.toString()))
     }

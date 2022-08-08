@@ -11,8 +11,10 @@ class WalletSaver(private val framework: Framework, private val service: WalletS
     private val logging = framework.getLogging()
 
     override fun run() {
-        val wallet = cache.getById(player.uniqueId.toString()) ?: return
-        val update = service.update(wallet) ?: return
-        framework.runTask { framework.callEvent(WalletUnloadEvent(update)) }
+        val opt = cache.getById(player.uniqueId.toString())
+        opt.ifPresent { wallet ->
+            val optUpdate = service.update(wallet)
+            optUpdate.ifPresent { update -> framework.runTask { framework.callEvent(WalletUnloadEvent(update)) } }
+        }
     }
 }

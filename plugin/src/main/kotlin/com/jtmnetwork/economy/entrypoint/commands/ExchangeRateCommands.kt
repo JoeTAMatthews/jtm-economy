@@ -25,7 +25,7 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
      * @param player        the command sender.
      */
     @Command("erate")
-    @Permission("erate.admin")
+    @Permission(["erate.admin"])
     fun onExchangeRate(player: Player) {
         val builder = StringBuilder()
         builder.append("&b&m                       ")
@@ -50,7 +50,7 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
      */
     @Command("erate")
     @SubCommand("add")
-    @Permission("erate.admin")
+    @Permission(["erate.admin"])
     @Usage("/erate add <from> <to> <rate>")
     fun onExchangeRateAdd(player: Player, from: Currency, to: Currency, rate: Double) {
         if (exchangeRateCache.existsBySymbol("${from.abbreviation}${to.abbreviation}")) {
@@ -64,9 +64,11 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
         }
 
         val exchangeRate = ExchangeRate(currency_from = from.id, currency_to = to.id, symbol = "${from.abbreviation}${to.abbreviation}", rate = rate)
-        val inserted = exchangeRateCache.insert(exchangeRate.id, exchangeRate) ?: return
-        framework.runTaskAsync { exchangeRateService.insert(inserted) }
-        localeMessenger.sendMessage(player, "exchangerate.commands.add", inserted.symbol)
+        val inserted = exchangeRateCache.insert(exchangeRate.id, exchangeRate)
+        inserted.ifPresent { returned ->
+            framework.runTaskAsync { exchangeRateService.insert(returned) }
+            localeMessenger.sendMessage(player, "exchangerate.commands.add", returned.symbol)
+        }
     }
 
     /**
@@ -77,7 +79,7 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
      */
     @Command("erate")
     @SubCommand("remove")
-    @Permission("erate.admin")
+    @Permission(["erate.admin"])
     @Usage("/erate remove <pair>")
     fun onExchangeRateRemove(player: Player, pair: String) {
         if (!exchangeRateCache.existsBySymbol(pair)) {
@@ -85,10 +87,14 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
             return
         }
 
-        val returned = exchangeRateCache.getBySymbol(pair) ?: return
-        val deleted = exchangeRateCache.remove(returned.id) ?: return
-        framework.runTaskAsync { exchangeRateService.delete(deleted.id) }
-        localeMessenger.sendMessage(player, "exchangerate.commands.remove", deleted.symbol)
+        val returned = exchangeRateCache.getBySymbol(pair)
+        returned.ifPresent { rate ->
+            val deleted = exchangeRateCache.remove(rate.id)
+            deleted.ifPresent { removed ->
+                framework.runTaskAsync { exchangeRateService.delete(removed.id) }
+                localeMessenger.sendMessage(player, "exchangerate.commands.remove", removed.symbol)
+            }
+        }
     }
 
     /**
@@ -101,7 +107,7 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
      */
     @Command("erate")
     @SubCommand("update")
-    @Permission("erate.admin")
+    @Permission(["erate.admin"])
     @Usage("/erate update <pair> <setting> <value>")
     fun onExchangeRateUpdate(player: Player, pair: String, setting: ExchangeRateSetting, value: String) {
         if (!exchangeRateCache.existsBySymbol(pair)) {
@@ -109,17 +115,21 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
             return
         }
 
-        val returned = exchangeRateCache.getBySymbol(pair) ?: return
+        val returned = exchangeRateCache.getBySymbol(pair)
 
-        when(setting) {
-            ExchangeRateSetting.RATE -> {
-                try {
-                    val rate = value.toDouble()
-                    val updated = exchangeRateCache.update(returned.id, returned.updateRate(rate)) ?: return
-                    framework.runTaskAsync { exchangeRateService.update(updated) }
-                    localeMessenger.sendMessage(player, "exchangerate.commands.updated.rate", value)
-                } catch (ex: NumberFormatException) {
-                    player.sendMessage(UtilString.colour("&4Error: &cNot a number."))
+        returned.ifPresent { returnedRate ->
+            when(setting) {
+                ExchangeRateSetting.RATE -> {
+                    try {
+                        val rate = value.toDouble()
+                        val updated = exchangeRateCache.update(returnedRate.id, returnedRate.updateRate(rate))
+                        updated.ifPresent { returned ->
+                            framework.runTaskAsync { exchangeRateService.update(returned) }
+                            localeMessenger.sendMessage(player, "exchangerate.commands.updated.rate", value)
+                        }
+                    } catch (ex: NumberFormatException) {
+                        player.sendMessage(UtilString.colour("&4Error: &cNot a number."))
+                    }
                 }
             }
         }
@@ -133,7 +143,7 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
      */
     @Command("erate")
     @SubCommand("info")
-    @Permission("erate.admin")
+    @Permission(["erate.admin"])
     @Usage("/erate info <symbol>")
     fun onExchangeRateInfo(player: Player, pair: String) {
         if (!exchangeRateCache.existsBySymbol(pair)) {
@@ -141,8 +151,8 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
             return
         }
 
-        val rate = exchangeRateCache.getBySymbol(pair) ?: return
-        player.sendMessage(UtilString.colour(rate.info()))
+        val rate = exchangeRateCache.getBySymbol(pair)
+        rate.ifPresent { returned -> player.sendMessage(UtilString.colour(returned.info())) }
     }
 
     /**
@@ -152,12 +162,12 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
      */
     @Command("erate")
     @SubCommand("list")
-    @Permission("erate.admin")
+    @Permission(["erate.admin"])
     @Usage("/erate list")
     fun onExchangeRateList(player: Player) {
         val builder = StringBuilder()
         builder.append("&b&m                        ")
-        exchangeRateCache.getAll()?.forEach { builder.append("\n${it.info()}") }
+        exchangeRateCache.getAll().forEach { builder.append("\n${it.info()}") }
         builder.append("\n&b&m                        ")
         player.sendMessage(UtilString.colour(builder.toString()))
     }

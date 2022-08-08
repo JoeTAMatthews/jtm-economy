@@ -19,16 +19,18 @@ import com.jtmnetwork.economy.entrypoint.module.EconomyModule
 import com.jtmnetwork.economy.entrypoint.module.ExchangeRateModule
 import com.jtmnetwork.economy.entrypoint.module.WalletModule
 import com.jtmnetwork.economy.entrypoint.vault.VaultEconomy
+import org.bukkit.Bukkit
 import org.bukkit.plugin.ServicePriority
 
-class Economy: Framework(false) {
+class JtmEconomy: Framework(false) {
 
     companion object {
-        lateinit var instance: Economy
+        lateinit var instance: JtmEconomy
         private set
     }
 
     private lateinit var subInjector: Injector
+    private lateinit var econ: net.milkbowl.vault.economy.Economy
 
     override fun setup() {
         instance = this
@@ -43,14 +45,14 @@ class Economy: Framework(false) {
     override fun init() {
         getExchangeRateCache().init()
         getCurrencyCache().init()
+
+        registerVault()
     }
 
     override fun enable() {
         getExchangeRateCache().enable()
         getCurrencyCache().enable()
         getWalletCache().enable()
-
-//        registerVault()
     }
 
     override fun disable() {
@@ -82,9 +84,12 @@ class Economy: Framework(false) {
             getLogging().warn("Vault not found, using standard EconomyAPI!")
             return
         }
-        val vault = server.pluginManager.getPlugin("Vault") ?: return
-        server.servicesManager.register(net.milkbowl.vault.economy.Economy::class.java, VaultEconomy(this, getEconomyAPI()), vault, ServicePriority.High)
+        Bukkit.getServer().servicesManager.register(net.milkbowl.vault.economy.Economy::class.java, VaultEconomy(this, getEconomyAPI()), this, ServicePriority.High)
         getLogging().info("Vault found. Registered Vault Economy Service provider.")
+
+        val rsp = Bukkit.getServer().servicesManager.getRegistration(net.milkbowl.vault.economy.Economy::class.java) ?: return
+        econ = rsp.provider
+        getLogging().info("Loaded Vault.")
     }
 
     fun isVaultEnabled(): Boolean {
@@ -105,5 +110,9 @@ class Economy: Framework(false) {
 
     fun getEconomyAPI(): EconomyAPI {
         return subInjector.getInstance(EconomyAPI::class.java)
+    }
+
+    fun getEconomy(): net.milkbowl.vault.economy.Economy {
+        return econ
     }
 }

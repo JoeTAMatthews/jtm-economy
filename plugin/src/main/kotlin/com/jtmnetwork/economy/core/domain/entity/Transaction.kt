@@ -27,17 +27,19 @@ data class Transaction(@Id @Convert(converter = UUIDConverter::class) @Column(le
 
         val senderName = if (sender == null) "SERVER" else Bukkit.getOfflinePlayer(sender).name
         val receiverName = if (receiver == null) "SERVER" else Bukkit.getOfflinePlayer(receiver).name
-        val currency = currencyCache.getById(currency)
+        val opt = currencyCache.getById(currency)
+        if (!opt.isPresent) return ""
+        val currency = opt.get()
 
         builder.append("\n&7&m------------------------")
         builder.append("\n&fUniqueId: &b$id")
         builder.append("\n&fTransaction: &b${type.name}")
         builder.append("\n&fSender: &b$senderName")
         builder.append("\n&fReceiver: &b$receiverName")
-        builder.append("\n&fCurrency: &b${currency?.name}")
-        builder.append("\n&fAmount: &b${currency?.getAbbreviationAmount(amount)}")
-        builder.append("\n&fPrevious Balance: &b${currency?.getAbbreviationAmount(previous_balance)}")
-        builder.append("\n&fNew Balance: &b${currency?.getAbbreviationAmount(new_balance)}")
+        builder.append("\n&fCurrency: &b${currency.name}")
+        builder.append("\n&fAmount: &b${currency.getAbbreviationAmount(amount)}")
+        builder.append("\n&fPrevious Balance: &b${currency.getAbbreviationAmount(previous_balance)}")
+        builder.append("\n&fNew Balance: &b${currency.getAbbreviationAmount(new_balance)}")
         builder.append("\n&fTime: &b${UtilTime.formatTime(created)}")
         builder.append("\n&7&m------------------------")
 
@@ -49,7 +51,9 @@ data class Transaction(@Id @Convert(converter = UUIDConverter::class) @Column(le
 
         val senderName = if (sender == null) "SERVER" else Bukkit.getOfflinePlayer(sender).name
         val receiverName = if (receiver == null) "SERVER" else Bukkit.getOfflinePlayer(receiver).name
-        val currency = currencyCache.getById(currency)
+        val opt = currencyCache.getById(currency)
+        if (!opt.isPresent) return ""
+        val currency = opt.get()
 
         builder.append("\n&7&m------------------------")
         builder.append("\n&fId: &b$index")
@@ -57,10 +61,10 @@ data class Transaction(@Id @Convert(converter = UUIDConverter::class) @Column(le
         builder.append("\n&fTransaction: &b${type.name}")
         builder.append("\n&fSender: &b$senderName")
         builder.append("\n&fReceiver: &b$receiverName")
-        builder.append("\n&fCurrency: &b${currency?.name}")
-        builder.append("\n&fAmount: &b${currency?.getAbbreviationAmount(amount)}")
-        builder.append("\n&fPrevious Balance: &b${currency?.getAbbreviationAmount(previous_balance)}")
-        builder.append("\n&fNew Balance: &b${currency?.getAbbreviationAmount(new_balance)}")
+        builder.append("\n&fCurrency: &b${currency.name}")
+        builder.append("\n&fAmount: &b${currency.getAbbreviationAmount(amount)}")
+        builder.append("\n&fPrevious Balance: &b${currency.getAbbreviationAmount(previous_balance)}")
+        builder.append("\n&fNew Balance: &b${currency.getAbbreviationAmount(new_balance)}")
         builder.append("\n&fTime: &b${UtilTime.formatTime(created)}")
         builder.append("\n&7&m------------------------")
 

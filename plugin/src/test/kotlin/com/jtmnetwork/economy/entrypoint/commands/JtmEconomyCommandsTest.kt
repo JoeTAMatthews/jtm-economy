@@ -19,7 +19,7 @@ import org.mockito.kotlin.*
 import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
-class EconomyCommandsTest {
+class JtmEconomyCommandsTest {
 
     private val framework: Framework = mock()
     private val economyAPI: EconomyAPI = mock()

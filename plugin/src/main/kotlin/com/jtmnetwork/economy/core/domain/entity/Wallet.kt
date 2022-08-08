@@ -20,6 +20,11 @@ data class Wallet(
         return balances[currency] ?: 0.0
     }
 
+    fun checkBalance(currency: UUID, amount: Double): Boolean {
+        val balance = balances[currency] ?: return false
+        return amount <= balance
+    }
+
     fun addBalance(currency: UUID): Wallet {
         balances[currency] = 0.0
         return this

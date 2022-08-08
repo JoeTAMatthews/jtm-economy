@@ -18,42 +18,55 @@ class DefaultEconomyAPI @Inject constructor(private val framework: Framework, pr
 
     private val walletService = walletCache.service
 
-    override fun deposit(player: Player, currency: UUID, from: UUID?, amount: Double): Transaction? {
-        val wallet = walletCache.getById(player.uniqueId.toString()) ?: return null
-        val transaction = walletCache.deposit(from, wallet, currency, amount) ?: return null
+    override fun deposit(player: Player, currency: UUID, from: UUID?, amount: Double): Optional<Transaction> {
+        val optWallet = walletCache.getById(player.uniqueId.toString())
+        if (optWallet.isEmpty) return Optional.empty()
+        val wallet = optWallet.get()
+        val transaction = walletCache.deposit(from, wallet, currency, amount) ?: return Optional.empty()
         framework.runTaskAsync { transactionService.insert(transaction) }
-        return transaction
+        return Optional.of(transaction)
     }
 
-    override fun deposit(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Transaction? {
-        val wallet = walletService.get(player.uniqueId.toString()) ?: return null
-        val transaction = walletCache.deposit(from, wallet, currency, amount) ?: return null
+    override fun deposit(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Optional<Transaction> {
+        val optWallet = walletCache.getById(player.uniqueId.toString())
+        if (optWallet.isEmpty) return Optional.empty()
+        val wallet = optWallet.get()
+        val transaction = walletCache.deposit(from, wallet, currency, amount) ?: return Optional.empty()
         transactionService.insert(transaction)
-        return transaction
+        return Optional.of(transaction)
     }
 
-    override fun withdraw(player: Player, currency: UUID, from: UUID?, amount: Double): Transaction? {
-        val wallet = walletCache.getById(player.uniqueId.toString()) ?: return null
-        val transaction = walletCache.withdraw(from, wallet, currency, amount) ?: return null
+    override fun withdraw(player: Player, currency: UUID, from: UUID?, amount: Double): Optional<Transaction> {
+        val optWallet = walletCache.getById(player.uniqueId.toString())
+        if (optWallet.isEmpty) return Optional.empty()
+        val wallet = optWallet.get()
+        val transaction = walletCache.withdraw(from, wallet, currency, amount) ?: return Optional.empty()
         framework.runTaskAsync { transactionService.insert(transaction) }
-        return transaction
+        return Optional.of(transaction)
     }
 
-    override fun withdraw(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Transaction? {
-        val wallet = walletService.get(player.uniqueId.toString()) ?: return null
-        val transaction = walletCache.withdraw(from, wallet, currency, amount) ?: return null
+    override fun withdraw(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Optional<Transaction> {
+        val optWallet = walletCache.getById(player.uniqueId.toString())
+        if (optWallet.isEmpty) return Optional.empty()
+        val wallet = optWallet.get()
+        if (!wallet.checkBalance(currency, amount)) return Optional.empty()
+        val transaction = walletCache.withdraw(from, wallet, currency, amount) ?: return Optional.empty()
         transactionService.insert(transaction)
-        return transaction
+        return Optional.of(transaction)
     }
 
-    override fun balance(player: Player, currency: UUID): Double? {
-        val wallet = walletCache.getById(player.uniqueId.toString()) ?: return null
-        return wallet.getBalance(currency)
+    override fun balance(player: Player, currency: UUID): Optional<Double> {
+        val optWallet = walletCache.getById(player.uniqueId.toString())
+        if (optWallet.isEmpty) return Optional.empty()
+        val wallet = optWallet.get()
+        return Optional.of(wallet.getBalance(currency))
     }
 
-    override fun balance(player: OfflinePlayer, currency: UUID): Double? {
-        val wallet = walletService.get(player.uniqueId.toString()) ?: return null
-        return wallet.getBalance(currency)
+    override fun balance(player: OfflinePlayer, currency: UUID): Optional<Double> {
+        val optWallet = walletService.get(player.uniqueId.toString())
+        if (optWallet.isEmpty) return Optional.empty()
+        val wallet = optWallet.get()
+        return Optional.of(wallet.getBalance(currency))
     }
 
     override fun getTransactions(player: Player, currency: UUID): List<Transaction> {
@@ -73,10 +86,21 @@ class DefaultEconomyAPI @Inject constructor(private val framework: Framework, pr
     }
 
     override fun exchangeAmount(player: Player, from: UUID, to: UUID, amount: Double): Boolean {
-        val currencyFrom = currencyCache.getById(from) ?: return false
-        val currencyTo = currencyCache.getById(to) ?: return false
-        val rate = exchangeRateCache.getBySymbol("${currencyFrom.abbreviation}${currencyTo.abbreviation}") ?: return false
-        val wallet = walletCache.getById(player.uniqueId.toString()) ?: return false
+        val optFrom = currencyCache.getById(from)
+        if (optFrom.isEmpty) return false
+        val currencyFrom = optFrom.get()
+
+        val optTo = currencyCache.getById(to)
+        if (optTo.isEmpty) return false
+        val currencyTo = optTo.get()
+
+        val optRate = exchangeRateCache.getBySymbol("${currencyFrom.abbreviation}${currencyTo.abbreviation}")
+        if (optRate.isEmpty) return false
+        val rate = optRate.get()
+
+        val optWallet = walletCache.getById(player.uniqueId.toString())
+        if (optWallet.isEmpty) return false
+        val wallet = optWallet.get()
 
         if (!walletCache.hasBalance(player, from, amount)) return false
 
@@ -84,16 +108,27 @@ class DefaultEconomyAPI @Inject constructor(private val framework: Framework, pr
         val added = wallet.addBalance(to, converted) ?: return false
         val removed = added.removeBalance(from, amount) ?: return false
 
-        val updated = walletCache.update(removed.id, removed) ?: return false
-        framework.runTaskAsync { walletService.update(updated) }
+        val updated = walletCache.update(removed.id, removed)
+        updated.ifPresent { save -> framework.runTaskAsync { walletService.update(save) } }
         return true
     }
 
     override fun exchangeAmountOffline(player: OfflinePlayer, from: UUID, to: UUID, amount: Double): Boolean {
-        val currencyFrom = currencyCache.getById(from) ?: return false
-        val currencyTo = currencyCache.getById(to) ?: return false
-        val rate = exchangeRateCache.getBySymbol("${currencyFrom.abbreviation}${currencyTo.abbreviation}") ?: return false
-        val wallet = walletService.get(player.uniqueId.toString()) ?: return false
+        val optFrom = currencyCache.getById(from)
+        if (optFrom.isEmpty) return false
+        val currencyFrom = optFrom.get()
+
+        val optTo = currencyCache.getById(to)
+        if (optTo.isEmpty) return false
+        val currencyTo = optTo.get()
+
+        val optRate = exchangeRateCache.getBySymbol("${currencyFrom.abbreviation}${currencyTo.abbreviation}")
+        if (optRate.isEmpty) return false
+        val rate = optRate.get()
+
+        val optWallet = walletCache.getById(player.uniqueId.toString())
+        if (optWallet.isEmpty) return false
+        val wallet = optWallet.get()
 
         if (!walletCache.hasBalanceOffline(player, from, amount)) return false
 
@@ -105,32 +140,35 @@ class DefaultEconomyAPI @Inject constructor(private val framework: Framework, pr
         return true
     }
 
-    override fun getWallet(player: Player): Wallet? {
+    override fun getWallet(player: Player): Optional<Wallet> {
         return walletCache.getById(player.uniqueId.toString())
     }
 
-    override fun getWallet(player: OfflinePlayer): Wallet? {
+    override fun getWallet(player: OfflinePlayer): Optional<Wallet> {
         return walletService.get(player.uniqueId.toString())
     }
 
-    override fun getGlobalCurrency(): Currency? {
+    override fun getGlobalCurrency(): Optional<Currency> {
         return currencyCache.getGlobalCurrency()
     }
 
-    override fun getCurrency(id: UUID): Currency? {
+    override fun getCurrency(id: UUID): Optional<Currency> {
         return currencyCache.getById(id)
     }
 
-    override fun getCurrency(name: String): Currency? {
+    override fun getCurrency(name: String): Optional<Currency> {
         return currencyCache.getByName(name)
     }
 
     override fun getCurrencies(): List<Currency> {
-        return currencyCache.getAll() ?: emptyList()
+        return currencyCache.getAll()
     }
 
     override fun processRollback(initiator: Player, target: Player, transactionId: Int): Boolean {
-        val wallet = walletCache.getById(target.uniqueId.toString()) ?: return false
+        val optWallet = walletCache.getById(target.uniqueId.toString())
+        if (optWallet.isEmpty) return false
+        val wallet = optWallet.get()
+
         val stack = transactionService.transactionsToStack(target.uniqueId)
         if (stack.isEmpty()) {
             initiator.sendMessage(UtilString.colour("&4Error: &cNo transactions to rollback."))
@@ -143,20 +181,25 @@ class DefaultEconomyAPI @Inject constructor(private val framework: Framework, pr
             val updated = wallet.setBalance(transaction.currency, transaction.previous_balance)
             walletService.update(updated)
 
-            val deleted = transactionService.delete(transaction.id) ?: return false
-            initiator.sendMessage(UtilString.colour("&cRolled back transaction: ${deleted.id}"))
+            val deleted = transactionService.delete(transaction.id)
+            deleted.ifPresent { trans -> initiator.sendMessage(UtilString.colour("&cRolled back transaction: ${trans.id}")) }
+
             if (stack.isNotEmpty()) node = stack.pop()
         }
         return true
     }
 
     override fun processRollback(initiator: Player, target: OfflinePlayer, transactionId: Int): Boolean {
-        val wallet = walletService.get(target.uniqueId.toString()) ?: return false
+        val optWallet = walletCache.getById(target.uniqueId.toString())
+        if (optWallet.isEmpty) return false
+        val wallet = optWallet.get()
+
         val stack = transactionService.transactionsToStack(target.uniqueId)
         if (stack.isEmpty()) {
             initiator.sendMessage(UtilString.colour("&4Error: &cNo transactions to rollback."))
             return false
         }
+
         var node = stack.pop()
         while (transactionId != node.index || stack.isNotEmpty()) {
             val transaction = node.transaction
@@ -164,17 +207,25 @@ class DefaultEconomyAPI @Inject constructor(private val framework: Framework, pr
             val updated = wallet.setBalance(transaction.currency, transaction.previous_balance)
             walletService.update(updated)
 
-            val deleted = transactionService.delete(transaction.id) ?: return false
-            initiator.sendMessage(UtilString.colour("&cRolled back transaction: ${deleted.id}"))
+            val deleted = transactionService.delete(transaction.id)
+            deleted.ifPresent { trans -> initiator.sendMessage(UtilString.colour("&cRolled back transaction: ${trans.id}")) }
             if (stack.isNotEmpty()) node = stack.pop()
         }
         return true
     }
 
     override fun pay(target: Player, sender: Player, currencyId: UUID, amount: Double): Boolean {
-        val currency = currencyCache.getById(currencyId) ?: return false
-        val senderWallet = walletCache.getById(sender.uniqueId.toString()) ?: return false
-        val receiverWallet = walletCache.getById(target.uniqueId.toString()) ?: return false
+        val optCurrency = currencyCache.getById(currencyId)
+        if (optCurrency.isEmpty) return false
+        val currency = optCurrency.get()
+
+        val optSenderWallet = walletCache.getById(sender.uniqueId.toString())
+        if (optSenderWallet.isEmpty) return false
+        val senderWallet = optSenderWallet.get()
+
+        val optReceiverWallet = walletCache.getById(target.uniqueId.toString())
+        if (optReceiverWallet.isEmpty) return false
+        val receiverWallet = optReceiverWallet.get()
 
         if (!walletCache.hasBalance(sender, currencyId, amount)) {
             sender.sendMessage(UtilString.colour("&4Error: &cInsufficient funds."))
@@ -191,9 +242,17 @@ class DefaultEconomyAPI @Inject constructor(private val framework: Framework, pr
     }
 
     override fun pay(target: OfflinePlayer, sender: Player, currencyId: UUID, amount: Double): Boolean {
-        val currency = currencyCache.getById(currencyId) ?: return false
-        val senderWallet = walletCache.getById(sender.uniqueId.toString()) ?: return false
-        val receiverWallet = walletService.get(target.uniqueId.toString()) ?: return false
+        val optCurrency = currencyCache.getById(currencyId)
+        if (optCurrency.isEmpty) return false
+        val currency = optCurrency.get()
+
+        val optSenderWallet = walletCache.getById(sender.uniqueId.toString())
+        if (optSenderWallet.isEmpty) return false
+        val senderWallet = optSenderWallet.get()
+
+        val optReceiverWallet = walletCache.getById(target.uniqueId.toString())
+        if (optReceiverWallet.isEmpty) return false
+        val receiverWallet = optReceiverWallet.get()
 
         if (!walletCache.hasBalance(sender, currencyId, amount)) {
             sender.sendMessage(UtilString.colour("&4Error: &cInsufficient funds."))
