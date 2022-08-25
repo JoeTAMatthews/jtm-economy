@@ -5,7 +5,9 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.util.*
 import javax.persistence.AttributeConverter
+import javax.persistence.Converter
 
+@Converter
 class BalanceConverter: AttributeConverter<MutableMap<UUID, Double>, String> {
 
     private val mapper = ObjectMapper().registerModule(KotlinModule())

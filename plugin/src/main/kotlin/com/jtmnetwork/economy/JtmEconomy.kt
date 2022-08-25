@@ -22,7 +22,7 @@ import com.jtmnetwork.economy.entrypoint.vault.VaultEconomy
 import org.bukkit.Bukkit
 import org.bukkit.plugin.ServicePriority
 
-class JtmEconomy: Framework(false) {
+class JtmEconomy: Framework(true) {
 
     companion object {
         lateinit var instance: JtmEconomy
