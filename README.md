@@ -10,7 +10,13 @@ A feature rich economy plugin, aimed at providing support for multiple integrati
 
 
 ### Requirements
+- Java 16
 
 ### Installation
+- Click this [link](https://www.jtm-network.com/products/store/f8b03785-fb0f-4291-a0e8-4f9aeada96a1) and follow the steps to download the plugin.
+- Drag and drop the file in to your plugin folder in the minecraft server directory.
+- Follow the steps [here](https://www.jtm-network.com/docs) to authenticate your plugin.
+- You are ready to go.
 
 ## Developer API
+You can find it [here](https://www.jtm-network.com/products/store/f8b03785-fb0f-4291-a0e8-4f9aeada96a1), under the documentation section.
