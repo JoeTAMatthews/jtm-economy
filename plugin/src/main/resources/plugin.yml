@@ -1,6 +1,6 @@
 name: JTMEconomy
 version: 0.38
-author: DrennyDev
+author: JTMNetwork
 api-version: 1.13
 main: com.jtmnetwork.economy.JtmEconomy
 softdepend:

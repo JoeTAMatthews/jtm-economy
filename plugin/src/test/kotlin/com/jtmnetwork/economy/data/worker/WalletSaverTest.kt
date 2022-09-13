@@ -39,8 +39,8 @@ class WalletSaverTest {
     }
 
     @Test
-    fun run_thenCacheNull() {
-        `when`(cache.getById(anyOrNull())).thenReturn(null)
+    fun run_thenCacheEmpty() {
+        `when`(cache.getById(anyOrNull())).thenReturn(Optional.empty())
 
         walletSaver.run()
 
@@ -55,8 +55,8 @@ class WalletSaverTest {
 
     @Test
     fun run_thenUpdateNull() {
-        `when`(cache.getById(anyOrNull())).thenReturn(wallet)
-        `when`(service.update(anyOrNull())).thenReturn(null)
+        `when`(cache.getById(anyOrNull())).thenReturn(Optional.of(wallet))
+        `when`(service.update(anyOrNull())).thenReturn(Optional.empty())
 
         walletSaver.run()
 
@@ -72,8 +72,8 @@ class WalletSaverTest {
 
     @Test
     fun run() {
-        `when`(cache.getById(anyOrNull())).thenReturn(wallet)
-        `when`(service.update(anyOrNull())).thenReturn(wallet)
+        `when`(cache.getById(anyOrNull())).thenReturn(Optional.of(wallet))
+        `when`(service.update(anyOrNull())).thenReturn(Optional.of(wallet))
 
         walletSaver.run()
 

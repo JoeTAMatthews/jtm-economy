@@ -10,7 +10,8 @@ data class ExchangeRate(@Id @Convert(converter = UUIDConverter::class) @Column(l
                         var currency_from: UUID = UUID.randomUUID(),
                         var currency_to: UUID = UUID.randomUUID(),
                         var symbol: String = "",
-                        var rate: Double = 1.0) {
+                        var rate: Double = 1.0,
+                        val created: Long = System.currentTimeMillis()) {
     
     fun info(): String {
         val builder = StringBuilder()

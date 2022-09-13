@@ -28,7 +28,7 @@ class DefaultEconomyAPI @Inject constructor(private val framework: Framework, pr
     }
 
     override fun deposit(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Optional<Transaction> {
-        val optWallet = walletCache.getById(player.uniqueId.toString())
+        val optWallet = walletService.get(player.uniqueId.toString())
         if (optWallet.isEmpty) return Optional.empty()
         val wallet = optWallet.get()
         val transaction = walletCache.deposit(from, wallet, currency, amount) ?: return Optional.empty()
@@ -46,7 +46,7 @@ class DefaultEconomyAPI @Inject constructor(private val framework: Framework, pr
     }
 
     override fun withdraw(player: OfflinePlayer, currency: UUID, from: UUID?, amount: Double): Optional<Transaction> {
-        val optWallet = walletCache.getById(player.uniqueId.toString())
+        val optWallet = walletService.get(player.uniqueId.toString())
         if (optWallet.isEmpty) return Optional.empty()
         val wallet = optWallet.get()
         if (!wallet.checkBalance(currency, amount)) return Optional.empty()
@@ -126,7 +126,7 @@ class DefaultEconomyAPI @Inject constructor(private val framework: Framework, pr
         if (optRate.isEmpty) return false
         val rate = optRate.get()
 
-        val optWallet = walletCache.getById(player.uniqueId.toString())
+        val optWallet = walletService.get(player.uniqueId.toString())
         if (optWallet.isEmpty) return false
         val wallet = optWallet.get()
 
@@ -190,7 +190,7 @@ class DefaultEconomyAPI @Inject constructor(private val framework: Framework, pr
     }
 
     override fun processRollback(initiator: Player, target: OfflinePlayer, transactionId: Int): Boolean {
-        val optWallet = walletCache.getById(target.uniqueId.toString())
+        val optWallet = walletService.get(target.uniqueId.toString())
         if (optWallet.isEmpty) return false
         val wallet = optWallet.get()
 

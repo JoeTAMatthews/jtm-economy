@@ -79,7 +79,7 @@ class JtmEconomy: Framework(true) {
         registerListener(subInjector.getInstance(CurrencyListener::class.java))
     }
 
-    fun registerVault() {
+    private fun registerVault() {
         if (!isVaultEnabled()) {
             getLogging().warn("Vault not found, using standard EconomyAPI!")
             return

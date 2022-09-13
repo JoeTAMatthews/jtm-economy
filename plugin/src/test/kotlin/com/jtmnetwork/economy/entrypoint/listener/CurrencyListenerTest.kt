@@ -32,7 +32,7 @@ class CurrencyListenerTest {
     fun onCurrencyAdd() {
         `when`(addEvent.currency).thenReturn(currency)
         `when`(cache.getAll()).thenReturn(listOf(walletOne))
-        `when`(cache.update(anyOrNull(), anyOrNull())).thenReturn(walletOne)
+        `when`(cache.update(anyOrNull(), anyOrNull())).thenReturn(Optional.of(walletOne))
 
         currencyListener.onCurrencyAdd(addEvent)
 
@@ -48,7 +48,7 @@ class CurrencyListenerTest {
     fun onCurrencyRemove() {
         `when`(removeEvent.currency).thenReturn(currency)
         `when`(cache.getAll()).thenReturn(listOf(walletTwo))
-        `when`(cache.update(anyOrNull(), anyOrNull())).thenReturn(walletTwo)
+        `when`(cache.update(anyOrNull(), anyOrNull())).thenReturn(Optional.of(walletTwo))
 
         currencyListener.onCurrencyRemove(removeEvent)
 

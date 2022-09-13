@@ -14,6 +14,7 @@ import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.mock
+import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
 class CurrencyCommandsTest {
@@ -61,11 +62,13 @@ class CurrencyCommandsTest {
     @Test
     fun onCurrencyAdd() {
         `when`(cache.existsByName(anyString())).thenReturn(false)
-        `when`(cache.insert(anyOrNull(), anyOrNull())).thenReturn(currency)
+        `when`(cache.getAll()).thenReturn(listOf())
+        `when`(cache.insert(anyOrNull(), anyOrNull())).thenReturn(Optional.of(currency))
 
         currencyCommands.onCurrencyAdd(player, "test", "gbp", "£")
 
         verify(cache, times(1)).existsByName(anyString())
+        verify(cache, times(1)).getAll()
         verify(cache, times(1)).insert(anyOrNull(), anyOrNull())
         verifyNoMoreInteractions(cache)
 
@@ -97,8 +100,8 @@ class CurrencyCommandsTest {
     @Test
     fun onCurrencyRemove() {
         `when`(cache.existsByName(anyString())).thenReturn(true)
-        `when`(cache.getByName(anyString())).thenReturn(currency)
-        `when`(cache.remove(anyOrNull())).thenReturn(currency)
+        `when`(cache.getByName(anyString())).thenReturn(Optional.of(currency))
+        `when`(cache.remove(anyOrNull())).thenReturn(Optional.of(currency))
 
         currencyCommands.onCurrencyRemove(player, "test")
 
@@ -135,7 +138,7 @@ class CurrencyCommandsTest {
     @Test
     fun onCurrencyUpdate_thenInvalidSetting() {
         `when`(cache.existsByName(anyString())).thenReturn(true)
-        `when`(cache.getByName(anyString())).thenReturn(currency)
+        `when`(cache.getByName(anyString())).thenReturn(Optional.of(currency))
 
         currencyCommands.onCurrencyUpdate(player, "test", "valid", "value")
 
@@ -153,8 +156,8 @@ class CurrencyCommandsTest {
     @Test
     fun onCurrencyUpdate() {
         `when`(cache.existsByName(anyString())).thenReturn(true)
-        `when`(cache.getByName(anyString())).thenReturn(currency)
-        `when`(cache.update(anyOrNull(), anyOrNull())).thenReturn(currency.updateName("new"))
+        `when`(cache.getByName(anyString())).thenReturn(Optional.of(currency))
+        `when`(cache.update(anyOrNull(), anyOrNull())).thenReturn(Optional.of(currency.updateName("new")))
 
         currencyCommands.onCurrencyUpdate(player, "test", "name", "new")
 
@@ -190,7 +193,7 @@ class CurrencyCommandsTest {
     @Test
     fun onCurrencyInfo() {
         `when`(cache.existsByName(anyString())).thenReturn(true)
-        `when`(cache.getByName(anyString())).thenReturn(currency)
+        `when`(cache.getByName(anyString())).thenReturn(Optional.of(currency))
 
         currencyCommands.onCurrencyInfo(player, "test")
 

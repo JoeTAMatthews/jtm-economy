@@ -38,7 +38,7 @@ class WalletLoaderTest {
     @Test
     fun run_walletNotExists() {
         `when`(service.exists(anyOrNull())).thenReturn(false)
-        `when`(service.insert(anyOrNull())).thenReturn(wallet)
+        `when`(service.insert(anyOrNull())).thenReturn(Optional.of(wallet))
 
         loader.run()
 
@@ -58,7 +58,7 @@ class WalletLoaderTest {
     @Test
     fun run_walletExists() {
         `when`(service.exists(anyOrNull())).thenReturn(true)
-        `when`(service.get(anyOrNull())).thenReturn(wallet)
+        `when`(service.get(anyOrNull())).thenReturn(Optional.of(wallet))
 
         loader.run()
 

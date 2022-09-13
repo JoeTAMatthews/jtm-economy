@@ -61,8 +61,8 @@ class DefaultJtmEconomyAPITest {
     }
 
     @Test
-    fun depositPlayer_thenWalletNull() {
-        `when`(walletCache.getById(anyOrNull())).thenReturn(null)
+    fun depositPlayer_thenWalletEmpty() {
+        `when`(walletCache.getById(anyOrNull())).thenReturn(Optional.empty())
 
         val returned = economyAPI.deposit(player, UUID.randomUUID(), UUID.randomUUID(), 2.0)
 
@@ -76,7 +76,7 @@ class DefaultJtmEconomyAPITest {
 
     @Test
     fun depositPlayer_thenTransactionNull() {
-        `when`(walletCache.getById(anyOrNull())).thenReturn(wallet)
+        `when`(walletCache.getById(anyOrNull())).thenReturn(Optional.of(wallet))
         `when`(walletCache.deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())).thenReturn(null)
 
         val returned = economyAPI.deposit(player, UUID.randomUUID(), UUID.randomUUID(),53.0)
@@ -92,7 +92,7 @@ class DefaultJtmEconomyAPITest {
 
     @Test
     fun depositPlayer() {
-        `when`(walletCache.getById(anyOrNull())).thenReturn(wallet)
+        `when`(walletCache.getById(anyOrNull())).thenReturn(Optional.of(wallet))
         `when`(walletCache.deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())).thenReturn(depositTrans)
 
         val returned = economyAPI.deposit(player, UUID.randomUUID(), UUID.randomUUID(),2.0)
@@ -109,8 +109,8 @@ class DefaultJtmEconomyAPITest {
     }
 
     @Test
-    fun depositOfflinePlayer_thenWalletNull() {
-        `when`(walletService.get(anyOrNull())).thenReturn(null)
+    fun depositOfflinePlayer_thenWalletEmpty() {
+        `when`(walletService.get(anyOrNull())).thenReturn(Optional.empty())
 
         val returned = economyAPI.deposit(offlinePlayer, UUID.randomUUID(), UUID.randomUUID(), 2.0)
 
@@ -127,7 +127,7 @@ class DefaultJtmEconomyAPITest {
 
     @Test
     fun depositOfflinePlayer_thenTransactionNull() {
-        `when`(walletService.get(anyOrNull())).thenReturn(wallet)
+        `when`(walletService.get(anyOrNull())).thenReturn(Optional.of(wallet))
         `when`(walletCache.deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())).thenReturn(null)
 
         val returned = economyAPI.deposit(offlinePlayer, UUID.randomUUID(), UUID.randomUUID(), 3.0)
@@ -146,7 +146,7 @@ class DefaultJtmEconomyAPITest {
 
     @Test
     fun depositOfflinePlayer() {
-        `when`(walletService.get(anyOrNull())).thenReturn(wallet)
+        `when`(walletService.get(anyOrNull())).thenReturn(Optional.of(wallet))
         `when`(walletCache.deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())).thenReturn(depositTrans)
 
         val returned = economyAPI.deposit(offlinePlayer, UUID.randomUUID(), UUID.randomUUID(), 2.0)
@@ -165,8 +165,8 @@ class DefaultJtmEconomyAPITest {
     }
 
     @Test
-    fun withdrawPlayer_thenWalletNull() {
-        `when`(walletCache.getById(anyOrNull())).thenReturn(null)
+    fun withdrawPlayer_thenWalletEmpty() {
+        `when`(walletCache.getById(anyOrNull())).thenReturn(Optional.empty())
 
         val returned = economyAPI.withdraw(player, UUID.randomUUID(), UUID.randomUUID(),5.0)
 
@@ -176,12 +176,12 @@ class DefaultJtmEconomyAPITest {
 
         verifyNoInteractions(framework)
 
-        assertNotNull(returned)
+        assertTrue(returned.isEmpty)
     }
 
     @Test
     fun withdrawPlayer_thenTransactionNull() {
-        `when`(walletCache.getById(anyOrNull())).thenReturn(wallet)
+        `when`(walletCache.getById(anyOrNull())).thenReturn(Optional.of(wallet))
         `when`(walletCache.withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())).thenReturn(null)
 
         val returned = economyAPI.withdraw(player, UUID.randomUUID(), UUID.randomUUID(),5.0)
@@ -198,7 +198,7 @@ class DefaultJtmEconomyAPITest {
 
     @Test
     fun withdrawPlayer() {
-        `when`(walletCache.getById(anyOrNull())).thenReturn(wallet)
+        `when`(walletCache.getById(anyOrNull())).thenReturn(Optional.of(wallet))
         `when`(walletCache.withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())).thenReturn(withdrawTrans)
 
         val returned = economyAPI.withdraw(player, UUID.randomUUID(), UUID.randomUUID(),3.0)
@@ -215,8 +215,8 @@ class DefaultJtmEconomyAPITest {
     }
 
     @Test
-    fun withdrawOfflinePlayer_thenWalletNull() {
-        `when`(walletService.get(anyOrNull())).thenReturn(null)
+    fun withdrawOfflinePlayer_thenWalletEmpty() {
+        `when`(walletService.get(anyOrNull())).thenReturn(Optional.empty())
 
         val returned = economyAPI.withdraw(offlinePlayer, UUID.randomUUID(), UUID.randomUUID(),3.0)
 
@@ -232,10 +232,12 @@ class DefaultJtmEconomyAPITest {
 
     @Test
     fun withdrawOfflinePlayer_thenTransactionNull() {
-        `when`(walletService.get(anyOrNull())).thenReturn(wallet)
+        val updated = wallet.setBalance(currency.id, 50.0)
+
+        `when`(walletService.get(anyOrNull())).thenReturn(Optional.of(updated))
         `when`(walletCache.withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())).thenReturn(null)
 
-        val returned = economyAPI.withdraw(offlinePlayer, UUID.randomUUID(), UUID.randomUUID(),2.0)
+        val returned = economyAPI.withdraw(offlinePlayer, currency.id, UUID.randomUUID(),2.0)
 
         verify(walletService, times(1)).get(anyOrNull())
         verifyNoMoreInteractions(walletService)
@@ -243,6 +245,7 @@ class DefaultJtmEconomyAPITest {
         verify(walletCache, times(1)).service
         verify(walletCache, times(1)).withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())
         verifyNoMoreInteractions(walletCache)
+
         verifyNoInteractions(transactionService)
 
         assertNotNull(returned)
@@ -250,10 +253,12 @@ class DefaultJtmEconomyAPITest {
 
     @Test
     fun withdrawOfflinePlayer() {
-        `when`(walletService.get(anyOrNull())).thenReturn(wallet)
+        wallet.setBalance(currency.id, 50.0)
+
+        `when`(walletService.get(anyOrNull())).thenReturn(Optional.of(wallet))
         `when`(walletCache.withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyDouble())).thenReturn(withdrawTrans)
 
-        val returned = economyAPI.withdraw(offlinePlayer, UUID.randomUUID(), UUID.randomUUID(),1.0)
+        val returned = economyAPI.withdraw(offlinePlayer, currency.id, UUID.randomUUID(),1.0)
 
         verify(walletService, times(1)).get(anyOrNull())
         verifyNoMoreInteractions(walletService)
@@ -269,8 +274,8 @@ class DefaultJtmEconomyAPITest {
     }
 
     @Test
-    fun balancePlayer_thenWalletNull() {
-        `when`(walletCache.getById(anyOrNull())).thenReturn(null)
+    fun balancePlayer_thenWalletEmpty() {
+        `when`(walletCache.getById(anyOrNull())).thenReturn(Optional.empty())
 
         val returned = economyAPI.balance(player, UUID.randomUUID())
 
@@ -278,12 +283,12 @@ class DefaultJtmEconomyAPITest {
         verify(walletCache, times(1)).getById(anyOrNull())
         verifyNoMoreInteractions(walletCache)
 
-        assertNull(returned)
+        assertTrue(returned.isEmpty)
     }
 
     @Test
     fun balancePlayer() {
-        `when`(walletCache.getById(anyOrNull())).thenReturn(wallet)
+        `when`(walletCache.getById(anyOrNull())).thenReturn(Optional.of(wallet))
 
         val returned = economyAPI.balance(player, UUID.randomUUID())
 
@@ -291,33 +296,34 @@ class DefaultJtmEconomyAPITest {
         verify(walletCache, times(1)).getById(anyOrNull())
         verifyNoMoreInteractions(walletCache)
 
-        assertNotNull(returned)
-        assertEquals(0.0, returned)
+        assertTrue(returned.isPresent)
+        returned.ifPresent { bal -> assertEquals(0.0, bal) }
+
     }
 
     @Test
-    fun balanceOfflinePlayer_thenWalletNull() {
-        `when`(walletService.get(anyOrNull())).thenReturn(null)
+    fun balanceOfflinePlayer_thenWalletEmpty() {
+        `when`(walletService.get(anyOrNull())).thenReturn(Optional.empty())
 
         val returned = economyAPI.balance(offlinePlayer, UUID.randomUUID())
 
         verify(walletService, times(1)).get(anyOrNull())
         verifyNoMoreInteractions(walletService)
 
-        assertNull(returned)
+        assertTrue(returned.isEmpty)
     }
 
     @Test
     fun balanceOfflinePlayer() {
-        `when`(walletService.get(anyOrNull())).thenReturn(wallet)
+        `when`(walletService.get(anyOrNull())).thenReturn(Optional.of(wallet))
 
         val returned = economyAPI.balance(offlinePlayer, UUID.randomUUID())
 
         verify(walletService, times(1)).get(anyOrNull())
         verifyNoMoreInteractions(walletService)
 
-        assertNotNull(returned)
-        assertEquals(0.0, returned)
+        assertTrue(returned.isPresent)
+        returned.ifPresent { bal -> assertEquals(0.0, bal) }
     }
 
     @Test
@@ -372,10 +378,10 @@ class DefaultJtmEconomyAPITest {
     fun exchangeAmountPlayer() {
         `when`(mockWallet.addBalance(anyOrNull(), anyDouble())).thenReturn(mockWallet)
         `when`(mockWallet.removeBalance(anyOrNull(), anyDouble())).thenReturn(mockWallet)
-        `when`(currencyCache.getById(anyOrNull())).thenReturn(currency)
-        `when`(exchangeRateCache.getBySymbol(anyString())).thenReturn(rate)
-        `when`(walletCache.getById(anyOrNull())).thenReturn(mockWallet)
-        `when`(walletCache.update(anyOrNull(), anyOrNull())).thenReturn(mockWallet)
+        `when`(currencyCache.getById(anyOrNull())).thenReturn(Optional.of(currency))
+        `when`(exchangeRateCache.getBySymbol(anyString())).thenReturn(Optional.of(rate))
+        `when`(walletCache.getById(anyOrNull())).thenReturn(Optional.of(mockWallet))
+        `when`(walletCache.update(anyOrNull(), anyOrNull())).thenReturn(Optional.of(mockWallet))
         `when`(walletCache.hasBalance(anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(true)
 
         val returned = economyAPI.exchangeAmount(player, UUID.randomUUID(), UUID.randomUUID(), 2.4)
@@ -407,9 +413,9 @@ class DefaultJtmEconomyAPITest {
         `when`(mockWallet.addBalance(anyOrNull(), anyDouble())).thenReturn(mockWallet)
         `when`(mockWallet.removeBalance(anyOrNull(), anyDouble())).thenReturn(mockWallet)
         `when`(walletCache.hasBalanceOffline(anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(true)
-        `when`(currencyCache.getById(anyOrNull())).thenReturn(currency)
-        `when`(exchangeRateCache.getBySymbol(anyString())).thenReturn(rate)
-        `when`(walletService.get(anyOrNull())).thenReturn(mockWallet)
+        `when`(currencyCache.getById(anyOrNull())).thenReturn(Optional.of(currency))
+        `when`(exchangeRateCache.getBySymbol(anyString())).thenReturn(Optional.of(rate))
+        `when`(walletService.get(anyOrNull())).thenReturn(Optional.of(mockWallet))
 
         val returned = economyAPI.exchangeAmountOffline(offlinePlayer, UUID.randomUUID(), UUID.randomUUID(), 2.5)
 
@@ -437,7 +443,7 @@ class DefaultJtmEconomyAPITest {
 
     @Test
     fun getWalletPlayer() {
-        `when`(walletCache.getById(anyOrNull())).thenReturn(mockWallet)
+        `when`(walletCache.getById(anyOrNull())).thenReturn(Optional.of(mockWallet))
 
         val returned = economyAPI.getWallet(player)
 
@@ -450,7 +456,7 @@ class DefaultJtmEconomyAPITest {
 
     @Test
     fun getWalletOfflinePlayer() {
-        `when`(walletService.get(anyOrNull())).thenReturn(mockWallet)
+        `when`(walletService.get(anyOrNull())).thenReturn(Optional.of(mockWallet))
 
         val returned = economyAPI.getWallet(offlinePlayer)
 
@@ -462,7 +468,7 @@ class DefaultJtmEconomyAPITest {
 
     @Test
     fun getCurrency() {
-        `when`(currencyCache.getById(anyOrNull())).thenReturn(mockCurrency)
+        `when`(currencyCache.getById(anyOrNull())).thenReturn(Optional.of(mockCurrency))
 
         val returned = economyAPI.getCurrency(UUID.randomUUID())
 
@@ -474,7 +480,7 @@ class DefaultJtmEconomyAPITest {
 
     @Test
     fun getCurrencyByName() {
-        `when`(currencyCache.getByName(anyString())).thenReturn(mockCurrency)
+        `when`(currencyCache.getByName(anyString())).thenReturn(Optional.of(mockCurrency))
 
         val returned = economyAPI.getCurrency("test")
 
@@ -486,17 +492,15 @@ class DefaultJtmEconomyAPITest {
 
     @Test
     fun getGlobalCurrency() {
-        `when`(currencyCache.getGlobalCurrency()).thenReturn(mockCurrency)
+        `when`(currencyCache.getGlobalCurrency()).thenReturn(Optional.of(mockCurrency))
 
         val returned = economyAPI.getGlobalCurrency()
 
         verify(currencyCache, times(1)).getGlobalCurrency()
         verifyNoMoreInteractions(currencyCache)
 
-        assertNotNull(returned)
+        assertTrue(returned.isPresent)
 
-        if (returned != null) {
-            assertTrue(returned.main)
-        }
+        returned.ifPresent { curr -> assertTrue(curr.main) }
     }
 }

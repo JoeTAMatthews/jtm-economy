@@ -16,6 +16,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
+import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
 class ExchangeRateCommandsTest {
@@ -63,7 +64,7 @@ class ExchangeRateCommandsTest {
     @Test
     fun onExchangeRateAdd() {
         `when`(exchangeRateCache.existsBySymbol(anyString())).thenReturn(false)
-        `when`(exchangeRateCache.insert(anyOrNull(), anyOrNull())).thenReturn(rate)
+        `when`(exchangeRateCache.insert(anyOrNull(), anyOrNull())).thenReturn(Optional.of(rate))
 
         exchangeRateCommands.onExchangeRateAdd(player, from, to, 1.34)
 
@@ -96,8 +97,8 @@ class ExchangeRateCommandsTest {
     @Test
     fun onExchangeRateRemove() {
         `when`(exchangeRateCache.existsBySymbol(anyString())).thenReturn(true)
-        `when`(exchangeRateCache.getBySymbol(anyString())).thenReturn(rate)
-        `when`(exchangeRateCache.remove(anyOrNull())).thenReturn(rate)
+        `when`(exchangeRateCache.getBySymbol(anyString())).thenReturn(Optional.of(rate))
+        `when`(exchangeRateCache.remove(anyOrNull())).thenReturn(Optional.of(rate))
 
         exchangeRateCommands.onExchangeRateRemove(player, "test")
 
@@ -130,8 +131,8 @@ class ExchangeRateCommandsTest {
     @Test
     fun onExchangeRateUpdate() {
         `when`(exchangeRateCache.existsBySymbol(anyString())).thenReturn(true)
-        `when`(exchangeRateCache.getBySymbol(anyString())).thenReturn(rate)
-        `when`(exchangeRateCache.update(anyOrNull(), anyOrNull())).thenReturn(rate)
+        `when`(exchangeRateCache.getBySymbol(anyString())).thenReturn(Optional.of(rate))
+        `when`(exchangeRateCache.update(anyOrNull(), anyOrNull())).thenReturn(Optional.of(rate))
 
         exchangeRateCommands.onExchangeRateUpdate(player, "test", ExchangeRateSetting.RATE, "1.0")
 
@@ -164,7 +165,7 @@ class ExchangeRateCommandsTest {
     @Test
     fun onExchangeRateInfo() {
         `when`(exchangeRateCache.existsBySymbol(anyString())).thenReturn(true)
-        `when`(exchangeRateCache.getBySymbol(anyString())).thenReturn(rate)
+        `when`(exchangeRateCache.getBySymbol(anyString())).thenReturn(Optional.of(rate))
 
         exchangeRateCommands.onExchangeRateInfo(player, "test")
 

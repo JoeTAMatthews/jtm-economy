@@ -49,7 +49,7 @@ class JtmEconomyCommandsTest {
     @Test
     fun onEconDepositOnline() {
         `when`(target.isOnline).thenReturn(true)
-        `when`(economyAPI.deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(mockTrans)
+        `when`(economyAPI.deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(Optional.of(mockTrans))
 
         economyCommands.onEconDeposit(player, target, currency, 5.0)
 
@@ -68,7 +68,7 @@ class JtmEconomyCommandsTest {
     @Test
     fun onEconDepositOnline_thenDepositFailed() {
         `when`(target.isOnline).thenReturn(true)
-        `when`(economyAPI.deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(null)
+        `when`(economyAPI.deposit(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(Optional.empty())
 
         economyCommands.onEconDeposit(player, target, currency, 5.0)
 
@@ -96,7 +96,7 @@ class JtmEconomyCommandsTest {
     @Test
     fun onEconWithdrawOnline() {
         `when`(target.isOnline).thenReturn(true)
-        `when`(economyAPI.withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(mockTrans)
+        `when`(economyAPI.withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(Optional.of(mockTrans))
 
         economyCommands.onEconWithdraw(player, target, currency, 5.0)
 
@@ -115,7 +115,7 @@ class JtmEconomyCommandsTest {
     @Test
     fun onEconWithdrawOnline_thenDepositFailed() {
         `when`(target.isOnline).thenReturn(true)
-        `when`(economyAPI.withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(null)
+        `when`(economyAPI.withdraw(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(Optional.empty())
 
         economyCommands.onEconWithdraw(player, target, currency, 5.0)
 
@@ -141,7 +141,7 @@ class JtmEconomyCommandsTest {
     @Test
     fun onEconBalanceOnline() {
         `when`(target.isOnline).thenReturn(true)
-        `when`(economyAPI.balance(anyOrNull(), anyOrNull())).thenReturn(5.0)
+        `when`(economyAPI.balance(anyOrNull(), anyOrNull())).thenReturn(Optional.of(5.0))
 
         economyCommands.onEconBalance(player, target, currency)
 

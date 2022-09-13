@@ -32,7 +32,7 @@ class WalletListenerTest {
     @Test
     fun onLoad() {
         `when`(loadEvent.wallet).thenReturn(wallet)
-        `when`(cache.insert(anyOrNull(), anyOrNull())).thenReturn(wallet)
+        `when`(cache.insert(anyOrNull(), anyOrNull())).thenReturn(Optional.of(wallet))
         `when`(currencyCache.getAll()).thenReturn(listOf(currency))
 
         walletListener.onLoad(loadEvent)
@@ -51,7 +51,7 @@ class WalletListenerTest {
     @Test
     fun onUnload() {
         `when`(unloadEvent.wallet).thenReturn(wallet)
-        `when`(cache.remove(anyOrNull())).thenReturn(wallet)
+        `when`(cache.remove(anyOrNull())).thenReturn(Optional.of(wallet))
 
         walletListener.onUnload(unloadEvent)
 
