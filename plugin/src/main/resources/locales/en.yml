@@ -6,7 +6,9 @@ currency:
     remove: "&aSuccessfully removed currency '&f%s&a'"
 
 economy:
-  deposited:
+  error:
+    failed_finding_wallet: "&4Error: &cFailed to find the target wallet."
+  deposit:
     sender_failed: "&4Error: &cFailed to deposit funds to the player."
     sender_success: "&aSuccessfully deposited &e%s &ato &e%s&a."
     target_success: "&aYou have been given &e%s&a."
@@ -36,3 +38,7 @@ rollback:
   end: "&fEnding rollback operation on &c%s"
   failed: "&4Error: &cRollback operation has failed."
   success: "&aSuccessfully completed rollback operation on &e%s"
+
+user:
+  insufficient_funds: "&cInsufficient funds."
+  sufficient_funds: "&b%s &ahas sufficient funds."
