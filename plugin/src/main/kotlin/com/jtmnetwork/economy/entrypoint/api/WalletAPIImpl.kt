@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
 
-class TransactionAPIImpl @Inject constructor(private val cache: WalletCache, private val service: WalletService): TransactionAPI {
+class WalletAPIImpl @Inject constructor(private val cache: WalletCache, private val service: WalletService): WalletAPI {
 
     override fun deposit(sender: CommandSender?, player: Player, from: UUID?, currency: Currency, amount: Double): Optional<Transaction> {
         return cache.deposit(sender, player, from, currency, amount)
@@ -26,5 +26,21 @@ class TransactionAPIImpl @Inject constructor(private val cache: WalletCache, pri
 
     override fun withdraw(sender: CommandSender?, player: OfflinePlayer, to: UUID?, currency: Currency, amount: Double): Optional<Transaction> {
         return service.withdraw(sender, player, to, currency, amount)
+    }
+
+    override fun balance(sender: CommandSender?, player: Player, currency: Currency): Optional<Double> {
+        return cache.balance(sender, player, currency)
+    }
+
+    override fun balance(sender: CommandSender?, player: OfflinePlayer, currency: Currency): Optional<Double> {
+        return service.balance(sender, player, currency)
+    }
+
+    override fun hasBalance(sender: CommandSender?, player: Player, currency: Currency, amount: Double): Boolean {
+        return cache.hasBalance(sender, player, currency, amount)
+    }
+
+    override fun hasBalance(sender: CommandSender?, player: OfflinePlayer, currency: Currency, amount: Double): Boolean {
+        return service.hasBalance(sender, player, currency, amount)
     }
 }

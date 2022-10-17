@@ -2,12 +2,12 @@ package com.jtmnetwork.economy.entrypoint.vault
 
 import com.jtmnetwork.economy.JtmEconomy
 import com.jtmnetwork.economy.entrypoint.api.EconomyAPI
-import com.jtmnetwork.economy.entrypoint.api.TransactionAPI
+import com.jtmnetwork.economy.entrypoint.api.WalletAPI
 import net.milkbowl.vault.economy.AbstractEconomy
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.Bukkit
 
-open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyAPI: EconomyAPI, private val transactionAPI: TransactionAPI): AbstractEconomy() {
+open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyAPI: EconomyAPI, private val walletAPI: WalletAPI): AbstractEconomy() {
 
     override fun isEnabled(): Boolean {
         return jtmEconomy.isVaultEnabled()
@@ -46,6 +46,7 @@ open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyA
         return currency.abbreviation
     }
 
+    @Deprecated("Deprecated in Java")
     override fun hasAccount(playerName: String): Boolean {
         val player = Bukkit.getPlayer(playerName) ?: return false
         val opt = economyAPI.getWallet(player)
@@ -53,6 +54,7 @@ open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyA
         return true
     }
 
+    @Deprecated("Deprecated in Java")
     override fun hasAccount(playerName: String, worldName: String?): Boolean {
         val player = Bukkit.getPlayer(playerName) ?: return false
         val opt = economyAPI.getWallet(player)
@@ -60,32 +62,27 @@ open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyA
         return true
     }
 
+    @Deprecated("Deprecated in Java")
     override fun getBalance(playerName: String): Double {
         val player = Bukkit.getPlayer(playerName) ?: return 0.0
-        val opt = economyAPI.getWallet(player)
-        if (opt.isEmpty) return 0.0
-        val wallet = opt.get()
-
         val optCurrency = economyAPI.getGlobalCurrency()
         if (optCurrency.isEmpty) return 0.0
         val currency = optCurrency.get()
 
-        return wallet.getBalance(currency.id)
+        return walletAPI.balance(null, player, currency).orElse(null)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun getBalance(playerName: String, world: String?): Double {
         val player = Bukkit.getPlayer(playerName) ?: return 0.0
-        val opt = economyAPI.getWallet(player)
-        if (opt.isEmpty) return 0.0
-        val wallet = opt.get()
-
         val optCurrency = economyAPI.getGlobalCurrency()
         if (optCurrency.isEmpty) return 0.0
         val currency = optCurrency.get()
 
-        return wallet.getBalance(currency.id)
+        return walletAPI.balance(null, player, currency).orElse(null)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun has(playerName: String, amount: Double): Boolean {
         val player = Bukkit.getPlayer(playerName) ?: return false
 
@@ -93,23 +90,17 @@ open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyA
         if (optCurrency.isEmpty) return false
         val currency = optCurrency.get()
 
-        val balance = economyAPI.balance(player, currency.id)
-        if (balance.isEmpty) return false
-        val bal = balance.get()
-
-        return amount <= bal
+        return walletAPI.hasBalance(null, player, currency, amount)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun has(playerName: String, worldName: String?, amount: Double): Boolean {
         val player = Bukkit.getPlayer(playerName) ?: return false
         val optCurrency = economyAPI.getGlobalCurrency()
         if (optCurrency.isEmpty) return false
         val currency = optCurrency.get()
 
-        val balance = economyAPI.balance(player, currency.id)
-        if (balance.isEmpty) return false
-        val bal = balance.get()
-        return amount <= bal
+        return walletAPI.hasBalance(null, player, currency, amount)
     }
 
     @Deprecated("Deprecated in Java")
@@ -120,7 +111,7 @@ open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyA
         if (opt.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find global currency.")
         val currency = opt.get()
 
-        val optTrans = transactionAPI.withdraw(null, player, null, currency, amount)
+        val optTrans = walletAPI.withdraw(null, player, null, currency, amount)
         if (optTrans.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Insufficient funds.")
         val trans = optTrans.get()
 
@@ -135,7 +126,7 @@ open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyA
         if (opt.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find global currency.")
         val currency = opt.get()
 
-        val optTrans = transactionAPI.withdraw(null, player, null, currency, amount)
+        val optTrans = walletAPI.withdraw(null, player, null, currency, amount)
         if (optTrans.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Failed to withdraw.")
         val trans = optTrans.get()
 
@@ -150,13 +141,14 @@ open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyA
         if (opt.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find global currency.")
         val currency = opt.get()
 
-        val optTrans = transactionAPI.deposit(null, player, null, currency, amount)
+        val optTrans = walletAPI.deposit(null, player, null, currency, amount)
         if (optTrans.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Failed to withdraw.")
         val trans = optTrans.get()
 
         return EconomyResponse(amount, trans.new_balance, EconomyResponse.ResponseType.SUCCESS, "")
     }
 
+    @Deprecated("Deprecated in Java")
     override fun depositPlayer(playerName: String, worldName: String?, amount: Double): EconomyResponse {
         val player = Bukkit.getPlayer(playerName) ?: return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find player.")
 
@@ -164,13 +156,14 @@ open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyA
         if (opt.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find global currency.")
         val currency = opt.get()
 
-        val optTrans = transactionAPI.deposit(null, player, null, currency, amount)
+        val optTrans = walletAPI.deposit(null, player, null, currency, amount)
         if (optTrans.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Failed to withdraw.")
         val trans = optTrans.get()
 
         return EconomyResponse(amount, trans.new_balance, EconomyResponse.ResponseType.SUCCESS, "")
     }
 
+    @Deprecated("Deprecated in Java")
     override fun createBank(name: String?, player: String?): EconomyResponse {
         return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented.")
     }
@@ -209,10 +202,12 @@ open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyA
         return economyAPI.getCurrencies().map { it.name }.toMutableList()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun createPlayerAccount(playerName: String?): Boolean {
         return false
     }
 
+    @Deprecated("Deprecated in Java")
     override fun createPlayerAccount(playerName: String?, worldName: String?): Boolean {
         return false
     }

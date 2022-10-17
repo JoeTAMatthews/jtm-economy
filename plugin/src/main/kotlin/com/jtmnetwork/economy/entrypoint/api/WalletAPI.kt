@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
 
-interface TransactionAPI {
+interface WalletAPI {
 
     /**
      * Deposit currency amount to an online player.
@@ -60,4 +60,12 @@ interface TransactionAPI {
      * @return              if completed return true, if failed return false
      */
     fun withdraw(sender: CommandSender?, player: OfflinePlayer, to: UUID?, currency: Currency, amount: Double): Optional<Transaction>
+
+    fun balance(sender: CommandSender?, player: Player, currency: Currency): Optional<Double>
+
+    fun balance(sender: CommandSender?, player: OfflinePlayer, currency: Currency): Optional<Double>
+
+    fun hasBalance(sender: CommandSender?, player: Player, currency: Currency, amount: Double): Boolean
+
+    fun hasBalance(sender: CommandSender?, player: OfflinePlayer, currency: Currency, amount: Double): Boolean
 }

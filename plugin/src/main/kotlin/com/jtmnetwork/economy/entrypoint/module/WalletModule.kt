@@ -4,8 +4,8 @@ import com.google.inject.AbstractModule
 import com.jtmnetwork.economy.data.cache.WalletCache
 import com.jtmnetwork.economy.data.service.TransactionService
 import com.jtmnetwork.economy.data.service.WalletService
-import com.jtmnetwork.economy.entrypoint.api.TransactionAPI
-import com.jtmnetwork.economy.entrypoint.api.TransactionAPIImpl
+import com.jtmnetwork.economy.entrypoint.api.WalletAPI
+import com.jtmnetwork.economy.entrypoint.api.WalletAPIImpl
 import com.jtmnetwork.economy.entrypoint.commands.PayCommands
 import com.jtmnetwork.economy.entrypoint.commands.RollbackCommands
 import com.jtmnetwork.economy.entrypoint.commands.WalletCommands
@@ -26,6 +26,6 @@ class WalletModule: AbstractModule() {
         bind(PayCommands::class.java)
         bind(RollbackCommands::class.java)
 
-        bind(TransactionAPI::class.java).to(TransactionAPIImpl::class.java)
+        bind(WalletAPI::class.java).to(WalletAPIImpl::class.java)
     }
 }
