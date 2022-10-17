@@ -61,11 +61,49 @@ interface WalletAPI {
      */
     fun withdraw(sender: CommandSender?, player: OfflinePlayer, to: UUID?, currency: Currency, amount: Double): Optional<Transaction>
 
+    /**
+     * Returns the balance amount of the currency found in the online player's wallet.
+     *
+     * @param sender        the nullable command sender.
+     * @param player        the target player wallet
+     * @param currency      the currency selected.
+     *
+     * @return              the balance found in the wallet
+     */
     fun balance(sender: CommandSender?, player: Player, currency: Currency): Optional<Double>
 
+    /**
+     * Returns the balance amount of the currency found in the offline player's wallet.
+     *
+     * @param sender        the nullable command sender.
+     * @param player        the target player wallet
+     * @param currency      the currency selected.
+     *
+     * @return              the balance found in the wallet
+     */
     fun balance(sender: CommandSender?, player: OfflinePlayer, currency: Currency): Optional<Double>
 
+    /**
+     * Checks if the online player has sufficient funds in the selected currency.
+     *
+     * @param sender        the command sender.
+     * @param player        the target online player.
+     * @param currency      the selected currency.
+     * @param amount        the amount to be checked.
+     *
+     * @return              if the player has sufficient funds return true, if not return false.
+     */
     fun hasBalance(sender: CommandSender?, player: Player, currency: Currency, amount: Double): Boolean
 
+    /**
+     * Checks if the offline player has sufficient funds in the selected currency.
+     *
+     * @param sender        the command sender.
+     * @param player        the target offline player.
+     * @param currency      the selected currency.
+     * @param amount        the amount to be checked.
+     *
+     * @return              if the player has sufficient funds return true, if not return false.
+     */
     fun hasBalance(sender: CommandSender?, player: OfflinePlayer, currency: Currency, amount: Double): Boolean
 }
