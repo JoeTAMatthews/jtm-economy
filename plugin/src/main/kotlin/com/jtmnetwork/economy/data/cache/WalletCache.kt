@@ -55,10 +55,10 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
      *
      * @return              the transaction of the deposit.
      */
-    fun deposit(sender: CommandSender, player: Player, from: UUID?, currency: Currency, amount: Double): Optional<Transaction> {
+    fun deposit(sender: CommandSender?, player: Player, from: UUID?, currency: Currency, amount: Double): Optional<Transaction> {
         val opt = getById(player.uniqueId.toString())
         if (opt.isEmpty) {
-            messenger.sendMessage(sender, "economy.error.failed_finding_wallet")
+            if (sender != null) messenger.sendMessage(sender, "economy.error.failed_finding_wallet")
             logging.warn(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name))
             return Optional.empty()
         }
@@ -66,13 +66,13 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         val wallet = opt.get()
         val returned = wallet.deposit(from, currency.id, amount)
         if (returned == null) {
-            messenger.sendMessage(sender, "economy.deposit.sender_failed")
+            if (sender != null) messenger.sendMessage(sender, "economy.deposit.sender_failed")
             logging.warn(format("Failed to deposit in wallet %s(%s)", player.uniqueId.toString(), player.name))
             return Optional.empty()
         }
 
         if (exists(wallet.id)) update(wallet.id, wallet)
-        messenger.sendMessage(sender, "economy.deposit.sender_success", currency.getSymbolAmount(amount), player.name)
+        if (sender != null) messenger.sendMessage(sender, "economy.deposit.sender_success", currency.getSymbolAmount(amount), player.name)
         messenger.sendMessage(player, "economy.deposit.target.success", currency.getSymbolAmount(amount))
 
         framework.runTaskAsync {
@@ -95,10 +95,10 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
      *
      * @return              the transaction of the withdrawal.
      */
-    fun withdraw(sender: CommandSender, player: Player, to: UUID?, currency: Currency, amount: Double): Optional<Transaction> {
+    fun withdraw(sender: CommandSender?, player: Player, to: UUID?, currency: Currency, amount: Double): Optional<Transaction> {
         val opt = getById(player.uniqueId.toString())
         if (opt.isEmpty) {
-            messenger.sendMessage(sender, "economy.error.failed_finding_wallet")
+            if (sender != null) messenger.sendMessage(sender, "economy.error.failed_finding_wallet")
             logging.warn(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name))
             return Optional.empty()
         }
@@ -106,14 +106,14 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         val wallet = opt.get()
         val returned = wallet.withdraw(to, currency.id, amount)
         if (returned == null) {
-            messenger.sendMessage(sender, "economy.withdraw.sender_failed")
+            if (sender != null) messenger.sendMessage(sender, "economy.withdraw.sender_failed")
             logging.warn(format("Failed to withdraw from wallet %s(%s)", player.uniqueId.toString(), player.name))
             return Optional.empty()
         }
 
         if (exists(wallet.id)) update(wallet.id, wallet)
-        messenger.sendMessage(sender, "economy.withdraw.sender_success", currency.getSymbolAmount(amount), player.name)
-        messenger.sendMessage(sender, "economy.withdraw.target_success", currency.getSymbolAmount(amount))
+        if (sender != null) messenger.sendMessage(sender, "economy.withdraw.sender_success", currency.getSymbolAmount(amount), player.name)
+        messenger.sendMessage(player, "economy.withdraw.target_success", currency.getSymbolAmount(amount))
         framework.runTaskAsync {
             service.update(wallet)
             transactionService.update(returned)
@@ -131,34 +131,17 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
      *
      * @return          the balance of the currency selected under the target wallet.
      */
-    fun balance(sender: CommandSender, player: Player, currency: Currency): Optional<Double> {
+    fun balance(sender: CommandSender?, player: Player, currency: Currency): Optional<Double> {
         val opt = getById(player.uniqueId.toString())
         if (opt.isEmpty) {
-            messenger.sendMessage(sender, "economy.error.failed_finding_wallet")
+            if (sender != null) messenger.sendMessage(sender, "economy.error.failed_finding_wallet")
             logging.warn(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name))
             return Optional.empty()
         }
 
         val wallet = opt.get()
         val balance = wallet.getBalance(currency.id)
-        messenger.sendMessage(sender, "economy.balance", player.name, currency.getSymbolAmount(balance))
-        return Optional.of(balance)
-    }
-
-    /**
-     * Return the balance of the currency selected under the target player's wallet.
-     * Logging the error to the console & log file.
-     *
-     * @param player    the target player.
-     * @param currency  the currency selected.
-     *
-     * @return          the balance of the currency selected under the target wallet.
-     */
-    fun balance(player: Player, currency: Currency): Optional<Double> {
-        val opt = getById(player.uniqueId.toString())
-        if (opt.isEmpty) return Optional.empty()
-        val wallet = opt.get()
-        val balance = wallet.getBalance(currency.id)
+        if (sender != null) messenger.sendMessage(sender, "economy.balance", player.name, currency.getSymbolAmount(balance))
         return Optional.of(balance)
     }
 
@@ -173,31 +156,10 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
      *
      * @return          if the player has sufficient funds return true, if they don't return false.
      */
-    fun hasBalance(sender: CommandSender, player: Player, currency: Currency, amount: Double): Boolean {
+    fun hasBalance(sender: CommandSender?, player: Player, currency: Currency, amount: Double): Boolean {
         val opt = getById(player.uniqueId.toString())
         if (opt.isEmpty) {
-            messenger.sendMessage(sender, "failed_finding_wallet")
-            logging.warn(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name))
-            return false
-        }
-
-        val wallet = opt.get()
-        return wallet.checkBalance(currency.id, amount)
-    }
-
-    /**
-     * Check the balance of a target player against the currency & amount selected,
-     * sending error messages to the command sender.
-     *
-     * @param player        the target online player
-     * @param currency      the currency to be used.
-     * @param amount        the currency amount.
-     *
-     * @return              if the player has sufficient amount return true, if they don't return false
-     */
-    fun hasBalance(player: Player, currency: Currency, amount: Double): Boolean {
-        val opt = getById(player.uniqueId.toString())
-        if (opt.isEmpty) {
+            if (sender != null) messenger.sendMessage(sender, "failed_finding_wallet")
             logging.warn(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name))
             return false
         }

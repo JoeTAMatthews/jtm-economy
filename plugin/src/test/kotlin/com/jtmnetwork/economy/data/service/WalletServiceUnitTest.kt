@@ -180,7 +180,7 @@ class WalletServiceUnitTest {
     fun balance_thenReturnEmpty_whenWalletEmpty() {
         `when`(service.get(anyString())).thenReturn(Optional.empty())
 
-        val opt = service.balance(target, currency)
+        val opt = service.balance(null, target, currency)
 
         verifyNoMoreInteractions(framework)
         assertTrue(opt.isEmpty)
@@ -190,7 +190,7 @@ class WalletServiceUnitTest {
     fun balance_thenReturnBalance() {
         `when`(service.get(anyString())).thenReturn(Optional.of(wallet.addBalance(currency.id)))
 
-        val returned = service.balance(target, currency)
+        val returned = service.balance(null, target, currency)
 
         verifyNoMoreInteractions(framework)
 
@@ -266,7 +266,7 @@ class WalletServiceUnitTest {
     fun hasBalance_thenSendError_whenWalletEmpty() {
         `when`(service.get(anyString())).thenReturn(Optional.empty())
 
-        val returned = service.hasBalance(target, currency, 25.0)
+        val returned = service.hasBalance(null, target, currency, 25.0)
 
         verify(logging, times(1)).warn(anyString())
         verify(logging, times(1)).error(anyString())
@@ -281,7 +281,7 @@ class WalletServiceUnitTest {
     fun hasBalance_thenReturnTrue() {
         `when`(service.get(anyString())).thenReturn(Optional.of(wallet.setBalance(currency.id, 250.0)))
 
-        val returned = service.hasBalance(target, currency, 25.0)
+        val returned = service.hasBalance(null, target, currency, 25.0)
 
         verifyNoMoreInteractions(framework)
 

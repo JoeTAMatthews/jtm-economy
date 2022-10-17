@@ -221,7 +221,7 @@ class WalletCacheUnitTest {
     fun hasBalance_thenLogError_whenGettingWallet() {
         `when`(cache.getById(anyString())).thenReturn(Optional.empty())
 
-        val returned = cache.hasBalance(player, currency, 100.0)
+        val returned = cache.hasBalance(null, player, currency, 100.0)
 
         verify(logging, times(1)).warn(anyString())
         verifyNoMoreInteractions(logging)
@@ -233,7 +233,7 @@ class WalletCacheUnitTest {
     fun hasBalance_thenReturnTrue() {
         `when`(cache.getById(anyString())).thenReturn(Optional.of(wallet.setBalance(currency.id, 200.0)))
 
-        val returned = cache.hasBalance(player, currency, 50.0)
+        val returned = cache.hasBalance(null, player, currency, 50.0)
 
         assertTrue(returned)
     }

@@ -2,11 +2,12 @@ package com.jtmnetwork.economy.entrypoint.vault
 
 import com.jtmnetwork.economy.JtmEconomy
 import com.jtmnetwork.economy.entrypoint.api.EconomyAPI
+import com.jtmnetwork.economy.entrypoint.api.TransactionAPI
 import net.milkbowl.vault.economy.AbstractEconomy
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.Bukkit
 
-open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyAPI: EconomyAPI): AbstractEconomy() {
+open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyAPI: EconomyAPI, private val transactionAPI: TransactionAPI): AbstractEconomy() {
 
     override fun isEnabled(): Boolean {
         return jtmEconomy.isVaultEnabled()
@@ -111,6 +112,7 @@ open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyA
         return amount <= bal
     }
 
+    @Deprecated("Deprecated in Java")
     override fun withdrawPlayer(playerName: String, amount: Double): EconomyResponse {
         val player = Bukkit.getPlayer(playerName) ?: return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find player.")
 
@@ -118,13 +120,14 @@ open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyA
         if (opt.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find global currency.")
         val currency = opt.get()
 
-        val optTrans = economyAPI.withdraw(player, currency.id, null, amount)
+        val optTrans = transactionAPI.withdraw(null, player, null, currency, amount)
         if (optTrans.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Insufficient funds.")
         val trans = optTrans.get()
 
         return EconomyResponse(amount, trans.new_balance, EconomyResponse.ResponseType.SUCCESS, "")
     }
 
+    @Deprecated("Deprecated in Java")
     override fun withdrawPlayer(playerName: String, worldName: String?, amount: Double): EconomyResponse {
         val player = Bukkit.getPlayer(playerName) ?: return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find player.")
 
@@ -132,13 +135,14 @@ open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyA
         if (opt.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find global currency.")
         val currency = opt.get()
 
-        val optTrans = economyAPI.withdraw(player, currency.id, null, amount)
+        val optTrans = transactionAPI.withdraw(null, player, null, currency, amount)
         if (optTrans.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Failed to withdraw.")
         val trans = optTrans.get()
 
         return EconomyResponse(amount, trans.new_balance, EconomyResponse.ResponseType.SUCCESS, "")
     }
 
+    @Deprecated("Deprecated in Java")
     override fun depositPlayer(playerName: String, amount: Double): EconomyResponse {
         val player = Bukkit.getPlayer(playerName) ?: return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find player.")
 
@@ -146,7 +150,7 @@ open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyA
         if (opt.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find global currency.")
         val currency = opt.get()
 
-        val optTrans = economyAPI.deposit(player, currency.id, null, amount)
+        val optTrans = transactionAPI.deposit(null, player, null, currency, amount)
         if (optTrans.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Failed to withdraw.")
         val trans = optTrans.get()
 
@@ -160,7 +164,7 @@ open class VaultEconomy(private val jtmEconomy: JtmEconomy, private val economyA
         if (opt.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Can't find global currency.")
         val currency = opt.get()
 
-        val optTrans = economyAPI.deposit(player, currency.id, null, amount)
+        val optTrans = transactionAPI.deposit(null, player, null, currency, amount)
         if (optTrans.isEmpty) return EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Failed to withdraw.")
         val trans = optTrans.get()
 
