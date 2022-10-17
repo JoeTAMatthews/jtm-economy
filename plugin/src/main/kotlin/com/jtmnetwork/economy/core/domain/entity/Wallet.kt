@@ -1,6 +1,8 @@
 package com.jtmnetwork.economy.core.domain.entity
 
+import com.jtmnetwork.economy.core.domain.constants.TransactionType
 import com.jtmnetwork.economy.core.usecase.converter.BalanceConverter
+import org.bukkit.entity.Player
 import java.util.*
 import javax.persistence.*
 
@@ -11,6 +13,20 @@ data class Wallet(
     val name: String = "",
     @Column(columnDefinition = "LONGTEXT") @Convert(converter = BalanceConverter::class) val balances: MutableMap<UUID, Double> = HashMap(),
     val created: Long = System.currentTimeMillis()) {
+
+    constructor(player: Player): this(id = player.uniqueId.toString(), name = player.name)
+
+    fun deposit(sender: UUID?, currency: UUID, amount: Double): Transaction? {
+        val current = getBalance(currency)
+        val deposited = addBalance(currency, amount) ?: return null
+        return Transaction(type = TransactionType.IN, sender = sender, receiver = UUID.fromString(id), currency = currency, amount = amount, previous_balance = current, new_balance = deposited.getBalance(currency))
+    }
+
+    fun withdraw(sender: UUID?, currency: UUID, amount: Double): Transaction? {
+        val current = getBalance(currency)
+        val withdrawn = removeBalance(currency, amount) ?: return null
+        return Transaction(type = TransactionType.OUT, sender = UUID.fromString(id), receiver = sender, currency = currency, amount = amount, previous_balance = current, new_balance = withdrawn.getBalance(currency))
+    }
 
     fun hasBalance(currency: UUID): Boolean {
         return balances.containsKey(currency)

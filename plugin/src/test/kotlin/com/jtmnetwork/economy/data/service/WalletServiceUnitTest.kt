@@ -6,8 +6,8 @@ import com.jtm.framework.core.util.Logging
 import com.jtm.framework.presenter.configuration.DatabaseConfiguration
 import com.jtm.framework.presenter.configuration.RestConfiguration
 import com.jtm.framework.presenter.locale.LocaleMessenger
-import com.jtmnetwork.economy.core.domain.entity.Currency
 import com.jtmnetwork.economy.core.domain.entity.Wallet
+import com.jtmnetwork.economy.core.util.TestUtil
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.junit.Before
@@ -35,7 +35,7 @@ class WalletServiceUnitTest {
     private val sender: CommandSender = mock()
     private val target: OfflinePlayer = mock()
     private val targetId = UUID.randomUUID()
-    private val currency = Currency(UUID.randomUUID(), "Pounds", "£")
+    private val currency = TestUtil.createCurrency()
     private val wallet = Wallet(targetId.toString(), "Test")
 
     @Before
@@ -61,7 +61,6 @@ class WalletServiceUnitTest {
 
         verify(connector, times(1)).logging
         verify(connector, times(1)).configuration
-
     }
 
     @Test

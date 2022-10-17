@@ -11,7 +11,6 @@ import com.jtmnetwork.economy.core.domain.entity.Wallet
 import okhttp3.internal.format
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 import java.util.*
 
 @Singleton
@@ -48,7 +47,7 @@ class WalletService @Inject constructor(framework: Framework, connector: Databas
             return Optional.empty()
         }
 
-        messenger.sendMessage(sender, "economy.deposit.sender_success", currency.getAbbreviationAmount(amount), player.name)
+        messenger.sendMessage(sender, "economy.deposit.sender_success", currency.getSymbolAmount(amount), player.name)
         framework.runTaskAsync { transactionService.insert(transaction) }
         return Optional.of(transaction)
     }
@@ -82,7 +81,7 @@ class WalletService @Inject constructor(framework: Framework, connector: Databas
             return Optional.empty()
         }
 
-        messenger.sendMessage(sender, "economy.withdraw.sender_success", currency.getAbbreviationAmount(amount), player.name)
+        messenger.sendMessage(sender, "economy.withdraw.sender_success", currency.getSymbolAmount(amount), player.name)
         framework.runTaskAsync { transactionService.insert(transaction) }
         return Optional.of(transaction)
     }
