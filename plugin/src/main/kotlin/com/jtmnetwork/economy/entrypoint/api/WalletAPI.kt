@@ -2,6 +2,7 @@ package com.jtmnetwork.economy.entrypoint.api
 
 import com.jtmnetwork.economy.core.domain.entity.Currency
 import com.jtmnetwork.economy.core.domain.entity.Transaction
+import com.jtmnetwork.economy.core.domain.entity.Wallet
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -106,4 +107,24 @@ interface WalletAPI {
      * @return              if the player has sufficient funds return true, if not return false.
      */
     fun hasBalance(sender: CommandSender?, player: OfflinePlayer, currency: Currency, amount: Double): Boolean
+
+    /**
+     * Return the wallet of the target online player.
+     *
+     * @param sender        the command sender.
+     * @param player        the target online player.
+     *
+     * @return              the wallet of the target player.
+     */
+    fun getWallet(sender: CommandSender?, player: Player): Optional<Wallet>
+
+    /**
+     * Return the wallet of the target offline player.
+     *
+     * @param sender        the command sender.
+     * @param player        the target offline player.
+     *
+     * @return              the wallet of the target player.
+     */
+    fun getWallet(sender: CommandSender?, player: OfflinePlayer): Optional<Wallet>
 }
