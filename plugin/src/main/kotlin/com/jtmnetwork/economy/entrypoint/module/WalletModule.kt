@@ -25,7 +25,5 @@ class WalletModule: AbstractModule() {
 
         bind(PayCommands::class.java)
         bind(RollbackCommands::class.java)
-
-        bind(WalletAPI::class.java).to(WalletAPIImpl::class.java)
     }
 }

@@ -132,4 +132,15 @@ class WalletService @Inject constructor(framework: Framework, connector: Databas
         val wallet = opt.get()
         return wallet.checkBalance(currency.id, amount)
     }
+
+    fun getWallet(sender: CommandSender?, player: OfflinePlayer): Optional<Wallet> {
+        val opt = get(player.uniqueId.toString())
+        if (opt.isEmpty) {
+            if (sender != null) messenger.sendMessage(sender, "economy.error.failed_finding_wallet")
+            logging.warn(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name ?: "no-name"))
+            return Optional.empty()
+        }
+
+        return opt
+    }
 }

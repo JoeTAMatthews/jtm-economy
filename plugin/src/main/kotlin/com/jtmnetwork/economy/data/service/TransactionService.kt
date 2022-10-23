@@ -23,62 +23,13 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
     private val logging = framework.getLogging()
     private val messenger = framework.getLocaleMessenger()
 
-    fun getOutgoingTransactions(sender: CommandSender?, player: Player): List<Transaction> {
-        val list = getAll()
-        if (list.isEmpty()) {
-            if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
-            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name))
-            return emptyList()
-        }
-
-        return list.stream()
-            .filter { it.sender == player.uniqueId }
-            .filter { it.type == TransactionType.OUT }
-            .collect(Collectors.toList())
-    }
-
-    fun getOutgoingTransactions(sender: CommandSender?, player: Player, currency: Currency): List<Transaction> {
-        val list = getAll()
-        if (list.isEmpty()) {
-            if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
-            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name))
-            return emptyList()
-        }
-
-        return list.stream()
-            .filter { it.sender == player.uniqueId }
-            .filter { it.type == TransactionType.OUT && it.currency == currency.id }
-            .collect(Collectors.toList())
-    }
-
-    fun getOutgoingTransactions(sender: CommandSender?, player: OfflinePlayer): List<Transaction> {
-        val list = getAll()
-        if (list.isEmpty()) {
-            if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
-            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name ?: "no-name"))
-            return emptyList()
-        }
-
-        return list.stream()
-            .filter { it.sender == player.uniqueId }
-            .filter { it.type == TransactionType.OUT }
-            .collect(Collectors.toList())
-    }
-
-    fun getOutgoingTransactions(sender: CommandSender?, player: OfflinePlayer, currency: Currency): List<Transaction> {
-        val list = getAll()
-        if (list.isEmpty()) {
-            if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
-            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name ?: "no-name"))
-            return emptyList()
-        }
-
-        return list.stream()
-            .filter { it.sender == player.uniqueId }
-            .filter { it.type == TransactionType.OUT && it.currency == currency.id }
-            .collect(Collectors.toList())
-    }
-
+    /**
+     * Return a list of ingoing transactions under the target online player.
+     *
+     * @param sender        the command sender.
+     * @param player        the target online player.
+     * @return              the list of ingoing transactions.
+     */
     fun getIngoingTransactions(sender: CommandSender?, player: Player): List<Transaction> {
         val list = getAll()
         if (list.isEmpty()) {
@@ -93,6 +44,14 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
             .collect(Collectors.toList())
     }
 
+    /**
+     * Return a list of ingoing transactions under the target online player & selected currency.
+     *
+     * @param sender        the command sender.
+     * @param player        the target online player.
+     * @param currency      the selected currency.
+     * @return              the list of ingoing transactions.
+     */
     fun getIngoingTransactions(sender: CommandSender?, player: Player, currency: Currency): List<Transaction> {
         val list = getAll()
         if (list.isEmpty()) {
@@ -107,6 +66,13 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
             .collect(Collectors.toList())
     }
 
+    /**
+     * Return a list of ingoing transactions under the target offline player.
+     *
+     * @param sender        the command sender.
+     * @param player        the target offline player.
+     * @return              the list of ingoing transactions.
+     */
     fun getIngoingTransactions(sender: CommandSender?, player: OfflinePlayer): List<Transaction> {
         val list = getAll()
         if (list.isEmpty()) {
@@ -121,6 +87,15 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
             .collect(Collectors.toList())
     }
 
+    /**
+     * Return a list of ingoing transactions under the target offline player & selected currency.
+     *
+     * @param sender        the command sender.
+     * @param player        the target offline player.
+     * @param currency      the selected currency.
+     *
+     * @return              the list of ingoing transactions.
+     */
     fun getIngoingTransactions(sender: CommandSender?, player: OfflinePlayer, currency: Currency): List<Transaction> {
         val list = getAll()
         if (list.isEmpty()) {
@@ -135,6 +110,104 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
             .collect(Collectors.toList())
     }
 
+    /**
+     * Return a list of outgoing under the target online player.
+     *
+     * @param sender        the command sender.
+     * @param player        the target online player.
+     *
+     * @return              list of outgoing transactions.
+     */
+    fun getOutgoingTransactions(sender: CommandSender?, player: Player): List<Transaction> {
+        val list = getAll()
+        if (list.isEmpty()) {
+            if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
+            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name))
+            return emptyList()
+        }
+
+        return list.stream()
+            .filter { it.sender == player.uniqueId }
+            .filter { it.type == TransactionType.OUT }
+            .collect(Collectors.toList())
+    }
+
+    /**
+     * Return a list of outgoing under the target online player & currency selected.
+     *
+     * @param sender        the command sender.
+     * @param player        the target online player.
+     * @param currency      the selected currency.
+     *
+     * @return              the list of outgoing transactions.
+     */
+    fun getOutgoingTransactions(sender: CommandSender?, player: Player, currency: Currency): List<Transaction> {
+        val list = getAll()
+        if (list.isEmpty()) {
+            if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
+            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name))
+            return emptyList()
+        }
+
+        return list.stream()
+            .filter { it.sender == player.uniqueId }
+            .filter { it.type == TransactionType.OUT && it.currency == currency.id }
+            .collect(Collectors.toList())
+    }
+
+    /**
+     * Return a list of outgoing under the target offline player.
+     *
+     * @param sender        the command sender.
+     * @param player        the target offline player.
+     *
+     * @return              the list of outgoing transactions.
+     */
+    fun getOutgoingTransactions(sender: CommandSender?, player: OfflinePlayer): List<Transaction> {
+        val list = getAll()
+        if (list.isEmpty()) {
+            if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
+            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name ?: "no-name"))
+            return emptyList()
+        }
+
+        return list.stream()
+            .filter { it.sender == player.uniqueId }
+            .filter { it.type == TransactionType.OUT }
+            .collect(Collectors.toList())
+    }
+
+    /**
+     * Return a list of outgoing under the target offline player & currency selected.
+     *
+     * @param sender        the command sender.
+     * @param player        the target offline player.
+     * @param currency      the currency selected.
+     *
+     * @return              the list of outgoing transactions.
+     */
+    fun getOutgoingTransactions(sender: CommandSender?, player: OfflinePlayer, currency: Currency): List<Transaction> {
+        val list = getAll()
+        if (list.isEmpty()) {
+            if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
+            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name ?: "no-name"))
+            return emptyList()
+        }
+
+        return list.stream()
+            .filter { it.sender == player.uniqueId }
+            .filter { it.type == TransactionType.OUT && it.currency == currency.id }
+            .collect(Collectors.toList())
+    }
+
+    /**
+     * Return list of all transactions under the target online player.
+     *
+     * @param sender        the command sender.
+     * @param player        the target online player.
+     *
+     * @return              the list of transactions.
+     */
     fun getAllTransactions(sender: CommandSender?, player: Player): List<Transaction> {
         val list = getAll()
         if (list.isEmpty()) {
@@ -148,6 +221,15 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
             .collect(Collectors.toList())
     }
 
+    /**
+     * Return list of all transactions under the target online player & selected currency.
+     *
+     * @param sender        the command sender.
+     * @param player        the target online player.
+     * @param currency      the selected currency.
+     *
+     * @return              the list of transactions.
+     */
     fun getAllTransactions(sender: CommandSender?, player: Player, currency: Currency): List<Transaction> {
         val list = getAll()
         if (list.isEmpty()) {
@@ -162,6 +244,14 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
             .collect(Collectors.toList())
     }
 
+    /**
+     * Return list of all transactions under the target offline player.
+     *
+     * @param sender        the command sender.
+     * @param player        the target offline player.
+     *
+     * @return              the list of transactions.
+     */
     fun getAllTransactions(sender: CommandSender?, player: OfflinePlayer): List<Transaction> {
         val list = getAll()
         if (list.isEmpty()) {
@@ -175,6 +265,15 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
             .collect(Collectors.toList())
     }
 
+    /**
+     * Return list of all transactions under the target offline player & selected currency.
+     *
+     * @param sender        the command sender.
+     * @param player        the target offline player.
+     * @param currency      the selected currency.
+     *
+     * @return              the list of transactions.
+     */
     fun getAllTransactions(sender: CommandSender?, player: OfflinePlayer, currency: Currency): List<Transaction> {
         val list = getAll()
         if (list.isEmpty()) {
@@ -190,73 +289,40 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
     }
 
     /**
-     * Retrieve all transactions based on the player being a receiver.
+     * Convert all transactions of an online player and return a Stack based data structure.
      *
-     * @param id            the target identifier
-     * @return              the list of transactions.
-     */
-    fun getByReceiver(id: UUID): List<Transaction> {
-        return getAll()
-                .stream()
-                .filter { it.receiver == id && it.type == TransactionType.IN }
-                .collect(Collectors.toList()) ?: listOf()
-    }
-
-    /**
-     * Retrieve all transactions based on the player being a sender.
-     *
-     * @param id            the target identifier.
-     * @return              the list of transactions.
-     */
-    fun getBySender(id: UUID): List<Transaction> {
-        return getAll()
-                .stream()
-                .filter { it.sender == id && it.type == TransactionType.OUT }
-                .collect(Collectors.toList()) ?: listOf()
-    }
-
-    /**
-     * Retrieve all transactions based on the player being a receiver and sender.
-     *
-     * @param id            the target identifier
-     * @return              the list of transactions.
-     */
-    fun getByReceiverAndSender(id: UUID): List<Transaction> {
-        return getAll()
-                .stream()
-                .filter { it.receiver == id && it.type == TransactionType.IN || it.sender == id && it.type == TransactionType.OUT }
-                .collect(Collectors.toList()) ?: listOf()
-    }
-
-    /**
-     * Retrieve all transactions based on the currency.
-     *
-     * @param id            the target identifier
-     * @param currency      the currency identifier
-     * @return              the list of transactions.
-     */
-    fun getByCurrency(id: UUID, currency: UUID): List<Transaction> {
-        return getAll()
-                .stream()
-                .filter { (it.receiver == id && it.type == TransactionType.IN || it.sender == id && it.type == TransactionType.OUT) && it.currency == currency }
-                .collect(Collectors.toList()) ?: listOf()
-    }
-
-    /**
-     * Convert all transactions and return a Stack based data structure.
-     *
-     * @param receiver      the identifier of the target
+     * @param sender        the command sender.
+     * @param player        the target online player of the transactions.
      * @return              the stack of indexed transactions.
      */
-    fun transactionsToStack(receiver: UUID): Stack<TransactionNode> {
+    fun transactionsToStack(sender: CommandSender?, player: Player): Stack<TransactionNode> {
         val stack: Stack<TransactionNode> = Stack()
         var index = 1
-        getByReceiverAndSender(receiver)
-                .sortedWith(Comparator.comparing(Transaction::created))
-                .forEach {
-                    stack.push(TransactionNode(index, it))
-                    index++
-                }
+        getAllTransactions(sender, player)
+            .sortedWith(Comparator.comparing(Transaction::created))
+            .forEach {
+                stack.push(TransactionNode(index, it))
+                index++
+            }
+        return stack
+    }
+
+    /**
+     * Convert all transactions of an offline player and return a Stack based data structure.
+     *
+     * @param sender        the command sender.
+     * @param player        the target offline player of the transactions.
+     * @return              the stack of indexed transactions.
+     */
+    fun transactionsToStack(sender: CommandSender?, player: OfflinePlayer): Stack<TransactionNode> {
+        val stack: Stack<TransactionNode> = Stack()
+        var index = 1
+        getAllTransactions(sender, player)
+            .sortedWith(Comparator.comparing(Transaction::created))
+            .forEach {
+                stack.push(TransactionNode(index, it))
+                index++
+            }
         return stack
     }
 }

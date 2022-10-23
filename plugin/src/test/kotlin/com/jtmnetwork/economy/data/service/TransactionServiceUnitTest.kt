@@ -69,6 +69,132 @@ class TransactionServiceUnitTest {
     }
 
     @Test
+    fun getIngoingTransactionsOnlinePlayer_thenSendError_whenNoTransactions() {
+        `when`(service.getAll()).thenReturn(emptyList())
+
+        val returned = service.getIngoingTransactions(sender, player)
+
+        verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
+        verifyNoMoreInteractions(messenger)
+
+        verify(logging, times(1)).warn(anyString())
+        verifyNoMoreInteractions(logging)
+
+        assertEquals(0, returned.size)
+    }
+
+    @Test
+    fun getIngoingTransactionsOnlinePlayer_thenReturnList() {
+        `when`(service.getAll()).thenReturn(transList)
+
+        val returned = service.getIngoingTransactions(sender, player)
+
+        assertEquals(3, returned.size)
+
+        assertEquals(TransactionType.IN, returned[0].type)
+        assertEquals(15.0, returned[0].amount)
+
+        assertEquals(TransactionType.IN, returned[1].type)
+        assertEquals(25.0, returned[1].amount)
+
+        assertEquals(TransactionType.IN, returned[2].type)
+        assertEquals(35.0, returned[2].amount)
+    }
+
+    @Test
+    fun getIngoingTransactionsOnlinePlayerByCurrency_thenSendError_whenNoTransactions() {
+        `when`(service.getAll()).thenReturn(emptyList())
+
+        val returned = service.getIngoingTransactions(sender, player, currency)
+
+        verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
+        verifyNoMoreInteractions(messenger)
+
+        verify(logging, times(1)).warn(anyString())
+        verifyNoMoreInteractions(logging)
+
+        assertEquals(0, returned.size)
+    }
+
+    @Test
+    fun getIngoingTransactionsOnlinePlayerByCurrency_thenReturnList() {
+        `when`(service.getAll()).thenReturn(transList)
+
+        val returned = service.getIngoingTransactions(sender, player, currency)
+
+        assertEquals(2, returned.size)
+
+        assertEquals(TransactionType.IN, returned[0].type)
+        assertEquals(15.0, returned[0].amount)
+
+        assertEquals(TransactionType.IN, returned[1].type)
+        assertEquals(25.0, returned[1].amount)
+    }
+
+    @Test
+    fun getIngoingTransactionsOfflinePlayer_thenSendError_whenNoTransactions() {
+        `when`(service.getAll()).thenReturn(emptyList())
+
+        val returned = service.getIngoingTransactions(sender, offlinePlayer)
+
+        verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
+        verifyNoMoreInteractions(messenger)
+
+        verify(logging, times(1)).warn(anyString())
+        verifyNoMoreInteractions(logging)
+
+        assertEquals(0, returned.size)
+    }
+
+    @Test
+    fun getIngoingTransactionsOfflinePlayer_thenReturnList() {
+        `when`(service.getAll()).thenReturn(transList)
+
+        val returned = service.getIngoingTransactions(sender, offlinePlayer)
+
+        assertEquals(3, returned.size)
+
+        assertEquals(TransactionType.IN, returned[0].type)
+        assertEquals(15.0, returned[0].amount)
+
+        assertEquals(TransactionType.IN, returned[1].type)
+        assertEquals(25.0, returned[1].amount)
+
+        assertEquals(TransactionType.IN, returned[2].type)
+        assertEquals(35.0, returned[2].amount)
+    }
+
+    @Test
+    fun getIngoingTransactionsOfflinePlayerByCurrency_thenSendError_whenNoTransactions() {
+        `when`(service.getAll()).thenReturn(emptyList())
+
+        val returned = service.getIngoingTransactions(sender, offlinePlayer, currency)
+
+        verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
+        verifyNoMoreInteractions(messenger)
+
+        verify(logging, times(1)).warn(anyString())
+        verifyNoMoreInteractions(logging)
+
+        assertEquals(0, returned.size)
+    }
+
+    @Test
+    fun getIngoingTransactionsOfflinePlayerByCurrency_thenReturnList() {
+        `when`(service.getAll()).thenReturn(transList)
+
+        val returned = service.getIngoingTransactions(sender, offlinePlayer, currency)
+
+        assertEquals(2, returned.size)
+
+        assertEquals(TransactionType.IN, returned[0].type)
+        assertEquals(15.0, returned[0].amount)
+
+        assertEquals(TransactionType.IN, returned[1].type)
+        assertEquals(25.0, returned[1].amount)
+    }
+
+    @Test
     fun getOutgoingTransactionsOnlinePlayer_thenSendError_whenNoTransactions() {
         `when`(service.getAll()).thenReturn(emptyList())
 
@@ -193,132 +319,6 @@ class TransactionServiceUnitTest {
         assertEquals(TransactionType.OUT, returned[1].type)
         assertEquals(currency.id, returned[1].currency)
         assertEquals(230.0, returned[1].amount)
-    }
-
-    @Test
-    fun getIngoingTransactionsOnlinePlayer_thenSendError_whenNoTransactions() {
-        `when`(service.getAll()).thenReturn(emptyList())
-
-        val returned = service.getIngoingTransactions(sender, player)
-
-        verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
-        verifyNoMoreInteractions(messenger)
-
-        verify(logging, times(1)).warn(anyString())
-        verifyNoMoreInteractions(logging)
-
-        assertEquals(0, returned.size)
-    }
-
-    @Test
-    fun getIngoingTransactionsOnlinePlayer_thenReturnList() {
-        `when`(service.getAll()).thenReturn(transList)
-
-        val returned = service.getIngoingTransactions(sender, player)
-
-        assertEquals(3, returned.size)
-
-        assertEquals(TransactionType.IN, returned[0].type)
-        assertEquals(15.0, returned[0].amount)
-
-        assertEquals(TransactionType.IN, returned[1].type)
-        assertEquals(25.0, returned[1].amount)
-
-        assertEquals(TransactionType.IN, returned[2].type)
-        assertEquals(35.0, returned[2].amount)
-    }
-
-    @Test
-    fun getIngoingTransactionsOnlinePlayerByCurrency_thenSendError_whenNoTransactions() {
-        `when`(service.getAll()).thenReturn(emptyList())
-
-        val returned = service.getIngoingTransactions(sender, player, currency)
-
-        verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
-        verifyNoMoreInteractions(messenger)
-
-        verify(logging, times(1)).warn(anyString())
-        verifyNoMoreInteractions(logging)
-
-        assertEquals(0, returned.size)
-    }
-
-    @Test
-    fun getIngoingTransactionsOnlinePlayerByCurrency_thenReturnList() {
-        `when`(service.getAll()).thenReturn(transList)
-
-        val returned = service.getIngoingTransactions(sender, player, currency)
-
-        assertEquals(2, returned.size)
-
-        assertEquals(TransactionType.IN, returned[0].type)
-        assertEquals(15.0, returned[0].amount)
-
-        assertEquals(TransactionType.IN, returned[1].type)
-        assertEquals(25.0, returned[1].amount)
-    }
-
-    @Test
-    fun getIngoingTransactionsOfflinePlayer_thenSendError_whenNoTransactions() {
-        `when`(service.getAll()).thenReturn(emptyList())
-
-        val returned = service.getIngoingTransactions(sender, offlinePlayer)
-
-        verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
-        verifyNoMoreInteractions(messenger)
-
-        verify(logging, times(1)).warn(anyString())
-        verifyNoMoreInteractions(logging)
-
-        assertEquals(0, returned.size)
-    }
-
-    @Test
-    fun getIngoingTransactionsOfflinePlayer_thenReturnList() {
-        `when`(service.getAll()).thenReturn(transList)
-
-        val returned = service.getIngoingTransactions(sender, offlinePlayer)
-
-        assertEquals(3, returned.size)
-
-        assertEquals(TransactionType.IN, returned[0].type)
-        assertEquals(15.0, returned[0].amount)
-
-        assertEquals(TransactionType.IN, returned[1].type)
-        assertEquals(25.0, returned[1].amount)
-
-        assertEquals(TransactionType.IN, returned[2].type)
-        assertEquals(35.0, returned[2].amount)
-    }
-
-    @Test
-    fun getIngoingTransactionsOfflinePlayerByCurrency_thenSendError_whenNoTransactions() {
-        `when`(service.getAll()).thenReturn(emptyList())
-
-        val returned = service.getIngoingTransactions(sender, offlinePlayer, currency)
-
-        verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
-        verifyNoMoreInteractions(messenger)
-
-        verify(logging, times(1)).warn(anyString())
-        verifyNoMoreInteractions(logging)
-
-        assertEquals(0, returned.size)
-    }
-
-    @Test
-    fun getIngoingTransactionsOfflinePlayerByCurrency_thenReturnList() {
-        `when`(service.getAll()).thenReturn(transList)
-
-        val returned = service.getIngoingTransactions(sender, offlinePlayer, currency)
-
-        assertEquals(2, returned.size)
-
-        assertEquals(TransactionType.IN, returned[0].type)
-        assertEquals(15.0, returned[0].amount)
-
-        assertEquals(TransactionType.IN, returned[1].type)
-        assertEquals(25.0, returned[1].amount)
     }
 
     @Test

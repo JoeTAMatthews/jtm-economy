@@ -167,4 +167,15 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         val wallet = opt.get()
         return wallet.checkBalance(currency.id, amount)
     }
+
+    fun getWallet(sender: CommandSender?, player: Player): Optional<Wallet> {
+        val opt = getById(player.uniqueId.toString())
+        if (opt.isEmpty) {
+            if (sender != null) messenger.sendMessage(sender, "economy.error.failed_finding_wallet")
+            logging.warn(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name))
+            return Optional.empty()
+        }
+
+        return opt
+    }
 }

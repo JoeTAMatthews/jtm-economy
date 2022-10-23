@@ -3,6 +3,7 @@ package com.jtmnetwork.economy.entrypoint.api
 import com.google.inject.Inject
 import com.jtmnetwork.economy.core.domain.entity.Currency
 import com.jtmnetwork.economy.core.domain.entity.Transaction
+import com.jtmnetwork.economy.core.domain.entity.Wallet
 import com.jtmnetwork.economy.data.cache.WalletCache
 import com.jtmnetwork.economy.data.service.WalletService
 import org.bukkit.OfflinePlayer
@@ -42,5 +43,13 @@ class WalletAPIImpl @Inject constructor(private val cache: WalletCache, private 
 
     override fun hasBalance(sender: CommandSender?, player: OfflinePlayer, currency: Currency, amount: Double): Boolean {
         return service.hasBalance(sender, player, currency, amount)
+    }
+
+    override fun getWallet(sender: CommandSender?, player: Player): Optional<Wallet> {
+        return cache.getWallet(sender, player)
+    }
+
+    override fun getWallet(sender: CommandSender?, player: OfflinePlayer): Optional<Wallet> {
+        return service.getWallet(sender, player)
     }
 }
