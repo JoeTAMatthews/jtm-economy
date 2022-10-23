@@ -1,22 +1,19 @@
-package com.jtmnetwork.economy.entrypoint.api
+package com.jtmnetwork.economy.entrypoint.api.impl
 
 import com.google.inject.Inject
 import com.jtm.framework.Framework
-import com.jtm.framework.core.util.UtilString
 import com.jtmnetwork.economy.core.domain.entity.Currency
-import com.jtmnetwork.economy.core.domain.entity.Transaction
 import com.jtmnetwork.economy.core.domain.entity.Wallet
 import com.jtmnetwork.economy.data.cache.CurrencyCache
 import com.jtmnetwork.economy.data.cache.ExchangeRateCache
-import com.jtmnetwork.economy.data.cache.WalletCache
 import com.jtmnetwork.economy.data.service.TransactionService
+import com.jtmnetwork.economy.entrypoint.api.EconomyAPI
 import org.bukkit.OfflinePlayer
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.checkerframework.checker.units.qual.C
 import java.util.*
 
-class DefaultEconomyAPI @Inject constructor(private val framework: Framework, private val transactionService: TransactionService, private val currencyCache: CurrencyCache, private val exchangeRateCache: ExchangeRateCache): EconomyAPI {
+class DefaultEconomyAPI @Inject constructor(private val framework: Framework, private val transactionService: TransactionService, private val currencyCache: CurrencyCache, private val exchangeRateCache: ExchangeRateCache):
+    EconomyAPI {
 
 //    override fun getTransactions(player: Player, currency: UUID): List<Transaction> {
 //        return transactionService.getByCurrency(player.uniqueId, currency)

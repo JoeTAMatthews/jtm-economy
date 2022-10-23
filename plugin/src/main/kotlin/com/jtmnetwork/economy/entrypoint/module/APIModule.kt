@@ -2,9 +2,9 @@ package com.jtmnetwork.economy.entrypoint.module
 
 import com.google.inject.AbstractModule
 import com.jtmnetwork.economy.entrypoint.api.TransactionAPI
-import com.jtmnetwork.economy.entrypoint.api.TransactionAPIImpl
+import com.jtmnetwork.economy.entrypoint.api.impl.TransactionAPIImpl
 import com.jtmnetwork.economy.entrypoint.api.WalletAPI
-import com.jtmnetwork.economy.entrypoint.api.WalletAPIImpl
+import com.jtmnetwork.economy.entrypoint.api.impl.WalletAPIImpl
 
 class APIModule: AbstractModule() {
     override fun configure() {

@@ -1,4 +1,4 @@
-package com.jtmnetwork.economy.entrypoint.api
+package com.jtmnetwork.economy.entrypoint.api.impl
 
 import com.google.inject.Inject
 import com.jtmnetwork.economy.core.domain.entity.Currency
@@ -6,6 +6,7 @@ import com.jtmnetwork.economy.core.domain.entity.Transaction
 import com.jtmnetwork.economy.core.domain.entity.Wallet
 import com.jtmnetwork.economy.data.cache.WalletCache
 import com.jtmnetwork.economy.data.service.WalletService
+import com.jtmnetwork.economy.entrypoint.api.WalletAPI
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
