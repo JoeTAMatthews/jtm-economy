@@ -24,43 +24,29 @@ import java.util.*
 @RunWith(MockitoJUnitRunner::class)
 class WalletServiceUnitTest {
 
-    private val framework: Framework = mock()
     private val logging: Logging = mock()
     private val messenger: LocaleMessenger = mock()
-    private val connector: DatabaseConnector = mock()
+    private val framework: Framework = TestUtil.createFramework(messenger, logging)
+    private val connector: DatabaseConnector = TestUtil.createConnector(logging)
     private val transService: TransactionService = mock()
 
     private lateinit var service: WalletService
 
-    private val sender: CommandSender = mock()
-    private val target: OfflinePlayer = mock()
     private val targetId = UUID.randomUUID()
+
+    private val sender: CommandSender = mock()
+    private val target = TestUtil.createOfflinePlayer(targetId)
     private val currency = TestUtil.createCurrency()
     private val wallet = Wallet(targetId.toString(), "Test")
 
     @Before
     fun setup() {
-        val dbConf: DatabaseConfiguration = mock()
-        val restConf: RestConfiguration = mock()
-
-        `when`(framework.getRestConfiguration()).thenReturn(restConf)
-        `when`(framework.dataFolder).thenReturn(File("./src/test/resources"))
-        `when`(connector.logging).thenReturn(logging)
-        `when`(connector.configuration).thenReturn(dbConf)
-        `when`(framework.getLocaleMessenger()).thenReturn(messenger)
-        `when`(framework.getLogging()).thenReturn(logging)
-
         service = spy(WalletService(framework, connector, transService))
 
         `when`(target.uniqueId).thenReturn(targetId)
 
-        verify(framework, times(1)).getLocaleMessenger()
-        verify(framework, times(1)).getLogging()
-        verify(framework, times(1)).dataFolder
-        verify(framework, times(1)).getRestConfiguration()
-
-        verify(connector, times(1)).logging
-        verify(connector, times(1)).configuration
+        TestUtil.verifyFramework(framework)
+        TestUtil.verifyConnector(connector)
     }
 
     @Test

@@ -27,45 +27,27 @@ import java.util.*
 @RunWith(MockitoJUnitRunner::class)
 class TransactionServiceUnitTest {
 
-    private val framework: Framework = mock()
     private val logging: Logging = mock()
     private val messenger: LocaleMessenger = mock()
-    private val connector: DatabaseConnector = mock()
+    private val framework: Framework = TestUtil.createFramework(messenger, logging)
+    private val connector: DatabaseConnector = TestUtil.createConnector(logging)
 
     private lateinit var service: TransactionService
 
-    private val sender: CommandSender = mock()
-    private val offlinePlayer: OfflinePlayer = mock()
-    private val player: Player = mock()
     private val id = UUID.randomUUID()
+
+    private val sender: CommandSender = mock()
+    private val offlinePlayer = TestUtil.createOfflinePlayer(id)
+    private val player = TestUtil.createPlayer(id)
     private val currency = TestUtil.createCurrency()
     private val transList = TestUtil.createTransactionList(id, currency)
 
     @Before
     fun setup() {
-        val dbConf: DatabaseConfiguration = mock()
-        val restConf: RestConfiguration = mock()
-
-        `when`(framework.getRestConfiguration()).thenReturn(restConf)
-        `when`(framework.dataFolder).thenReturn(File("./src/test/resources"))
-        `when`(connector.logging).thenReturn(logging)
-        `when`(connector.configuration).thenReturn(dbConf)
-        `when`(framework.getLocaleMessenger()).thenReturn(messenger)
-        `when`(framework.getLogging()).thenReturn(logging)
-        `when`(player.uniqueId).thenReturn(id)
-        `when`(player.name).thenReturn("JTM")
-        `when`(offlinePlayer.uniqueId).thenReturn(id)
-        `when`(offlinePlayer.name).thenReturn("JTM")
-
         service = spy(TransactionService(framework, connector))
 
-        verify(framework, times(1)).getLocaleMessenger()
-        verify(framework, times(1)).getLogging()
-        verify(framework, times(1)).dataFolder
-        verify(framework, times(1)).getRestConfiguration()
-
-        verify(connector, times(1)).logging
-        verify(connector, times(1)).configuration
+        TestUtil.verifyFramework(framework)
+        TestUtil.verifyConnector(connector)
     }
 
     @Test
