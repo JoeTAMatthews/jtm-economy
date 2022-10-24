@@ -2,6 +2,7 @@ package com.jtmnetwork.economy.core.util
 
 import com.jtm.framework.Framework
 import com.jtm.framework.core.usecase.database.DatabaseConnector
+import com.jtm.framework.core.usecase.redis.RedisConnector
 import com.jtm.framework.core.util.Logging
 import com.jtm.framework.presenter.configuration.DatabaseConfiguration
 import com.jtm.framework.presenter.configuration.RestConfiguration
@@ -15,6 +16,7 @@ import org.mockito.Mockito.times
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
+import java.awt.Frame
 import java.io.File
 import java.util.*
 
@@ -47,6 +49,15 @@ class TestUtil {
             return framework
         }
 
+        fun createFrameworkCache(messenger: LocaleMessenger, logging: Logging): Framework {
+            val framework: Framework = mock()
+
+            `when`(framework.getLocaleMessenger()).thenReturn(messenger)
+            `when`(framework.getLogging()).thenReturn(logging)
+
+            return framework
+        }
+
         fun createConnector(logging: Logging): DatabaseConnector {
             val dbConf: DatabaseConfiguration = mock()
             val connector: DatabaseConnector = mock()
@@ -55,6 +66,14 @@ class TestUtil {
             `when`(connector.configuration).thenReturn(dbConf)
 
             return connector
+        }
+
+        fun createRedisConnector(): RedisConnector {
+            val redisConnector: RedisConnector = mock()
+
+
+
+            return redisConnector
         }
 
         fun verifyFramework(framework: Framework) {

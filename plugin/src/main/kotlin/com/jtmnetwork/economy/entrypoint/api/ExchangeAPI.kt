@@ -6,7 +6,7 @@ import org.bukkit.entity.Player
 interface ExchangeAPI {
 
     /**
-     * Request a exchange between currencies based on a set amount.
+     * Request an exchange between currencies based on a set amount.
      *
      * @param player        the initiator of the exchange.
      * @param from          the currency you are exchanging from.
