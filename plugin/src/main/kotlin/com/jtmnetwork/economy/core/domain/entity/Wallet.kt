@@ -22,10 +22,10 @@ data class Wallet(
         return Transaction(type = TransactionType.IN, sender = sender, receiver = UUID.fromString(id), currency = currency, amount = amount, previous_balance = current, new_balance = deposited.getBalance(currency))
     }
 
-    fun withdraw(sender: UUID?, currency: UUID, amount: Double): Transaction? {
+    fun withdraw(receiver: UUID?, currency: UUID, amount: Double): Transaction? {
         val current = getBalance(currency)
         val withdrawn = removeBalance(currency, amount) ?: return null
-        return Transaction(type = TransactionType.OUT, sender = UUID.fromString(id), receiver = sender, currency = currency, amount = amount, previous_balance = current, new_balance = withdrawn.getBalance(currency))
+        return Transaction(type = TransactionType.OUT, sender = UUID.fromString(id), receiver = receiver, currency = currency, amount = amount, previous_balance = current, new_balance = withdrawn.getBalance(currency))
     }
 
     fun hasBalance(currency: UUID): Boolean {

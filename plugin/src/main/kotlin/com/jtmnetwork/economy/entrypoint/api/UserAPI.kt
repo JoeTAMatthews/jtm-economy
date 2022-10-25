@@ -43,7 +43,7 @@ interface UserAPI {
      *
      * @return              returns true if the operation was successful, false if not.
      */
-    fun startRollback(sender: CommandSender, player: Player, transactionId: Int): Boolean
+    fun startRollback(sender: CommandSender, player: Player, transactionId: Int)
 
     /**
      * Rollbacks the target player's wallet back to a {@param transactionId} at a certain
@@ -55,5 +55,5 @@ interface UserAPI {
      *
      * @return              returns true if the operation was successful, false if not.
      */
-    fun startRollback(sender: CommandSender, player: OfflinePlayer, transactionId: Int): Boolean
+    fun startRollback(sender: CommandSender, player: OfflinePlayer, transactionId: Int)
 }

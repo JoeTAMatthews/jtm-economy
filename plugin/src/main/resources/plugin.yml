@@ -1,5 +1,5 @@
 name: JTMEconomy
-version: 0.38
+version: 0.39-DEV
 author: JTMNetwork
 api-version: 1.13
 main: com.jtmnetwork.economy.JtmEconomy

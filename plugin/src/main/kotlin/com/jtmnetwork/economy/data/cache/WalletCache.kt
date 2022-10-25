@@ -5,10 +5,10 @@ import com.google.inject.Singleton
 import com.jtm.framework.Framework
 import com.jtm.framework.core.usecase.redis.RedisConnector
 import com.jtm.framework.data.service.CacheService
-import com.jtmnetwork.economy.core.domain.constants.TransactionType
 import com.jtmnetwork.economy.core.domain.entity.Currency
 import com.jtmnetwork.economy.core.domain.entity.Transaction
 import com.jtmnetwork.economy.core.domain.entity.Wallet
+import com.jtmnetwork.economy.core.domain.model.TransactionNode
 import com.jtmnetwork.economy.data.service.TransactionService
 import com.jtmnetwork.economy.data.service.WalletService
 import okhttp3.internal.format
@@ -177,5 +177,150 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         }
 
         return opt
+    }
+
+    fun pay(sender: Player, receiver: Player, currency: Currency, amount: Double): Boolean {
+        val optSender = getWallet(sender, sender)
+        if (optSender.isEmpty) return false
+        val senderWallet = optSender.get()
+        if (!senderWallet.checkBalance(currency.id, amount)) return false
+
+        val optReceiver = getWallet(sender, receiver)
+        if (optReceiver.isEmpty) return false
+        val receiverWallet = optReceiver.get()
+
+        val withdrawn = senderWallet.withdraw(receiver.uniqueId, currency.id, amount)
+        if (withdrawn == null) {
+            messenger.sendMessage(sender, "economy.withdraw.sender_failed")
+            logging.warn(format("Failed to withdraw from wallet %s(%s)", sender.uniqueId.toString(), sender.name))
+            return false
+        }
+
+        val deposited = receiverWallet.deposit(sender.uniqueId, currency.id, amount)
+        if (deposited == null) {
+            messenger.sendMessage(sender, "economy.deposit.sender_failed")
+            logging.warn(format("Failed to deposit in wallet %s(%s)", receiver.uniqueId.toString(), receiver.name))
+            return false
+        }
+
+        messenger.sendMessage(sender, "pay.sender_success", receiver.name, currency.getSymbolAmount(amount))
+        messenger.sendMessage(receiver, "pay.receiver_success", currency.getSymbolAmount(amount), sender.name)
+        framework.runTaskAsync {
+            // Update wallets
+            update(senderWallet.id, senderWallet)
+            update(receiverWallet.id, receiverWallet)
+
+            // Insert transactions
+            transactionService.insert(withdrawn)
+            transactionService.insert(deposited)
+        }
+        return true
+    }
+
+    fun pay(sender: Player, receiver: OfflinePlayer, currency: Currency, amount: Double): Boolean {
+        val optSender = getWallet(sender, sender)
+        if (optSender.isEmpty) return false
+        val senderWallet = optSender.get()
+        if (!senderWallet.checkBalance(currency.id, amount)) return false
+
+        val optReceiver = service.getWallet(sender, receiver)
+        if (optReceiver.isEmpty) return false
+        val receiverWallet = optReceiver.get()
+
+        val withdrawn = senderWallet.withdraw(receiver.uniqueId, currency.id, amount)
+        if (withdrawn == null) {
+            messenger.sendMessage(sender, "economy.withdraw.sender_failed")
+            logging.warn(format("Failed to withdraw from wallet %s(%s)", sender.uniqueId.toString(), sender.name))
+            return false
+        }
+
+        val deposited = receiverWallet.deposit(sender.uniqueId, currency.id, amount)
+        if (deposited == null) {
+            messenger.sendMessage(sender, "economy.deposit.sender_failed")
+            logging.warn(format("Failed to deposit in wallet %s(%s)", receiver.uniqueId.toString(), receiver.name ?: "no-name"))
+            return false
+        }
+
+        messenger.sendMessage(sender, "pay.sender_success", receiver.name, currency.getSymbolAmount(amount))
+        framework.runTaskAsync {
+            // Update wallets
+            update(senderWallet.id, senderWallet)
+            service.update(receiverWallet)
+
+            // Insert transactions
+            transactionService.insert(withdrawn)
+            transactionService.insert(deposited)
+        }
+        return true
+    }
+
+    fun rollback(sender: CommandSender, target: Player, stack: Stack<TransactionNode>, id: Int) {
+        if (stack.isEmpty()) {
+            messenger.sendMessage(sender, "transactions.not_found")
+            logging.warn("Failed to find any transactions to rollback.")
+            return
+        }
+
+        val opt = getWallet(sender, target)
+        if (opt.isEmpty) {
+            messenger.sendMessage(sender, "rollback.failed")
+            return
+        }
+
+        var wallet = opt.get()
+        messenger.sendMessage(sender, "rollback.start")
+        framework.runTaskAsync {
+            var node = stack.pop()
+            while (id != node.index || stack.isNotEmpty()) {
+                val transaction = node.transaction
+
+                wallet = wallet.setBalance(transaction.currency, transaction.previous_balance)
+
+                val deleted = transactionService.delete(transaction.id)
+                deleted.ifPresent { trans -> framework.runTask { messenger.sendMessage(sender, "rollback.transaction", trans.id) } }
+
+                if (stack.isNotEmpty()) node = stack.pop()
+            }
+
+            framework.runTask { messenger.sendMessage(sender, "rollback.end") }
+
+            update(wallet.id, wallet)
+            framework.runTask { messenger.sendMessage(sender, "rollback.success") }
+        }
+    }
+
+    fun rollback(sender: CommandSender, target: OfflinePlayer, stack: Stack<TransactionNode>, id: Int) {
+        if (stack.isEmpty()) {
+            messenger.sendMessage(sender, "transactions.not_found")
+            logging.warn("Failed to find any transactions to rollback.")
+            return
+        }
+
+        val opt = service.getWallet(sender, target)
+        if (opt.isEmpty) {
+            messenger.sendMessage(sender, "rollback.failed")
+            return
+        }
+
+        var wallet = opt.get()
+        messenger.sendMessage(sender, "rollback.start")
+        framework.runTaskAsync {
+            var node = stack.pop()
+            while (id != node.index || stack.isNotEmpty()) {
+                val transaction = node.transaction
+
+                wallet = wallet.setBalance(transaction.currency, transaction.previous_balance)
+
+                val deleted = transactionService.delete(transaction.id)
+                deleted.ifPresent { trans -> framework.runTask { messenger.sendMessage(sender, "rollback.transaction", trans.id) } }
+
+                if (stack.isNotEmpty()) node = stack.pop()
+            }
+
+            framework.runTask { messenger.sendMessage(sender, "rollback.end") }
+
+            service.update(wallet)
+            framework.runTask { messenger.sendMessage(sender, "rollback.success") }
+        }
     }
 }

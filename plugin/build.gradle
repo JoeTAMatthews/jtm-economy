@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'com.jtmnetwork.economy'
-version '0.38'
+version '0.39-DEV'
 
 publishing {
     repositories {
@@ -50,8 +50,9 @@ dependencies {
     implementation 'com.google.inject:guice:5.1.0'
     implementation 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     implementation "com.jtm.framework:framework:0.9.41"
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.4'
+    implementation 'ch.qos.logback:logback-classic:1.4.3'
 
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
     compileOnly 'me.clip:placeholderapi:2.10.9'
@@ -59,10 +60,11 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
-    testImplementation 'org.mockito:mockito-inline:4.6.1'
+    testImplementation 'org.mockito:mockito-inline:4.8.0'
     testImplementation 'org.mockito.kotlin:mockito-kotlin:4.0.0'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.8.0'
 }
 
 sourceCompatibility = 16
