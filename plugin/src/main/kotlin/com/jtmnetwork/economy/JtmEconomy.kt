@@ -9,15 +9,12 @@ import com.jtmnetwork.economy.core.domain.entity.Wallet
 import com.jtmnetwork.economy.data.cache.CurrencyCache
 import com.jtmnetwork.economy.data.cache.ExchangeRateCache
 import com.jtmnetwork.economy.data.cache.WalletCache
-import com.jtmnetwork.economy.entrypoint.api.EconomyAPI
+import com.jtmnetwork.economy.entrypoint.api.*
 import com.jtmnetwork.economy.entrypoint.commands.*
 import com.jtmnetwork.economy.entrypoint.listener.CurrencyListener
 import com.jtmnetwork.economy.entrypoint.listener.PlayerListener
 import com.jtmnetwork.economy.entrypoint.listener.WalletListener
-import com.jtmnetwork.economy.entrypoint.module.CurrencyModule
-import com.jtmnetwork.economy.entrypoint.module.EconomyModule
-import com.jtmnetwork.economy.entrypoint.module.ExchangeRateModule
-import com.jtmnetwork.economy.entrypoint.module.WalletModule
+import com.jtmnetwork.economy.entrypoint.module.*
 import com.jtmnetwork.economy.entrypoint.vault.VaultEconomy
 import org.bukkit.Bukkit
 import org.bukkit.plugin.ServicePriority
@@ -34,7 +31,7 @@ class JtmEconomy: Framework(true) {
 
     override fun setup() {
         instance = this
-        subInjector = injector(listOf(WalletModule(), CurrencyModule(), EconomyModule(), ExchangeRateModule()))
+        subInjector = injector(listOf(WalletModule(), CurrencyModule(), EconomyModule(), ExchangeRateModule(), APIModule()))
 
         registerClass(Wallet::class.java)
         registerClass(Currency::class.java)
@@ -84,7 +81,7 @@ class JtmEconomy: Framework(true) {
             getLogging().warn("Vault not found, using standard EconomyAPI!")
             return
         }
-        Bukkit.getServer().servicesManager.register(net.milkbowl.vault.economy.Economy::class.java, VaultEconomy(this, getEconomyAPI()), this, ServicePriority.High)
+        Bukkit.getServer().servicesManager.register(net.milkbowl.vault.economy.Economy::class.java, VaultEconomy(this), this, ServicePriority.High)
         getLogging().info("Vault found. Registered Vault Economy Service provider.")
 
         val rsp = Bukkit.getServer().servicesManager.getRegistration(net.milkbowl.vault.economy.Economy::class.java) ?: return
@@ -108,8 +105,24 @@ class JtmEconomy: Framework(true) {
         return subInjector.getInstance(ExchangeRateCache::class.java)
     }
 
-    fun getEconomyAPI(): EconomyAPI {
-        return subInjector.getInstance(EconomyAPI::class.java)
+    fun getCurrencyAPI(): CurrencyAPI {
+        return subInjector.getInstance(CurrencyAPI::class.java)
+    }
+
+    fun getUserAPI(): UserAPI {
+        return subInjector.getInstance(UserAPI::class.java)
+    }
+
+    fun getExchangeAPI(): ExchangeAPI {
+        return subInjector.getInstance(ExchangeAPI::class.java)
+    }
+
+    fun getTransactionAPI(): WalletAPI {
+        return subInjector.getInstance(WalletAPI::class.java)
+    }
+
+    fun getWalletAPI(): WalletAPI {
+        return subInjector.getInstance(WalletAPI::class.java)
     }
 
     fun getEconomy(): net.milkbowl.vault.economy.Economy {

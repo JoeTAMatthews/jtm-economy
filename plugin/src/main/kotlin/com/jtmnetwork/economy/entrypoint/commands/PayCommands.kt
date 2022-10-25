@@ -8,10 +8,14 @@ import com.jtm.framework.core.util.UtilString
 import com.jtm.framework.presenter.locale.LocaleMessenger
 import com.jtmnetwork.economy.core.domain.entity.Currency
 import com.jtmnetwork.economy.entrypoint.api.EconomyAPI
+import com.jtmnetwork.economy.entrypoint.api.UserAPI
+import okhttp3.internal.format
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
-class PayCommands @Inject constructor(private val framework: Framework, private val economyAPI: EconomyAPI, private val localeMessenger: LocaleMessenger) {
+class PayCommands @Inject constructor(private val framework: Framework, private val userAPI: UserAPI, private val messenger: LocaleMessenger) {
+
+    private val logging = framework.getLogging()
 
     /**
      * Allow players to pay each other using a selected currency.
@@ -32,19 +36,17 @@ class PayCommands @Inject constructor(private val framework: Framework, private 
                     return
                 }
 
-                if (economyAPI.pay(targetPlayer, player, currency.id, amount)) {
-                    localeMessenger.sendMessage(player, "pay.sender_success", targetPlayer.name, currency.getAbbreviationAmount(amount))
-                    localeMessenger.sendMessage(targetPlayer, "pay.receiver_success", player.name, currency.getAbbreviationAmount(amount))
-                } else localeMessenger.sendMessage(player, "pay.sender_failed")
+                if (userAPI.pay(player, targetPlayer, currency, amount))
+                    logging.info(format("%s has successfully paid %s: %s", player.name, targetPlayer.name, currency.getSymbolAmount(amount)))
+                else
+                    logging.info(format("%s has failed to pay %s: %s", player.name, targetPlayer.name, currency.getSymbolAmount(amount)))
             }
 
             false -> {
-                framework.runTaskAsync {
-                    if (economyAPI.pay(target, player, currency.id, amount))
-                        localeMessenger.sendMessage(player, "pay.sender_success", target.name, currency.getAbbreviationAmount(amount))
-                    else
-                        localeMessenger.sendMessage(player, "pay.sender_failed")
-                }
+                if (userAPI.pay(player, target, currency, amount))
+                    logging.info(format("%s has successfully paid %s: %s", player.name, target.name ?: target.uniqueId, currency.getSymbolAmount(amount)))
+                else
+                    logging.info(format("%s has failed to pay %s: %s", player.name, target.name ?: target.uniqueId, currency.getSymbolAmount(amount)))
             }
         }
     }

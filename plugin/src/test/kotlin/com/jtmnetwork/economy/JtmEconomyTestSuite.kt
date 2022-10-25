@@ -7,7 +7,6 @@ import com.jtmnetwork.economy.data.service.TransactionServiceUnitTest
 import com.jtmnetwork.economy.data.service.WalletServiceUnitTest
 import com.jtmnetwork.economy.data.worker.WalletLoaderTest
 import com.jtmnetwork.economy.data.worker.WalletSaverTest
-import com.jtmnetwork.economy.entrypoint.api.DefaultJtmEconomyAPITest
 import com.jtmnetwork.economy.entrypoint.commands.*
 import com.jtmnetwork.economy.entrypoint.listener.CurrencyListenerTest
 import com.jtmnetwork.economy.entrypoint.listener.PlayerListenerTest
@@ -34,8 +33,6 @@ import org.junit.runners.Suite
 
     CurrencyServiceUnitTest::class,
     TransactionServiceUnitTest::class,
-    WalletServiceUnitTest::class,
-
-    DefaultJtmEconomyAPITest::class
+    WalletServiceUnitTest::class
 ])
 class JtmEconomyTestSuite

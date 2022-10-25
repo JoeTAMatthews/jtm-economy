@@ -10,7 +10,7 @@ import javax.persistence.Converter
 @Converter
 class BalanceConverter: AttributeConverter<MutableMap<UUID, Double>, String> {
 
-    private val mapper = ObjectMapper().registerModule(KotlinModule())
+    private val mapper = ObjectMapper()
 
     override fun convertToDatabaseColumn(attribute: MutableMap<UUID, Double>?): String {
         return mapper.writeValueAsString(attribute)

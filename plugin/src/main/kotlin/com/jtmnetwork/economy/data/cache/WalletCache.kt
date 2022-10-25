@@ -204,7 +204,7 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         }
 
         messenger.sendMessage(sender, "pay.sender_success", receiver.name, currency.getSymbolAmount(amount))
-        messenger.sendMessage(receiver, "pay.receiver_success", currency.getSymbolAmount(amount), sender.name)
+        messenger.sendMessage(receiver, "pay.receiver_success", sender.name, currency.getSymbolAmount(amount))
         framework.runTaskAsync {
             // Update wallets
             update(senderWallet.id, senderWallet)
