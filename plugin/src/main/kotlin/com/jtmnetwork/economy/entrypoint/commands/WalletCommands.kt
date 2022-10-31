@@ -9,7 +9,6 @@ import com.jtmnetwork.economy.core.domain.model.TransactionNode
 import com.jtmnetwork.economy.data.cache.CurrencyCache
 import com.jtmnetwork.economy.data.cache.WalletCache
 import com.jtmnetwork.economy.data.service.TransactionService
-import com.jtmnetwork.economy.entrypoint.api.EconomyAPI
 import com.jtmnetwork.economy.entrypoint.ui.WalletUI
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
@@ -48,7 +47,7 @@ class WalletCommands @Inject constructor(private val transactionService: Transac
         builder.append("&7&m---------------------------------------")
 
         if (target != null) {
-            nodes = transactionService.transactionsToStack(target.uniqueId)
+            nodes = transactionService.transactionsToStack(player, target)
             if (nodes.isEmpty()) {
                 player.sendMessage(UtilString.colour("&4Error: &cNo transactions."))
                 return
@@ -56,7 +55,7 @@ class WalletCommands @Inject constructor(private val transactionService: Transac
 
             nodes.forEach { builder.append(it.transaction.toString(it.index, currencyCache)) }
         } else {
-            nodes = transactionService.transactionsToStack(player.uniqueId)
+            nodes = transactionService.transactionsToStack(player, player)
             if (nodes.isEmpty()) {
                 player.sendMessage(UtilString.colour("&4Error: &cNo transactions."))
                 return

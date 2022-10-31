@@ -87,7 +87,7 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
             return
         }
 
-        val returned = exchangeRateCache.getBySymbol(pair)
+        val returned = exchangeRateCache.getBySymbol(player, pair)
         returned.ifPresent { rate ->
             val deleted = exchangeRateCache.remove(rate.id)
             deleted.ifPresent { removed ->
@@ -115,7 +115,7 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
             return
         }
 
-        val returned = exchangeRateCache.getBySymbol(pair)
+        val returned = exchangeRateCache.getBySymbol(player, pair)
 
         returned.ifPresent { returnedRate ->
             when(setting) {
@@ -151,7 +151,7 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
             return
         }
 
-        val rate = exchangeRateCache.getBySymbol(pair)
+        val rate = exchangeRateCache.getBySymbol(player, pair)
         rate.ifPresent { returned -> player.sendMessage(UtilString.colour(returned.info())) }
     }
 

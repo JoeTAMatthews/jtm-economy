@@ -7,10 +7,11 @@ import com.jtm.framework.core.domain.annotations.Permission
 import com.jtm.framework.core.domain.annotations.Usage
 import com.jtm.framework.presenter.locale.LocaleMessenger
 import com.jtmnetwork.economy.entrypoint.api.EconomyAPI
+import com.jtmnetwork.economy.entrypoint.api.UserAPI
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
-class RollbackCommands @Inject constructor(private val framework: Framework, private val economyAPI: EconomyAPI, private val localeMessenger: LocaleMessenger) {
+class RollbackCommands @Inject constructor(private val framework: Framework, private val userAPI: UserAPI, private val localeMessenger: LocaleMessenger) {
 
     /**
      * Rollback a target player's wallet transactions to a certain transaction index.
@@ -23,24 +24,13 @@ class RollbackCommands @Inject constructor(private val framework: Framework, pri
     @Usage("/rollback <target> <transaction_id>")
     @Permission(["economy.rollback"])
     fun onRollback(player: Player, target: OfflinePlayer, id: Int) {
-        localeMessenger.sendMessage(player, "rollback.start", target.name)
-        framework.runTaskAsync {
-            when (target.isOnline) {
-                true -> {
-                    val targetPlayer = target.player
-                    if (targetPlayer != null) {
-                        if (economyAPI.processRollback(player, targetPlayer, id)) {
-                            localeMessenger.sendMessage(player, "rollback.success", target.name)
-                        } else localeMessenger.sendMessage(player, "rollback.failed")
-                    }
-                }
-                false -> {
-                    if (economyAPI.processRollback(player, target, id)) {
-                        localeMessenger.sendMessage(player, "rollback.success", target.name)
-                    } else localeMessenger.sendMessage(player, "rollback.failed")
-                }
+        when (target.isOnline) {
+            true -> {
+                val targetPlayer = target.player
+                if (targetPlayer != null) userAPI.startRollback(player, targetPlayer, id)
             }
-            localeMessenger.sendMessage(player, "rollback.end", target.name)
+
+            false -> { userAPI.startRollback(player, target, id) }
         }
     }
 }

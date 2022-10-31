@@ -1,9 +1,12 @@
 package com.jtmnetwork.economy
 
-import com.jtmnetwork.economy.data.cache.WalletCacheTest
+import com.jtmnetwork.economy.data.cache.RateCacheUnitTest
+import com.jtmnetwork.economy.data.cache.WalletCacheUnitTest
+import com.jtmnetwork.economy.data.service.CurrencyServiceUnitTest
+import com.jtmnetwork.economy.data.service.TransactionServiceUnitTest
+import com.jtmnetwork.economy.data.service.WalletServiceUnitTest
 import com.jtmnetwork.economy.data.worker.WalletLoaderTest
 import com.jtmnetwork.economy.data.worker.WalletSaverTest
-import com.jtmnetwork.economy.entrypoint.api.DefaultJtmEconomyAPITest
 import com.jtmnetwork.economy.entrypoint.commands.*
 import com.jtmnetwork.economy.entrypoint.listener.CurrencyListenerTest
 import com.jtmnetwork.economy.entrypoint.listener.PlayerListenerTest
@@ -15,7 +18,9 @@ import org.junit.runners.Suite
 @Suite.SuiteClasses(value = [
     WalletLoaderTest::class,
     WalletSaverTest::class,
-    WalletCacheTest::class,
+
+    RateCacheUnitTest::class,
+    WalletCacheUnitTest::class,
 
     PlayerListenerTest::class,
     WalletListenerTest::class,
@@ -26,6 +31,8 @@ import org.junit.runners.Suite
     ExchangeRateCommandsTest::class,
     ExchangeCommandsTest::class,
 
-    DefaultJtmEconomyAPITest::class
+    CurrencyServiceUnitTest::class,
+    TransactionServiceUnitTest::class,
+    WalletServiceUnitTest::class
 ])
 class JtmEconomyTestSuite

@@ -11,11 +11,16 @@ import com.jtm.framework.core.util.UtilString
 import com.jtm.framework.presenter.locale.LocaleMessenger
 import com.jtmnetwork.economy.core.domain.entity.Currency
 import com.jtmnetwork.economy.entrypoint.api.EconomyAPI
+import com.jtmnetwork.economy.entrypoint.api.TransactionAPI
+import com.jtmnetwork.economy.entrypoint.api.WalletAPI
+import okhttp3.internal.format
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
 @Singleton
-class EconomyCommands @Inject constructor(private val framework: Framework, private val economyAPI: EconomyAPI, private val localeMessenger: LocaleMessenger) {
+class EconomyCommands @Inject constructor(private val framework: Framework, private val walletAPI: WalletAPI, private val localeMessenger: LocaleMessenger) {
+
+    private val logging = framework.getLogging()
 
     /**
      * Shows all the commands under "/econ"
@@ -58,22 +63,19 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
                     return
                 }
 
-                val optTrans = economyAPI.deposit(targetPlayer, currency.id, null, amount)
-                if (optTrans.isPresent) {
-                    localeMessenger.sendMessage(player, "economy.deposited.sender_success", currency.getAbbreviationAmount(amount), target.name)
-                    localeMessenger.sendMessage(targetPlayer, "economy.deposited.target_success", currency.getAbbreviationAmount(amount))
-                } else localeMessenger.sendMessage(player, "economy.deposited.sender_failed")
+                val optTrans = walletAPI.deposit(player, targetPlayer, null, currency, amount)
+                if (optTrans.isPresent)
+                    logging.info(format("%s has successfully deposited %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
+                else
+                    logging.info(format("%s has failed to deposit %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
             }
 
             false -> {
-                framework.runTaskAsync {
-                    val optTrans = economyAPI.deposit(target, currency.id, null, amount)
-
-                    if (optTrans.isPresent)
-                        localeMessenger.sendMessage(player, "economy.deposited.sender_success", currency.getAbbreviationAmount(amount), target.name)
-                    else
-                        localeMessenger.sendMessage(player, "economy.deposited.sender_failed")
-                }
+                val optTrans = walletAPI.deposit(player, target, null, currency, amount)
+                if (optTrans.isPresent)
+                    logging.info(format("%s has successfully deposited %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
+                else
+                    logging.info(format("%s has failed to deposit %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
             }
         }
     }
@@ -99,21 +101,19 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
                     return
                 }
 
-                val optTrans = economyAPI.withdraw(targetPlayer, currency.id, null, amount)
-                if (optTrans.isPresent) {
-                    localeMessenger.sendMessage(player, "economy.withdraw.sender_success", currency.getAbbreviationAmount(amount), target.name)
-                    localeMessenger.sendMessage(targetPlayer, "economy.withdraw.target_success", currency.getAbbreviationAmount(amount))
-                } else localeMessenger.sendMessage(player, "economy.withdraw.sender_failed")
+                val optTrans = walletAPI.withdraw(player, targetPlayer, null, currency, amount)
+                if (optTrans.isPresent)
+                    logging.info(format("%s has successfully withdrew %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
+                else
+                    logging.info(format("%s has failed to withdraw %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
             }
 
             false -> {
-                framework.runTaskAsync {
-                    val optTrans = economyAPI.withdraw(target, currency.id, null, amount)
-                    if (optTrans.isPresent)
-                        localeMessenger.sendMessage(player, "economy.withdraw.sender_success", currency.getAbbreviationAmount(amount), target.name)
-                    else
-                        localeMessenger.sendMessage(player, "economy.withdraw.sender_failed")
-                }
+                val optTrans = walletAPI.withdraw(player, target, null, currency, amount)
+                if (optTrans.isPresent)
+                    logging.info(format("%s has successfully withdrew %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
+                else
+                    logging.info(format("%s has failed to withdraw %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
             }
         }
     }
@@ -138,16 +138,11 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
                     return
                 }
 
-                val balance = economyAPI.balance(targetPlayer, currency.id)
-                balance.ifPresent { bal -> localeMessenger.sendMessage(player, "economy.balance", target.name, currency.getAbbreviationAmount(bal)) }
+                walletAPI.balance(player, targetPlayer, currency)
             }
 
             false -> {
-                framework.runTaskAsync {
-                    val balance = economyAPI.balance(target, currency.id)
-                    balance.ifPresent { bal -> localeMessenger.sendMessage(player, "economy.balance", target.name, currency.getAbbreviationAmount(bal)) }
-
-                }
+                framework.runTaskAsync { walletAPI.balance(player, target, currency) }
             }
         }
     }

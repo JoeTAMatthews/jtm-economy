@@ -6,7 +6,9 @@ currency:
     remove: "&aSuccessfully removed currency '&f%s&a'"
 
 economy:
-  deposited:
+  error:
+    failed_finding_wallet: "&4Error: &cFailed to find the target wallet."
+  deposit:
     sender_failed: "&4Error: &cFailed to deposit funds to the player."
     sender_success: "&aSuccessfully deposited &e%s &ato &e%s&a."
     target_success: "&aYou have been given &e%s&a."
@@ -16,7 +18,7 @@ economy:
     target_success: "&aYou have lost &e%s&a."
   balance: "&b%s &abalance: &e%s"
 
-exchangerate:
+rate:
   found: "&4Error: &cExchange rate with that symbol already found."
   not_found: "&4Error: &cExchange rate with that symbol not found."
   commands:
@@ -25,6 +27,9 @@ exchangerate:
     updated:
       rate: "&aSuccessfully updated rate of exchange rate to: '&f%s&a'"
     same_currency: "&4Error: &cCan't add a exchange rate of 2 of the same currency."
+  failed:
+    deposited: "&cFailed to deposit funds."
+    withdrawn: "&cFailed to withdraw funds."
 
 pay:
   sender_success: "&aSuccessfully paid &f%s &b%s&a."
@@ -36,3 +41,10 @@ rollback:
   end: "&fEnding rollback operation on &c%s"
   failed: "&4Error: &cRollback operation has failed."
   success: "&aSuccessfully completed rollback operation on &e%s"
+
+transactions:
+  not_found: "&cNo transactions found."
+
+user:
+  insufficient_funds: "&cInsufficient funds."
+  sufficient_funds: "&b%s &ahas sufficient funds."
