@@ -63,6 +63,7 @@ class CurrencyCommands @Inject constructor(private val framework: Framework, pri
         val global = size <= 0
         val currency = Currency(name = name, abbreviation = abbreviation.uppercase(Locale.getDefault()), symbol = symbol, main = global)
         val inserted = cache.insert(currency.id, currency)
+
         inserted.ifPresent { returned ->
             framework.runTaskAsync { service.insert(returned) }
             framework.callEvent(CurrencyAddEvent(returned))

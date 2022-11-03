@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'com.jtmnetwork.economy'
-version '0.39-DEV'
+version '0.40-DEV'
 
 publishing {
     repositories {
@@ -49,10 +49,10 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
     implementation 'com.google.inject:guice:5.1.0'
     implementation 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
-    implementation "com.jtm.framework:framework:0.9.41"
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.4'
     implementation 'ch.qos.logback:logback-classic:1.4.4'
+    implementation "com.jtm.framework:framework:0.9.47-dev"
 
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
     compileOnly 'me.clip:placeholderapi:2.10.9'
