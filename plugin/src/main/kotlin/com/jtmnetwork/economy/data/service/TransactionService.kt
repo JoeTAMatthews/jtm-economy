@@ -34,7 +34,7 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
         val list = getAll()
         if (list.isEmpty()) {
             if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
-            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name))
+            logging.debug(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name))
             return emptyList()
         }
 
@@ -56,7 +56,7 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
         val list = getAll()
         if (list.isEmpty()) {
             if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
-            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name))
+            logging.debug(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name))
             return emptyList()
         }
 
@@ -77,7 +77,7 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
         val list = getAll()
         if (list.isEmpty()) {
             if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
-            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name ?: "no-name"))
+            logging.debug(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name ?: "no-name"))
             return emptyList()
         }
 
@@ -100,7 +100,7 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
         val list = getAll()
         if (list.isEmpty()) {
             if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
-            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name ?: "no-name"))
+            logging.debug(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name ?: "no-name"))
             return emptyList()
         }
 
@@ -122,7 +122,7 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
         val list = getAll()
         if (list.isEmpty()) {
             if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
-            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name))
+            logging.debug(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name))
             return emptyList()
         }
 
@@ -145,7 +145,7 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
         val list = getAll()
         if (list.isEmpty()) {
             if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
-            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name))
+            logging.debug(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name))
             return emptyList()
         }
 
@@ -167,7 +167,7 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
         val list = getAll()
         if (list.isEmpty()) {
             if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
-            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name ?: "no-name"))
+            logging.debug(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name ?: "no-name"))
             return emptyList()
         }
 
@@ -190,7 +190,7 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
         val list = getAll()
         if (list.isEmpty()) {
             if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
-            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name ?: "no-name"))
+            logging.debug(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name ?: "no-name"))
             return emptyList()
         }
 
@@ -212,7 +212,7 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
         val list = getAll()
         if (list.isEmpty()) {
             if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
-            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name))
+            logging.debug(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name))
             return emptyList()
         }
 
@@ -234,7 +234,7 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
         val list = getAll()
         if (list.isEmpty()) {
             if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
-            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name))
+            logging.debug(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name))
             return emptyList()
         }
 
@@ -256,7 +256,7 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
         val list = getAll()
         if (list.isEmpty()) {
             if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
-            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name ?: "no-name"))
+            logging.debug(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name ?: "no-name"))
             return emptyList()
         }
 
@@ -278,7 +278,7 @@ class TransactionService @Inject constructor(framework: Framework, connector: Da
         val list = getAll()
         if (list.isEmpty()) {
             if (sender != null) messenger.sendMessage(sender, "transactions.no_found")
-            logging.warn(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name ?: "no-name"))
+            logging.debug(format("%s(%s) has no transactions.", player.uniqueId.toString(), player.name ?: "no-name"))
             return emptyList()
         }
 

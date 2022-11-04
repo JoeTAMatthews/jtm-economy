@@ -52,7 +52,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.4'
     implementation 'ch.qos.logback:logback-classic:1.4.4'
-    implementation "com.jtm.framework:framework:0.9.47-dev"
+    implementation "com.jtm.framework:framework:0.9.52-dev"
 
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
     compileOnly 'me.clip:placeholderapi:2.10.9'

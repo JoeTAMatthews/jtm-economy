@@ -36,14 +36,14 @@ class WalletService @Inject constructor(framework: Framework, connector: Databas
         val opt = get(player.uniqueId.toString())
         if (opt.isEmpty) {
             if (sender != null) messenger.sendMessage(sender, "economy.error.failed_finding_wallet")
-            logging.warn(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name ?: "no-name"))
+            logging.debug(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name ?: "no-name"))
             return Optional.empty()
         }
         val wallet = opt.get()
         val transaction = wallet.deposit(from, currency.id, amount)
         if (transaction == null) {
             if (sender != null) messenger.sendMessage(sender, "economy.deposit.sender_failed")
-            logging.warn(format("Failed to deposit in wallet %s(%s)", player.uniqueId.toString(), player.name ?: "no-name"))
+            logging.debug(format("Failed to deposit in wallet %s(%s)", player.uniqueId.toString(), player.name ?: "no-name"))
             return Optional.empty()
         }
 
@@ -69,7 +69,7 @@ class WalletService @Inject constructor(framework: Framework, connector: Databas
         val opt = get(player.uniqueId.toString())
         if (opt.isEmpty) {
             if (sender != null) messenger.sendMessage(sender, "economy.error.failed_finding_wallet")
-            logging.warn(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name ?: "no-name"))
+            logging.debug(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name ?: "no-name"))
             return Optional.empty()
         }
 
@@ -77,7 +77,7 @@ class WalletService @Inject constructor(framework: Framework, connector: Databas
         val transaction = wallet.withdraw(to, currency.id, amount)
         if (transaction == null) {
             if (sender != null) messenger.sendMessage(sender, "economy.withdraw.sender_failed")
-            logging.warn(format("Failed to withdraw from wallet %s(%s)", player.uniqueId.toString(), player.name ?: "no-name"))
+            logging.debug(format("Failed to withdraw from wallet %s(%s)", player.uniqueId.toString(), player.name ?: "no-name"))
             return Optional.empty()
         }
 
@@ -100,7 +100,7 @@ class WalletService @Inject constructor(framework: Framework, connector: Databas
         val opt = get(player.uniqueId.toString())
         if (opt.isEmpty) {
             if (sender != null) messenger.sendMessage(sender, "economy.error.failed_finding_wallet")
-            logging.warn(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name ?: "no-name"))
+            logging.debug(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name ?: "no-name"))
             return Optional.empty()
         }
 
@@ -125,7 +125,7 @@ class WalletService @Inject constructor(framework: Framework, connector: Databas
         val opt = get(player.uniqueId.toString())
         if (opt.isEmpty) {
             if (sender != null) messenger.sendMessage(sender, "economy.error.failed_finding_wallet")
-            logging.warn(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name ?: "no-name"))
+            logging.debug(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name ?: "no-name"))
             return false
         }
 
@@ -137,7 +137,7 @@ class WalletService @Inject constructor(framework: Framework, connector: Databas
         val opt = get(player.uniqueId.toString())
         if (opt.isEmpty) {
             if (sender != null) messenger.sendMessage(sender, "economy.error.failed_finding_wallet")
-            logging.warn(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name ?: "no-name"))
+            logging.debug(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name ?: "no-name"))
             return Optional.empty()
         }
 

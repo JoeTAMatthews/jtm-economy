@@ -59,7 +59,7 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         val opt = getById(player.uniqueId.toString())
         if (opt.isEmpty) {
             if (sender != null) messenger.sendMessage(sender, "economy.error.failed_finding_wallet")
-            logging.warn(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name))
+            logging.debug(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name))
             return Optional.empty()
         }
 
@@ -67,18 +67,19 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         val returned = wallet.deposit(from, currency.id, amount)
         if (returned == null) {
             if (sender != null) messenger.sendMessage(sender, "economy.deposit.sender_failed")
-            logging.warn(format("Failed to deposit in wallet %s(%s)", player.uniqueId.toString(), player.name))
+            logging.debug(format("Failed to deposit in wallet %s(%s)", player.uniqueId.toString(), player.name))
             return Optional.empty()
         }
 
         if (exists(wallet.id)) update(wallet.id, wallet)
         if (sender != null) messenger.sendMessage(sender, "economy.deposit.sender_success", currency.getSymbolAmount(amount), player.name)
-        messenger.sendMessage(player, "economy.deposit.target.success", currency.getSymbolAmount(amount))
+        messenger.sendMessage(player, "economy.deposit.target_success", currency.getSymbolAmount(amount))
 
         framework.runTaskAsync {
             service.update(wallet)
             transactionService.insert(returned)
         }
+
         return Optional.of(returned)
     }
 
@@ -99,7 +100,7 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         val opt = getById(player.uniqueId.toString())
         if (opt.isEmpty) {
             if (sender != null) messenger.sendMessage(sender, "economy.error.failed_finding_wallet")
-            logging.warn(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name))
+            logging.debug(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name))
             return Optional.empty()
         }
 
@@ -107,7 +108,7 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         val returned = wallet.withdraw(to, currency.id, amount)
         if (returned == null) {
             if (sender != null) messenger.sendMessage(sender, "economy.withdraw.sender_failed")
-            logging.warn(format("Failed to withdraw from wallet %s(%s)", player.uniqueId.toString(), player.name))
+            logging.debug(format("Failed to withdraw from wallet %s(%s)", player.uniqueId.toString(), player.name))
             return Optional.empty()
         }
 
@@ -135,7 +136,7 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         val opt = getById(player.uniqueId.toString())
         if (opt.isEmpty) {
             if (sender != null) messenger.sendMessage(sender, "economy.error.failed_finding_wallet")
-            logging.warn(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name))
+            logging.debug(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name))
             return Optional.empty()
         }
 
@@ -160,7 +161,7 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         val opt = getById(player.uniqueId.toString())
         if (opt.isEmpty) {
             if (sender != null) messenger.sendMessage(sender, "failed_finding_wallet")
-            logging.warn(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name))
+            logging.debug(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name))
             return false
         }
 
@@ -172,7 +173,7 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         val opt = getById(player.uniqueId.toString())
         if (opt.isEmpty) {
             if (sender != null) messenger.sendMessage(sender, "economy.error.failed_finding_wallet")
-            logging.warn(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name))
+            logging.debug(format("%s(%s) wallet was not found.", player.uniqueId.toString(), player.name))
             return Optional.empty()
         }
 
@@ -192,14 +193,14 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         val withdrawn = senderWallet.withdraw(receiver.uniqueId, currency.id, amount)
         if (withdrawn == null) {
             messenger.sendMessage(sender, "economy.withdraw.sender_failed")
-            logging.warn(format("Failed to withdraw from wallet %s(%s)", sender.uniqueId.toString(), sender.name))
+            logging.debug(format("Failed to withdraw from wallet %s(%s)", sender.uniqueId.toString(), sender.name))
             return false
         }
 
         val deposited = receiverWallet.deposit(sender.uniqueId, currency.id, amount)
         if (deposited == null) {
             messenger.sendMessage(sender, "economy.deposit.sender_failed")
-            logging.warn(format("Failed to deposit in wallet %s(%s)", receiver.uniqueId.toString(), receiver.name))
+            logging.debug(format("Failed to deposit in wallet %s(%s)", receiver.uniqueId.toString(), receiver.name))
             return false
         }
 
@@ -230,14 +231,14 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         val withdrawn = senderWallet.withdraw(receiver.uniqueId, currency.id, amount)
         if (withdrawn == null) {
             messenger.sendMessage(sender, "economy.withdraw.sender_failed")
-            logging.warn(format("Failed to withdraw from wallet %s(%s)", sender.uniqueId.toString(), sender.name))
+            logging.debug(format("Failed to withdraw from wallet %s(%s)", sender.uniqueId.toString(), sender.name))
             return false
         }
 
         val deposited = receiverWallet.deposit(sender.uniqueId, currency.id, amount)
         if (deposited == null) {
             messenger.sendMessage(sender, "economy.deposit.sender_failed")
-            logging.warn(format("Failed to deposit in wallet %s(%s)", receiver.uniqueId.toString(), receiver.name ?: "no-name"))
+            logging.debug(format("Failed to deposit in wallet %s(%s)", receiver.uniqueId.toString(), receiver.name ?: "no-name"))
             return false
         }
 
@@ -257,7 +258,7 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
     fun rollback(sender: CommandSender, target: Player, stack: Stack<TransactionNode>, id: Int) {
         if (stack.isEmpty()) {
             messenger.sendMessage(sender, "transactions.not_found")
-            logging.warn("Failed to find any transactions to rollback.")
+            logging.debug("Failed to find any transactions to rollback.")
             return
         }
 
@@ -292,7 +293,7 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
     fun rollback(sender: CommandSender, target: OfflinePlayer, stack: Stack<TransactionNode>, id: Int) {
         if (stack.isEmpty()) {
             messenger.sendMessage(sender, "transactions.not_found")
-            logging.warn("Failed to find any transactions to rollback.")
+            logging.debug("Failed to find any transactions to rollback.")
             return
         }
 

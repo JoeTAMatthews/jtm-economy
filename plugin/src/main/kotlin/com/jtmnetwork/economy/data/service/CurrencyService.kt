@@ -20,7 +20,7 @@ class CurrencyService @Inject constructor(framework: Framework, connector: Datab
         val opt = getAll().stream().filter { it.main }.findFirst()
         if (opt.isEmpty) {
             if (sender != null) messenger.sendMessage(sender, "currency.not_found")
-            logging.warn(format("No primary currency set."))
+            logging.debug(format("No primary currency set."))
             return Optional.empty()
         }
 
@@ -31,7 +31,7 @@ class CurrencyService @Inject constructor(framework: Framework, connector: Datab
         val opt = get(id)
         if (opt.isEmpty) {
             if (sender != null) messenger.sendMessage(sender, "currency.not_found")
-            logging.warn(format("No currency found."))
+            logging.debug(format("No currency found."))
             return Optional.empty()
         }
 
@@ -42,7 +42,7 @@ class CurrencyService @Inject constructor(framework: Framework, connector: Datab
         val opt = getAll().stream().filter { it.name == name }.findFirst()
         if (opt.isEmpty) {
             if (sender != null) messenger.sendMessage(sender, "currency.not_found")
-            logging.warn(format("No currency found."))
+            logging.debug(format("No currency found."))
             return Optional.empty()
         }
 

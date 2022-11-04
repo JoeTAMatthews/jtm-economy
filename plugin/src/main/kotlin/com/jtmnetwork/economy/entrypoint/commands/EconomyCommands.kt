@@ -65,17 +65,17 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
 
                 val optTrans = walletAPI.deposit(player, targetPlayer, null, currency, amount)
                 if (optTrans.isPresent)
-                    logging.info(format("%s has successfully deposited %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
+                    logging.debug(format("%s has successfully deposited %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
                 else
-                    logging.info(format("%s has failed to deposit %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
+                    logging.debug(format("%s has failed to deposit %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
             }
 
             false -> {
                 val optTrans = walletAPI.deposit(player, target, null, currency, amount)
                 if (optTrans.isPresent)
-                    logging.info(format("%s has successfully deposited %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
+                    logging.debug(format("%s has successfully deposited %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
                 else
-                    logging.info(format("%s has failed to deposit %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
+                    logging.debug(format("%s has failed to deposit %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
             }
         }
     }
@@ -103,17 +103,17 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
 
                 val optTrans = walletAPI.withdraw(player, targetPlayer, null, currency, amount)
                 if (optTrans.isPresent)
-                    logging.info(format("%s has successfully withdrew %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
+                    logging.debug(format("%s has successfully withdrew %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
                 else
-                    logging.info(format("%s has failed to withdraw %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
+                    logging.debug(format("%s has failed to withdraw %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
             }
 
             false -> {
                 val optTrans = walletAPI.withdraw(player, target, null, currency, amount)
                 if (optTrans.isPresent)
-                    logging.info(format("%s has successfully withdrew %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
+                    logging.debug(format("%s has successfully withdrew %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
                 else
-                    logging.info(format("%s has failed to withdraw %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
+                    logging.debug(format("%s has failed to withdraw %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
             }
         }
     }
@@ -141,9 +141,7 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
                 walletAPI.balance(player, targetPlayer, currency)
             }
 
-            false -> {
-                framework.runTaskAsync { walletAPI.balance(player, target, currency) }
-            }
+            false -> framework.runTaskAsync { walletAPI.balance(player, target, currency) }
         }
     }
 

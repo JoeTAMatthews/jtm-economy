@@ -64,7 +64,7 @@ class ExchangeRateCache @Inject constructor(private val framework: Framework, pr
         val currency = getAll().stream().filter { it.symbol.equals(symbol, true) }.findFirst()
         if (currency.isEmpty) {
             if (sender != null) messenger.sendMessage(sender, "rate.not_found")
-            logging.warn("No exchange rate found.")
+            logging.debug("No exchange rate found.")
             return Optional.empty()
         }
 
