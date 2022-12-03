@@ -8,6 +8,7 @@ import com.jtm.framework.presenter.configuration.RestConfiguration
 import com.jtm.framework.presenter.locale.LocaleMessenger
 import com.jtmnetwork.economy.core.domain.constants.TransactionType
 import com.jtmnetwork.economy.core.domain.entity.Currency
+import com.jtmnetwork.economy.core.domain.entity.Transaction
 import com.jtmnetwork.economy.core.util.TestUtil
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
@@ -24,7 +25,7 @@ import org.mockito.kotlin.verify
 import java.io.File
 import java.util.*
 
-@RunWith(MockitoJUnitRunner::class)
+@RunWith(MockitoJUnitRunner.Silent::class)
 class TransactionServiceUnitTest {
 
     private val logging: Logging = mock()
@@ -32,7 +33,7 @@ class TransactionServiceUnitTest {
     private val framework: Framework = TestUtil.createFramework(messenger, logging)
     private val connector: DatabaseConnector = TestUtil.createConnector(logging)
 
-    private lateinit var service: TransactionService
+    private val service = spy(TransactionService(framework, connector))
 
     private val id = UUID.randomUUID()
 
@@ -44,32 +45,38 @@ class TransactionServiceUnitTest {
 
     @Before
     fun setup() {
-        service = spy(TransactionService(framework, connector))
-
         TestUtil.verifyFramework(framework)
         TestUtil.verifyConnector(connector)
     }
 
     @Test
-    fun getIngoingTransactionsOnlinePlayer_thenSendError_whenNoTransactions() {
-        `when`(service.getAll()).thenReturn(emptyList())
+    fun getIngoingTransactionsOnlinePlayer_shouldSendError_whenNoTransactions() {
+        doReturn(emptyList<Transaction>()).`when`(service).getAll()
 
         val returned = service.getIngoingTransactions(sender, player)
 
-        verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
+        verify(service, times(1)).getIngoingTransactions(sender, player)
+        verify(service, times(1)).getAll()
+        verifyNoMoreInteractions(service)
+
+        verify(messenger, times(1)).sendMessage(sender, "transactions.no_found")
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).debug(anyString())
+        verify(logging, times(1)).debug("${id}(JTM) has no transactions.")
         verifyNoMoreInteractions(logging)
 
         assertEquals(0, returned.size)
     }
 
     @Test
-    fun getIngoingTransactionsOnlinePlayer_thenReturnList() {
-        `when`(service.getAll()).thenReturn(transList)
+    fun getIngoingTransactionsOnlinePlayer_shouldReturnList_whenFilteringIngoing() {
+        doReturn(transList).`when`(service).getAll()
 
         val returned = service.getIngoingTransactions(sender, player)
+
+        verify(service, times(1)).getIngoingTransactions(sender, player)
+        verify(service, times(1)).getAll()
+        verifyNoMoreInteractions(service)
 
         assertEquals(3, returned.size)
 
@@ -84,8 +91,8 @@ class TransactionServiceUnitTest {
     }
 
     @Test
-    fun getIngoingTransactionsOnlinePlayerByCurrency_thenSendError_whenNoTransactions() {
-        `when`(service.getAll()).thenReturn(emptyList())
+    fun getIngoingTransactionsOnlinePlayerByCurrency_shouldSendError_whenNoTransactions() {
+        doReturn(emptyList<Transaction>()).`when`(service).getAll()
 
         val returned = service.getIngoingTransactions(sender, player, currency)
 
@@ -100,7 +107,7 @@ class TransactionServiceUnitTest {
 
     @Test
     fun getIngoingTransactionsOnlinePlayerByCurrency_thenReturnList() {
-        `when`(service.getAll()).thenReturn(transList)
+        doReturn(transList).`when`(service).getAll()
 
         val returned = service.getIngoingTransactions(sender, player, currency)
 
@@ -115,7 +122,7 @@ class TransactionServiceUnitTest {
 
     @Test
     fun getIngoingTransactionsOfflinePlayer_thenSendError_whenNoTransactions() {
-        `when`(service.getAll()).thenReturn(emptyList())
+        doReturn(emptyList<Transaction>()).`when`(service).getAll()
 
         val returned = service.getIngoingTransactions(sender, offlinePlayer)
 
@@ -130,7 +137,7 @@ class TransactionServiceUnitTest {
 
     @Test
     fun getIngoingTransactionsOfflinePlayer_thenReturnList() {
-        `when`(service.getAll()).thenReturn(transList)
+        doReturn(transList).`when`(service).getAll()
 
         val returned = service.getIngoingTransactions(sender, offlinePlayer)
 
@@ -148,7 +155,7 @@ class TransactionServiceUnitTest {
 
     @Test
     fun getIngoingTransactionsOfflinePlayerByCurrency_thenSendError_whenNoTransactions() {
-        `when`(service.getAll()).thenReturn(emptyList())
+        doReturn(emptyList<Transaction>()).`when`(service).getAll()
 
         val returned = service.getIngoingTransactions(sender, offlinePlayer, currency)
 
@@ -163,7 +170,7 @@ class TransactionServiceUnitTest {
 
     @Test
     fun getIngoingTransactionsOfflinePlayerByCurrency_thenReturnList() {
-        `when`(service.getAll()).thenReturn(transList)
+        doReturn(transList).`when`(service).getAll()
 
         val returned = service.getIngoingTransactions(sender, offlinePlayer, currency)
 
@@ -193,7 +200,7 @@ class TransactionServiceUnitTest {
 
     @Test
     fun getOutgoingTransactionsOnlinePlayer_thenReturnList() {
-        `when`(service.getAll()).thenReturn(transList)
+        doReturn(transList).`when`(service).getAll()
 
         val returned = service.getOutgoingTransactions(sender, player)
 
@@ -225,7 +232,7 @@ class TransactionServiceUnitTest {
 
     @Test
     fun getOutgoingTransactionOnlinePlayerByCurrency_thenReturnList() {
-        `when`(service.getAll()).thenReturn(transList)
+        doReturn(transList).`when`(service).getAll()
 
         val returned = service.getOutgoingTransactions(sender, player, currency)
 
