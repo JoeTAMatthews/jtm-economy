@@ -48,3 +48,4 @@ transactions:
 user:
   insufficient_funds: "&cInsufficient funds."
   sufficient_funds: "&b%s &ahas sufficient funds."
+  not_online: "&4Error: &cTarget player is not online."

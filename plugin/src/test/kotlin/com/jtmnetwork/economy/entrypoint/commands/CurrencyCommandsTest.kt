@@ -1,8 +1,9 @@
 package com.jtmnetwork.economy.entrypoint.commands
 
-import com.jtm.framework.Framework
+import com.jtm.framework.core.util.Logging
 import com.jtm.framework.presenter.locale.LocaleMessenger
 import com.jtmnetwork.economy.core.domain.entity.Currency
+import com.jtmnetwork.economy.core.util.TestUtil
 import com.jtmnetwork.economy.data.cache.CurrencyCache
 import com.jtmnetwork.economy.data.service.CurrencyService
 import org.bukkit.entity.Player
@@ -16,11 +17,13 @@ import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.mock
 import java.util.*
 
-@RunWith(MockitoJUnitRunner::class)
+@RunWith(MockitoJUnitRunner.Silent::class)
 class CurrencyCommandsTest {
-
-    private val framework: Framework = mock()
-    private val localeMessenger: LocaleMessenger = mock()
+    
+    private val messenger: LocaleMessenger = mock()
+    private val logging: Logging = mock()
+    private val framework = TestUtil.createFramework(messenger, logging)
+    
     private val cache: CurrencyCache = mock()
     private val service: CurrencyService = mock()
     private lateinit var currencyCommands: CurrencyCommands
@@ -30,9 +33,9 @@ class CurrencyCommandsTest {
 
     @Before
     fun setup() {
-        `when`(framework.getLocaleMessenger()).thenReturn(localeMessenger)
-
         currencyCommands = CurrencyCommands(framework, cache, service)
+        
+        verify(framework, times(1)).getLocaleMessenger()
     }
 
     @Test
@@ -52,8 +55,8 @@ class CurrencyCommandsTest {
         verify(cache, times(1)).existsByName(anyString())
         verifyNoMoreInteractions(cache)
 
-        verify(localeMessenger, times(1)).sendMessage(anyOrNull(), anyString())
-        verifyNoMoreInteractions(localeMessenger)
+        verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
+        verifyNoMoreInteractions(messenger)
 
         verify(framework, times(1)).getLocaleMessenger()
         verifyNoMoreInteractions(framework)
@@ -77,8 +80,8 @@ class CurrencyCommandsTest {
         verify(framework, times(1)).callEvent(anyOrNull())
         verifyNoMoreInteractions(framework)
 
-        verify(localeMessenger, times(1)).sendMessage(anyOrNull(), anyString(), anyOrNull())
-        verifyNoMoreInteractions(localeMessenger)
+        verify(messenger, times(1)).sendMessage(anyOrNull(), anyString(), anyOrNull())
+        verifyNoMoreInteractions(messenger)
     }
 
     @Test
@@ -90,8 +93,8 @@ class CurrencyCommandsTest {
         verify(cache, times(1)).existsByName(anyString())
         verifyNoMoreInteractions(cache)
 
-        verify(localeMessenger, times(1)).sendMessage(anyOrNull(), anyString())
-        verifyNoMoreInteractions(localeMessenger)
+        verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
+        verifyNoMoreInteractions(messenger)
 
         verify(framework, times(1)).getLocaleMessenger()
         verifyNoMoreInteractions(framework)
@@ -115,8 +118,8 @@ class CurrencyCommandsTest {
         verify(framework, times(1)).callEvent(anyOrNull())
         verifyNoMoreInteractions(framework)
 
-        verify(localeMessenger, times(1)).sendMessage(anyOrNull(), anyString(), anyOrNull())
-        verifyNoMoreInteractions(localeMessenger)
+        verify(messenger, times(1)).sendMessage(anyOrNull(), anyString(), anyOrNull())
+        verifyNoMoreInteractions(messenger)
     }
 
     @Test
@@ -131,8 +134,8 @@ class CurrencyCommandsTest {
         verify(framework, times(1)).getLocaleMessenger()
         verifyNoMoreInteractions(framework)
 
-        verify(localeMessenger, times(1)).sendMessage(anyOrNull(), anyString())
-        verifyNoMoreInteractions(localeMessenger)
+        verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
+        verifyNoMoreInteractions(messenger)
     }
 
     @Test
@@ -170,8 +173,8 @@ class CurrencyCommandsTest {
         verify(framework, times(1)).getLocaleMessenger()
         verifyNoMoreInteractions(framework)
 
-        verify(localeMessenger, times(1)).sendMessage(anyOrNull(), anyString(), anyOrNull())
-        verifyNoMoreInteractions(localeMessenger)
+        verify(messenger, times(1)).sendMessage(anyOrNull(), anyString(), anyOrNull())
+        verifyNoMoreInteractions(messenger)
     }
 
     @Test
@@ -186,8 +189,8 @@ class CurrencyCommandsTest {
         verify(framework, times(1)).getLocaleMessenger()
         verifyNoMoreInteractions(framework)
 
-        verify(localeMessenger, times(1)).sendMessage(anyOrNull(), anyString())
-        verifyNoMoreInteractions(localeMessenger)
+        verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
+        verifyNoMoreInteractions(messenger)
     }
 
     @Test

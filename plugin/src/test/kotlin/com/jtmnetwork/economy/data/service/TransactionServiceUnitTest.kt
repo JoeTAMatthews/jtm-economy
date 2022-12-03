@@ -59,7 +59,7 @@ class TransactionServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertEquals(0, returned.size)
@@ -92,7 +92,7 @@ class TransactionServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertEquals(0, returned.size)
@@ -122,7 +122,7 @@ class TransactionServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertEquals(0, returned.size)
@@ -155,7 +155,7 @@ class TransactionServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertEquals(0, returned.size)
@@ -185,7 +185,7 @@ class TransactionServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertEquals(0, returned.size)
@@ -217,7 +217,7 @@ class TransactionServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertEquals(0, returned.size)
@@ -247,7 +247,7 @@ class TransactionServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertEquals(0, returned.size)
@@ -280,7 +280,7 @@ class TransactionServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertEquals(0, returned.size)
@@ -312,7 +312,7 @@ class TransactionServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertEquals(0, returned.size)
@@ -345,7 +345,7 @@ class TransactionServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertEquals(0, returned.size)
@@ -375,7 +375,7 @@ class TransactionServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertEquals(0, returned.size)
@@ -408,7 +408,7 @@ class TransactionServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertEquals(0, returned.size)

@@ -58,7 +58,7 @@ class WalletServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verify(logging, times(1)).error(anyString())
         verifyNoMoreInteractions(logging)
 
@@ -76,7 +76,7 @@ class WalletServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verify(logging, times(1)).error(anyString())
         verifyNoMoreInteractions(logging)
 
@@ -114,7 +114,7 @@ class WalletServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verify(logging, times(1)).error(anyString())
         verifyNoMoreInteractions(logging)
 
@@ -132,7 +132,7 @@ class WalletServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verify(logging, times(1)).error(anyString())
         verifyNoMoreInteractions(logging)
 
@@ -194,7 +194,7 @@ class WalletServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verify(logging, times(1)).error(anyString())
         verifyNoMoreInteractions(logging)
 
@@ -228,7 +228,7 @@ class WalletServiceUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verify(logging, times(1)).error(anyString())
         verifyNoMoreInteractions(logging)
 
@@ -254,7 +254,7 @@ class WalletServiceUnitTest {
 
         val returned = service.hasBalance(null, target, currency, 25.0)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verify(logging, times(1)).error(anyString())
         verifyNoMoreInteractions(logging)
 

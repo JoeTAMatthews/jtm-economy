@@ -48,7 +48,7 @@ class CurrencyServiceUnitTest {
         verify(messenger, times(1)).sendMessage(sender, "currency.not_found")
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertTrue(returned.isEmpty)
@@ -78,7 +78,7 @@ class CurrencyServiceUnitTest {
         verify(messenger, times(1)).sendMessage(sender, "currency.not_found")
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verify(logging, times(1)).error(anyString())
         verifyNoMoreInteractions(logging)
 
@@ -109,7 +109,7 @@ class CurrencyServiceUnitTest {
         verify(messenger, times(1)).sendMessage(sender, "currency.not_found")
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertTrue(returned.isEmpty)
