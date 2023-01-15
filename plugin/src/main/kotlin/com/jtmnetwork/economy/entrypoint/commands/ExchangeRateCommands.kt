@@ -54,20 +54,20 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
     @Usage("/erate add <from> <to> <rate>")
     fun onExchangeRateAdd(player: Player, from: Currency, to: Currency, rate: Double) {
         if (exchangeRateCache.existsBySymbol("${from.abbreviation}${to.abbreviation}")) {
-            localeMessenger.sendMessage(player, "exchangerate.found")
+            localeMessenger.sendMessage(player, "rate.found")
             return
         }
 
         if (from.id == to.id) {
-            localeMessenger.sendMessage(player, "exchangerate.commands.same_currency")
+            localeMessenger.sendMessage(player, "rate.commands.same_currency")
             return
         }
 
-        val exchangeRate = ExchangeRate(currency_from = from.id, currency_to = to.id, symbol = "${from.abbreviation}${to.abbreviation}", rate = rate)
-        val inserted = exchangeRateCache.insert(exchangeRate.id, exchangeRate)
+        val erate = ExchangeRate(currency_from = from.id, currency_to = to.id, symbol = "${from.abbreviation}${to.abbreviation}", rate = rate)
+        val inserted = exchangeRateCache.insert(erate.id, erate)
         inserted.ifPresent { returned ->
             framework.runTaskAsync { exchangeRateService.insert(returned) }
-            localeMessenger.sendMessage(player, "exchangerate.commands.add", returned.symbol)
+            localeMessenger.sendMessage(player, "rate.commands.add", returned.symbol)
         }
     }
 
@@ -83,7 +83,7 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
     @Usage("/erate remove <pair>")
     fun onExchangeRateRemove(player: Player, pair: String) {
         if (!exchangeRateCache.existsBySymbol(pair)) {
-            localeMessenger.sendMessage(player, "exchangerate.not_found")
+            localeMessenger.sendMessage(player, "rate.not_found")
             return
         }
 
@@ -92,7 +92,7 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
             val deleted = exchangeRateCache.remove(rate.id)
             deleted.ifPresent { removed ->
                 framework.runTaskAsync { exchangeRateService.delete(removed.id) }
-                localeMessenger.sendMessage(player, "exchangerate.commands.remove", removed.symbol)
+                localeMessenger.sendMessage(player, "rate.commands.remove", removed.symbol)
             }
         }
     }
@@ -111,7 +111,7 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
     @Usage("/erate update <pair> <setting> <value>")
     fun onExchangeRateUpdate(player: Player, pair: String, setting: ExchangeRateSetting, value: String) {
         if (!exchangeRateCache.existsBySymbol(pair)) {
-            localeMessenger.sendMessage(player, "exchangerate.not_found")
+            localeMessenger.sendMessage(player, "rate.not_found")
             return
         }
 
@@ -125,7 +125,7 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
                         val updated = exchangeRateCache.update(returnedRate.id, returnedRate.updateRate(rate))
                         updated.ifPresent { returned ->
                             framework.runTaskAsync { exchangeRateService.update(returned) }
-                            localeMessenger.sendMessage(player, "exchangerate.commands.updated.rate", value)
+                            localeMessenger.sendMessage(player, "rate.commands.updated.rate", value)
                         }
                     } catch (ex: NumberFormatException) {
                         player.sendMessage(UtilString.colour("&4Error: &cNot a number."))
@@ -147,7 +147,7 @@ class ExchangeRateCommands @Inject constructor(private val framework: Framework,
     @Usage("/erate info <symbol>")
     fun onExchangeRateInfo(player: Player, pair: String) {
         if (!exchangeRateCache.existsBySymbol(pair)) {
-            localeMessenger.sendMessage(player, "exchangerate.not_found")
+            localeMessenger.sendMessage(player, "rate.not_found")
             return
         }
 
