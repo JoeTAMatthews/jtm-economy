@@ -117,7 +117,7 @@ class WalletCache @Inject constructor(private val framework: Framework, val serv
         messenger.sendMessage(player, "economy.withdraw.target_success", currency.getSymbolAmount(amount))
         framework.runTaskAsync {
             service.update(wallet)
-            transactionService.update(returned)
+            transactionService.insert(returned)
         }
         return Optional.of(returned)
     }
