@@ -11,8 +11,10 @@ open class CorsGlobalConfiguration: WebFluxConfigurer {
 
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
-            .allowedOrigins("*")
-            .allowedMethods("GET", "OPTIONS")
-            .maxAge(3600)
+            .allowedOrigins("https://localhost:3000", "https://play.jtm-network.com")
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            .allowedHeaders("*")
+            .allowCredentials(true)
+            .maxAge(7200);
     }
 }
