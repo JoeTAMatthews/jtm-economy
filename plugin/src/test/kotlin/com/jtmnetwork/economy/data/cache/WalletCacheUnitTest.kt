@@ -25,16 +25,18 @@ import org.mockito.kotlin.verifyNoMoreInteractions
 import java.util.*
 import javax.swing.text.html.Option
 
-@RunWith(MockitoJUnitRunner::class)
+@RunWith(MockitoJUnitRunner.Silent::class)
 class WalletCacheUnitTest {
 
-    private val framework: Framework = mock()
+
     private val logging: Logging = mock()
     private val messenger: LocaleMessenger = mock()
+    private val framework: Framework = TestUtil.createFramework(messenger, logging)
+    private val connector = TestUtil.createRedisConnector()
+
     private val walletService: WalletService = mock()
     private val transactionService: TransactionService = mock()
-    private val connector: RedisConnector = mock()
-    private lateinit var cache: WalletCache
+    private var cache = spy(WalletCache(framework, walletService, transactionService, connector))
 
     private val player: Player = mock()
     private val id = UUID.randomUUID()
@@ -48,13 +50,9 @@ class WalletCacheUnitTest {
         `when`(player.uniqueId).thenReturn(id)
         `when`(player.name).thenReturn("JTM")
 
-        `when`(framework.getLogging()).thenReturn(logging)
-        `when`(framework.getLocaleMessenger()).thenReturn(messenger)
-
-        cache = spy(WalletCache(framework, walletService, transactionService, connector))
-
         verify(framework, times(1)).getLogging()
         verify(framework, times(1)).getLocaleMessenger()
+        verifyNoMoreInteractions(framework)
     }
 
     @Test
@@ -66,7 +64,7 @@ class WalletCacheUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertTrue(returned.isEmpty)
@@ -82,7 +80,7 @@ class WalletCacheUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertTrue(returned.isEmpty)
@@ -120,7 +118,7 @@ class WalletCacheUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertTrue(returned.isEmpty)
@@ -135,7 +133,7 @@ class WalletCacheUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertTrue(returned.isEmpty)
@@ -173,7 +171,7 @@ class WalletCacheUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertTrue(returned.isEmpty)
@@ -202,7 +200,7 @@ class WalletCacheUnitTest {
         verify(messenger, times(1)).sendMessage(anyOrNull(), anyString())
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertFalse(returned)
@@ -223,7 +221,7 @@ class WalletCacheUnitTest {
 
         val returned = cache.hasBalance(null, player, currency, 100.0)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertFalse(returned)

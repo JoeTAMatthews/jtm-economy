@@ -24,6 +24,7 @@ data class Wallet(
 
     fun withdraw(receiver: UUID?, currency: UUID, amount: Double): Transaction? {
         val current = getBalance(currency)
+        if (!checkBalance(currency, amount)) return null
         val withdrawn = removeBalance(currency, amount) ?: return null
         return Transaction(type = TransactionType.OUT, sender = UUID.fromString(id), receiver = receiver, currency = currency, amount = amount, previous_balance = current, new_balance = withdrawn.getBalance(currency))
     }

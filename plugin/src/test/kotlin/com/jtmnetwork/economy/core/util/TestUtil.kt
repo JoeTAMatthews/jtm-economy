@@ -71,8 +71,6 @@ class TestUtil {
         fun createRedisConnector(): RedisConnector {
             val redisConnector: RedisConnector = mock()
 
-
-
             return redisConnector
         }
 

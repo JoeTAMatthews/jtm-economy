@@ -5,3 +5,4 @@ api-version: 1.13
 main: com.jtmnetwork.economy.JtmEconomy
 softdepend:
   - Vault
+  - JTMDiscord

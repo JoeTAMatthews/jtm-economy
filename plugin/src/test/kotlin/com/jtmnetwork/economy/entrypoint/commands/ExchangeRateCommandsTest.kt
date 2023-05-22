@@ -97,13 +97,13 @@ class ExchangeRateCommandsTest {
     @Test
     fun onExchangeRateRemove() {
         `when`(exchangeRateCache.existsBySymbol(anyString())).thenReturn(true)
-        `when`(exchangeRateCache.getBySymbol(anyString())).thenReturn(Optional.of(rate))
+        `when`(exchangeRateCache.getBySymbol(anyOrNull(), anyString())).thenReturn(Optional.of(rate))
         `when`(exchangeRateCache.remove(anyOrNull())).thenReturn(Optional.of(rate))
 
         exchangeRateCommands.onExchangeRateRemove(player, "test")
 
         verify(exchangeRateCache, times(1)).existsBySymbol(anyString())
-        verify(exchangeRateCache, times(1)).getBySymbol(anyString())
+        verify(exchangeRateCache, times(1)).getBySymbol(anyOrNull(),  anyString())
         verify(exchangeRateCache, times(1)).remove(anyOrNull())
         verifyNoMoreInteractions(exchangeRateCache)
 
@@ -131,13 +131,13 @@ class ExchangeRateCommandsTest {
     @Test
     fun onExchangeRateUpdate() {
         `when`(exchangeRateCache.existsBySymbol(anyString())).thenReturn(true)
-        `when`(exchangeRateCache.getBySymbol(anyString())).thenReturn(Optional.of(rate))
+        `when`(exchangeRateCache.getBySymbol(anyOrNull(), anyString())).thenReturn(Optional.of(rate))
         `when`(exchangeRateCache.update(anyOrNull(), anyOrNull())).thenReturn(Optional.of(rate))
 
         exchangeRateCommands.onExchangeRateUpdate(player, "test", ExchangeRateSetting.RATE, "1.0")
 
         verify(exchangeRateCache, times(1)).existsBySymbol(anyString())
-        verify(exchangeRateCache, times(1)).getBySymbol(anyString())
+        verify(exchangeRateCache, times(1)).getBySymbol(anyOrNull(), anyString())
         verify(exchangeRateCache, times(1)).update(anyOrNull(), anyOrNull())
         verifyNoMoreInteractions(exchangeRateCache)
 
@@ -165,12 +165,12 @@ class ExchangeRateCommandsTest {
     @Test
     fun onExchangeRateInfo() {
         `when`(exchangeRateCache.existsBySymbol(anyString())).thenReturn(true)
-        `when`(exchangeRateCache.getBySymbol(anyString())).thenReturn(Optional.of(rate))
+        `when`(exchangeRateCache.getBySymbol(anyOrNull(), anyString())).thenReturn(Optional.of(rate))
 
         exchangeRateCommands.onExchangeRateInfo(player, "test")
 
         verify(exchangeRateCache, times(1)).existsBySymbol(anyString())
-        verify(exchangeRateCache, times(1)).getBySymbol(anyString())
+        verify(exchangeRateCache, times(1)).getBySymbol(anyOrNull(), anyString())
         verifyNoMoreInteractions(exchangeRateCache)
 
         verify(player, times(1)).sendMessage(anyString())

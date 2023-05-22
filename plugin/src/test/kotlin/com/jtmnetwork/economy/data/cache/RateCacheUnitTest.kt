@@ -53,7 +53,7 @@ class RateCacheUnitTest {
         verify(messenger, times(1)).sendMessage(player, "rate.not_found")
         verifyNoMoreInteractions(messenger)
 
-        verify(logging, times(1)).warn(anyString())
+        verify(logging, times(1)).debug(anyString())
         verifyNoMoreInteractions(logging)
 
         assertTrue(returned.isEmpty)

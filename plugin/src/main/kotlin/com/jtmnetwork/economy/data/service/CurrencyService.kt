@@ -16,39 +16,67 @@ class CurrencyService @Inject constructor(framework: Framework, connector: Datab
     private val messenger = framework.getLocaleMessenger()
     private val logging = framework.getLogging()
 
+    /**
+     * Return the currency being set as main.
+     *
+     * @param sender                    the command sender.
+     *
+     * @return                          the primary currency, empty if not found.
+     */
     fun getPrimaryCurrency(sender: CommandSender?): Optional<Currency> {
         val opt = getAll().stream().filter { it.main }.findFirst()
         if (opt.isEmpty) {
             if (sender != null) messenger.sendMessage(sender, "currency.not_found")
-            logging.warn(format("No primary currency set."))
+            logging.debug(format("No primary currency set."))
             return Optional.empty()
         }
 
         return opt
     }
 
+    /**
+     * Return the currency by the identifier.
+     *
+     * @param sender                    the command sender.
+     * @param id                        the identifier.
+     *
+     * @return                          the currency found, empty if not found.
+     */
     fun getCurrency(sender: CommandSender?, id: UUID): Optional<Currency> {
         val opt = get(id)
         if (opt.isEmpty) {
             if (sender != null) messenger.sendMessage(sender, "currency.not_found")
-            logging.warn(format("No currency found."))
+            logging.debug(format("No currency found."))
             return Optional.empty()
         }
 
         return opt
     }
 
+    /**
+     * Return the currency by the name.
+     *
+     * @param sender                    the command sender.
+     * @param name                      the name.
+     *
+     * @return                          the currency found, empty if not found.
+     */
     fun getCurrency(sender: CommandSender?, name: String): Optional<Currency> {
         val opt = getAll().stream().filter { it.name == name }.findFirst()
         if (opt.isEmpty) {
             if (sender != null) messenger.sendMessage(sender, "currency.not_found")
-            logging.warn(format("No currency found."))
+            logging.debug(format("No currency found."))
             return Optional.empty()
         }
 
         return opt
     }
 
+    /**
+     * Return a list of currencies.
+     *
+     * @return                          the currency list.
+     */
     fun getCurrencies(): List<Currency> {
         return getAll()
     }

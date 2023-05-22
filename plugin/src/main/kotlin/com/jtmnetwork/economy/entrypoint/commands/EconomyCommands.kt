@@ -18,8 +18,9 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
 @Singleton
-class EconomyCommands @Inject constructor(private val framework: Framework, private val walletAPI: WalletAPI, private val localeMessenger: LocaleMessenger) {
+class EconomyCommands @Inject constructor(private val framework: Framework, private val walletAPI: WalletAPI) {
 
+    private val messenger = framework.getLocaleMessenger()
     private val logging = framework.getLogging()
 
     /**
@@ -59,23 +60,38 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
             true -> {
                 val targetPlayer = target.player
                 if (targetPlayer == null) {
-                    player.sendMessage(UtilString.colour("&4Error: &cTarget player not online."))
+                    messenger.sendMessage(player, "user.not_online")
                     return
                 }
 
                 val optTrans = walletAPI.deposit(player, targetPlayer, null, currency, amount)
                 if (optTrans.isPresent)
-                    logging.info(format("%s has successfully deposited %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
+                    logging.debug(format("%s has successfully deposited %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
                 else
-                    logging.info(format("%s has failed to deposit %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
+                    logging.debug(format("%s has failed to deposit %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
             }
 
             false -> {
                 val optTrans = walletAPI.deposit(player, target, null, currency, amount)
-                if (optTrans.isPresent)
-                    logging.info(format("%s has successfully deposited %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
-                else
-                    logging.info(format("%s has failed to deposit %s in %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
+                if (optTrans.isPresent) {
+                    logging.debug(
+                        format(
+                            "%s has successfully deposited %s in %s's wallet.",
+                            player.name,
+                            currency.getSymbolAmount(amount),
+                            target.name ?: target.uniqueId
+                        )
+                    )
+                } else {
+                    logging.debug(
+                        format(
+                            "%s has failed to deposit %s in %s's wallet.",
+                            player.name,
+                            currency.getSymbolAmount(amount),
+                            target.name ?: target.uniqueId
+                        )
+                    )
+                }
             }
         }
     }
@@ -97,23 +113,23 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
             true -> {
                 val targetPlayer = target.player
                 if (targetPlayer == null) {
-                    player.sendMessage(UtilString.colour("&4Error: &cTarget player not online."))
+                    messenger.sendMessage(player, "user.not_online")
                     return
                 }
 
                 val optTrans = walletAPI.withdraw(player, targetPlayer, null, currency, amount)
                 if (optTrans.isPresent)
-                    logging.info(format("%s has successfully withdrew %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
+                    logging.debug(format("%s has successfully withdrew %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
                 else
-                    logging.info(format("%s has failed to withdraw %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
+                    logging.debug(format("%s has failed to withdraw %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), targetPlayer.name))
             }
 
             false -> {
                 val optTrans = walletAPI.withdraw(player, target, null, currency, amount)
                 if (optTrans.isPresent)
-                    logging.info(format("%s has successfully withdrew %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
+                    logging.debug(format("%s has successfully withdrew %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
                 else
-                    logging.info(format("%s has failed to withdraw %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
+                    logging.debug(format("%s has failed to withdraw %s from %s's wallet.", player.name, currency.getSymbolAmount(amount), target.name ?: target.uniqueId))
             }
         }
     }
@@ -134,16 +150,14 @@ class EconomyCommands @Inject constructor(private val framework: Framework, priv
             true -> {
                 val targetPlayer = target.player
                 if (targetPlayer == null) {
-                    player.sendMessage(UtilString.colour("&4Error: &cTarget player not online."))
+                    messenger.sendMessage(player, "user.not_online")
                     return
                 }
 
                 walletAPI.balance(player, targetPlayer, currency)
             }
 
-            false -> {
-                framework.runTaskAsync { walletAPI.balance(player, target, currency) }
-            }
+            false -> framework.runTaskAsync { walletAPI.balance(player, target, currency) }
         }
     }
 
