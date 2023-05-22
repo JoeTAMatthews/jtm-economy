@@ -36,6 +36,11 @@ class WalletController @Autowired constructor(private val walletService: WalletS
         return walletService.getWallets()
     }
 
+    @GetMapping("/search/{prefix}")
+    fun searchWallets(@PathVariable prefix: String): Flux<Wallet> {
+        return walletService.searchWallets(prefix)
+    }
+
     @DeleteMapping("/{id}")
     fun deleteWallet(@PathVariable id: String): Mono<Wallet> {
         return walletService.removeWallet(id)

@@ -38,6 +38,10 @@ class WalletService @Autowired constructor(private val walletRepository: WalletR
         return walletRepository.findAll()
     }
 
+    fun searchWallets(prefix: String): Flux<Wallet> {
+        return walletRepository.findByNameStartsWithIgnoreCaseOrderByNameDesc(prefix)
+    }
+
     fun removeWallet(id: String): Mono<Wallet> {
         return walletRepository.findById(id)
             .switchIfEmpty(Mono.defer { Mono.error(WalletNotFound()) })
