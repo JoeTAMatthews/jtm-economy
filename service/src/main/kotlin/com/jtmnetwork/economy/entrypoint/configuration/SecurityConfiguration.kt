@@ -24,7 +24,7 @@ open class SecurityConfiguration {
     lateinit var audience: String
 
     @Bean
-    fun filterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
+    open fun filterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
         http.cors()
             .and()
             .csrf().disable()
@@ -44,7 +44,7 @@ open class SecurityConfiguration {
     }
 
     @Bean
-    fun jwtDecoder(): ReactiveJwtDecoder {
+    open fun jwtDecoder(): ReactiveJwtDecoder {
         val jwtDecoder = ReactiveJwtDecoders.fromOidcIssuerLocation(issuerUri) as NimbusReactiveJwtDecoder
         val audienceValidator = AudienceValidator(audience)
         val withIssuer = JwtValidators.createDefaultWithIssuer(issuerUri)
