@@ -12,6 +12,8 @@ data class ExchangeRate(@Id val id: UUID,
                         var rate: Double,
                         val created: Long) {
 
+    constructor(id: UUID, currency_from: UUID, currency_to: UUID, symbol: String, rate: Double): this(id, currency_from, currency_to, symbol, rate, System.currentTimeMillis());
+
     fun update(update: ExchangeRate): ExchangeRate {
         if (currency_from != update.currency_from) this.currency_from = update.currency_from
         if (currency_to != update.currency_to) this.currency_to = update.currency_to

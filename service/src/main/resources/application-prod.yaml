@@ -3,3 +3,18 @@ spring:
     mongodb:
       uri: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/admin
       database: ${MONGO_DATABASE}
+  security:
+    oauth2:
+      resourceserver:
+        id: ${BACKEND_AUDIENCE}
+        jwk:
+          jwk-set-uri: ${JWK_SET_URI}
+          issuer-uri: ${ISSUER_URI}
+
+auth0:
+  uri: ${AUTH0_URI}
+  client_id: ${CLIENT_ID}
+  client_secret: ${CLIENT_SECRET}
+  audience: ${AUTH_ID}
+  backend_audience: ${BACKEND_AUDIENCE}
+  backend_domain: ${BACKEND_DOMAIN}
