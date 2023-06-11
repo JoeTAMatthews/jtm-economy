@@ -5,7 +5,9 @@ import org.springframework.data.mongodb.core.mapping.Document
 import java.util.*
 
 @Document("currencies")
-data class Currency(@Id val id: UUID, var name: String, var abbreviation: String, var symbol: String) {
+data class Currency(@Id val id: UUID, var name: String, var abbreviation: String, var symbol: String, var main: Boolean) {
+
+    constructor(id: UUID, name: String, abbreviation: String, symbol: String): this(id, name, abbreviation, symbol, false);
 
     fun update(update: Currency): Currency {
         if (update.name != name) this.name = update.name

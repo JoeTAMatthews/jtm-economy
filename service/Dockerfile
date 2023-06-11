@@ -14,6 +14,6 @@ FROM openjdk:16.0-buster
 VOLUME /tmp
 
 ARG JAR_FILE=build/libs/*.jar
-EXPOSE 7977
+EXPOSE 8095
 COPY --from=build /home/gradle/src/producer/build/libs/*.jar app.jar
 CMD java -Xms256m -Xmx512m -jar /app.jar

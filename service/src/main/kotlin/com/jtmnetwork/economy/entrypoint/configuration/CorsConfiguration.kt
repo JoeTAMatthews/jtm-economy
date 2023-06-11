@@ -7,12 +7,14 @@ import org.springframework.web.reactive.config.WebFluxConfigurer
 
 @EnableWebFlux
 @Configuration
-open class CorsGlobalConfiguration: WebFluxConfigurer {
+open class CorsConfiguration: WebFluxConfigurer {
 
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
-            .allowedOrigins("*")
-            .allowedMethods("GET", "OPTIONS")
-            .maxAge(3600)
+            .allowedOrigins("https://localhost:3000", "https://play.jtm-network.com")
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            .allowedHeaders("*")
+            .allowCredentials(true)
+            .maxAge(7200);
     }
 }

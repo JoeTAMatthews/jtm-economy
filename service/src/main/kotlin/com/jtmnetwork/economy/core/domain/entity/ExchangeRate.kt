@@ -5,7 +5,14 @@ import org.springframework.data.mongodb.core.mapping.Document
 import java.util.*
 
 @Document("exchange_rates")
-data class ExchangeRate(@Id val id: UUID, var currency_from: UUID, var currency_to: UUID, var symbol: String, var rate: Double) {
+data class ExchangeRate(@Id val id: UUID,
+                        var currency_from: UUID,
+                        var currency_to: UUID,
+                        var symbol: String,
+                        var rate: Double,
+                        val created: Long) {
+
+    constructor(id: UUID, currency_from: UUID, currency_to: UUID, symbol: String, rate: Double): this(id, currency_from, currency_to, symbol, rate, System.currentTimeMillis());
 
     fun update(update: ExchangeRate): ExchangeRate {
         if (currency_from != update.currency_from) this.currency_from = update.currency_from

@@ -9,3 +9,24 @@ spring:
       FAIL_ON_EMPTY_BEANS: false
   profiles:
     active: ${PROFILE}
+  globalcors:
+    corsConfiguration:
+      '[/**]':
+        allowedOrigins:
+          - "https://localhost:3000"
+          - "https://play.jtm-network.com"
+        allowCredentials: true
+        allowedHeaders:
+          - Content-Type
+          - Api-Type
+          - Authorization
+          - Set-Cookie
+          - X-Requested-With
+          - Cache-Control
+        allowedMethods:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+          - OPTIONS

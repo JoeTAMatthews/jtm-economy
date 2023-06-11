@@ -12,6 +12,7 @@ import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -22,7 +23,7 @@ import reactor.core.publisher.Mono
 import java.util.*
 
 @RunWith(SpringRunner::class)
-@WebFluxTest(TransactionController::class)
+@WebFluxTest(TransactionController::class, excludeAutoConfiguration = [ReactiveSecurityAutoConfiguration::class])
 @AutoConfigureWebTestClient
 class TransactionControllerTest {
 
@@ -113,12 +114,12 @@ class TransactionControllerTest {
                 .expectBody()
                 .jsonPath("$[0].id").isEqualTo(created.id.toString())
                 .jsonPath("$[0].type").isEqualTo(created.type.name)
-                .jsonPath("$.sender").isEqualTo(created.sender.toString())
-                .jsonPath("$.receiver").isEqualTo(created.receiver.toString())
-                .jsonPath("$.currency").isEqualTo(created.currency.toString())
-                .jsonPath("$.amount").isEqualTo(created.amount)
-                .jsonPath("$.previous_balance").isEqualTo(created.previous_balance)
-                .jsonPath("$.new_balance").isEqualTo(created.new_balance)
+                .jsonPath("$[0].sender").isEqualTo(created.sender.toString())
+                .jsonPath("$[0].receiver").isEqualTo(created.receiver.toString())
+                .jsonPath("$[0].currency").isEqualTo(created.currency.toString())
+                .jsonPath("$[0].amount").isEqualTo(created.amount)
+                .jsonPath("$[0].previous_balance").isEqualTo(created.previous_balance)
+                .jsonPath("$[0].new_balance").isEqualTo(created.new_balance)
 
                 .jsonPath("$[1].type").isEqualTo(TransactionType.OUT.name)
                 .jsonPath("$[1].amount").isEqualTo(1000.0)
